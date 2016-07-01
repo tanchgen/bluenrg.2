@@ -17,6 +17,9 @@
  * @brief User can use this section to tailor USARTx/UARTx instance used and 
  *        associated resources.
  */
+
+#define  TICK_INT_PRIORITY            ((uint32_t)0)    /*!< tick interrupt priority (lowest by default)  */
+
 /* Definition for USARTx clock resources */
 #define USARTx                           USART2
 #define USARTx_CLK_ENABLE()              __USART2_CLK_ENABLE();
@@ -78,16 +81,10 @@ typedef enum {
  * @}
  */
  
+extern uint32_t myTick;
+
 /* Exported functions ------------------------------------------------------- */
 
-/**
- * @}
- */
-
-/**
- * @}
- */
- 
 void getTokenStr( uint8_t ch[] );
 void getShaHash( uint8_t *ch, uint8_t shaHash[] );
 

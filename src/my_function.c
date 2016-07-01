@@ -1,23 +1,17 @@
-#include "stm32f0xx_hal.h"
-#include "stm32xx_lpm.h"
+#include "stm32f0xx.h"
 #include "my_main.h"
 #include "role_type.h"
-#include "bt01.h"
-#include "my_service.h"
-#include "osal.h"
-#include "ble_status.h"
+//#include "bt01.h"
+//#include "my_service.h"
 #include "deviceid.h"
 
 #ifndef HAL_TIM_MODULE_ENABLED
 #define HAL_TIM_MODULE_ENABLED
 #endif
-#include "stm32f0xx_hal_tim.h"
 
 
 uint8_t relayStatus( relayTypeDef rel ); // Состояние реле
 void HardFault_Handler( void ); // Прерывание ошибки железа
-void set_irq_as_output(void);
-void set_irq_as_input(void);
 //static void WakeupBlueNRG(void);
 /*
  *  Define the circular shift macro
@@ -26,13 +20,8 @@ void set_irq_as_input(void);
                 ((((word) << (bits)) & 0xFFFFFFFF) | \
                 ((word) >> (32-(bits))))
 
-extern TIM_HandleTypeDef relayTimHandle[];      // Хэндлы для таймеров 2-х реле
-extern GPIO_TypeDef* RELAY_PORT[RELAYn];
-extern uint16_t RELAY_PIN[RELAYn];              
-extern volatile uint8_t set_connectable;        // Флаг готовности к соединению
 extern volatile int connected;                  // Флаг действующего соединения
 extern volatile uint16_t connection_handle; 
-extern BLE_RoleTypeDef BLE_Role;        // Роль BlueNRG, определена в my_main.c
 extern uint8_t tknStr[TOKEN_LEN+1];     // строка для вычесления токена
 extern uint8_t shaHash[41];             // Длина SHA-hash - 40 байт
 extern uint8_t tokenPart;
@@ -58,7 +47,7 @@ void getTokenStr(uint8_t str[])
   uint8_t i, b;
   uint32_t m, k;
 
-  rand0 = HAL_GetTick();
+  rand0 = myTick;
   m = 0x3FFFFFFF;                 // 2^31-1 - Модуль
   k = 1220703125;              // Множитель
   b = 7;                          // Прироащение
@@ -204,8 +193,8 @@ void getShaHash(uint8_t * str, uint8_t token[] )
    return;
 }
 
-tBleStatus setTokenStr( void ){
-  tBleStatus err;
+int8_t setTokenStr( void ){
+  int8_t err;
   // uint8_t tempStr[] = { "Vm21CmA2LAV3uRyMCT2u" };  // Постоянная строка для теста
 
   tokenPart = 0;          // Сбрасываем счетчик-"какая часть токена передана" 
@@ -274,7 +263,7 @@ void iwdgInit( void ){
   IWDG->KR = IWDG_WRITE_ACCESS;   // Доступ записи в регистры
   IWDG->PR = IWDG_PR_PR_2;        // Прескалер = 64;
   IWDG->RLR = 2047;               // Записываем регистр перезагрузки
-  for ( uint32_t tickstart = HAL_GetTick(); !(IWDG->SR ) ; ) {
+  for ( uint32_t tickstart = myTick; !(IWDG->SR ) ; ) {
     if ( (HAL_GetTick() - tickstart) > HW_TIMEOUT) {
       // Проблема с IWDG
       HardFault_Handler();
