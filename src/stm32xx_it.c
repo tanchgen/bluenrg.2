@@ -2,8 +2,8 @@
 #include "stdint.h"
 #include "stm32xx_it.h"
 //#include "my_service.h"
-#include "my_stm32l0xx_nucleo.h" //
-//#include "stm32l0xx_nucleo_bluenrg.h" //
+//#include "my_stm32l0xx_nucleo.h"
+//#include "stm32l0xx_nucleo_bluenrg.h"
 //#include "hci.h"
 
 
@@ -176,7 +176,7 @@ void PPP_IRQHandler(void)
  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  HCI_Isr();
+  //HCI_Isr();
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

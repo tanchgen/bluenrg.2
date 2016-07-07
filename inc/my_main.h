@@ -88,6 +88,8 @@ extern uint32_t myTick;
 void getTokenStr( uint8_t ch[] );
 void getShaHash( uint8_t *ch, uint8_t shaHash[] );
 
+void Error_Handler( void );
+
 #endif /* __MAIN_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

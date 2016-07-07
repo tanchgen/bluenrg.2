@@ -1,5 +1,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
+#include <string.h>
 #include "stm32f0xx.h"
 #include "stm32f0xx_conf.h"
 //#include "stm32_bluenrg_ble.h"
@@ -9,6 +10,8 @@
 //#include "sample_service.h"
 #include "role_type.h"
 #include "stm32xx_it.h"
+#include "onewire.h"
+#include "init.h"
 //#include "bt01.h"
 //#include "my_bt01_def.h"
 
@@ -22,7 +25,7 @@
 
 
 // SPI handler declaration 
-
+#if BLUENRG
 // Uncomment the line corresponding to the role you want to have 
 BLE_RoleTypeDef BLE_Role = SERVER;
 
@@ -33,9 +36,13 @@ extern volatile uint32_t resetCount;
 //uint8_t data[20]; //data for send to characteristic
 
 /* Private function prototypes -----------------------------------------------*/
+void User_Process(void);
+#endif
+
 static void SetSysClock(void);
 
-void User_Process(void);
+
+
 //void iwdgInit( void );
 
 /* Private functions ---------------------------------------------------------*/
@@ -52,8 +59,21 @@ int main(void)
 { 
   // Configure the system clock
   SetSysClock();
-  
-#if BLENRG
+  owInit();
+  // Установки логирования
+ 	logInit();
+
+/*
+ // Тестирование 1-Wire
+  OW_Init();
+  OW_Send(OW_SEND_RESET, (uint8_t *)"\xcc\x44", 2, NULL, 0, OW_NO_READ);
+  for (uint32_t i=0; i<1000000; i++);
+
+  uint8_t buf[2];
+  OW_Send(OW_SEND_RESET, (uint8_t *)"\xcc\xbe\xff\xff", 4, buf,2, 2);
+*/
+
+#if BLUENRG
   // Initialize the BlueNRG SPI driver
   BNRG_SPI_Init();
 
@@ -61,7 +81,8 @@ int main(void)
   HCI_Init();
 
   BlueNRG_Init();
-#endif  // BLENRG
+#endif  // BLUENRG
+
 #if WATCHDOG
   iwdgInit();
 #endif // WATCHDOG
@@ -69,7 +90,7 @@ int main(void)
   while(1)
   {
 
-#if BLENRG
+#if BLUENRG
     HCI_Process();
     User_Process();
 #endif
@@ -80,6 +101,7 @@ int main(void)
   }
 }
 
+#if BLUENRG
 void User_Process(void)
 {
   // Проверяем на програмный сброс
@@ -96,6 +118,7 @@ void User_Process(void)
     set_connectable = FALSE;
   }
 }
+#endif
 
 /**
   * @brief  Configures the System clock frequency, AHB/APBx prescalers and Flash
@@ -177,3 +200,6 @@ static void SetSysClock(void)
   NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
 }
 
+void Error_Handler( void ) {
+	while(1);
+}

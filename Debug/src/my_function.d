@@ -1,178 +1,52 @@
-src/my_function.o: ../src/my_function.c ../stm32_inc/stm32f0xx_hal.h \
- ../inc/stm32f0xx_hal_conf.h ../stm32_inc/stm32f0xx_hal_rcc.h \
- ../stm32_inc/stm32f0xx_hal_def.h ../stm32_inc/stm32f0xx.h \
- ../stm32_inc/stm32f030x6.h ../stm32_inc/core_cm0.h \
- ../system/inc/cmsis/core_cmInstr.h ../system/inc/cmsis/cmsis_gcc.h \
- ../system/inc/cmsis/core_cmFunc.h ../stm32_inc/system_stm32f0xx.h \
- ../stm32_inc/Legacy/stm32_hal_legacy.h \
- ../stm32_inc/stm32f0xx_hal_rcc_ex.h ../stm32_inc/stm32f0xx_hal_gpio.h \
- ../stm32_inc/stm32f0xx_hal_gpio_ex.h ../stm32_inc/stm32f0xx_hal_dma.h \
- ../stm32_inc/stm32f0xx_hal_dma_ex.h ../stm32_inc/stm32f0xx_hal_cortex.h \
- ../stm32_inc/stm32f0xx_hal_flash.h ../stm32_inc/stm32f0xx_hal_flash_ex.h \
- ../stm32_inc/stm32f0xx_hal_pwr.h ../stm32_inc/stm32f0xx_hal_pwr_ex.h \
- ../stm32_inc/stm32f0xx_hal_spi.h ../stm32_inc/stm32f0xx_hal_dma.h \
- ../stm32_inc/stm32f0xx_hal_spi_ex.h ../stm32_inc/stm32f0xx_hal_uart.h \
- ../stm32_inc/stm32f0xx_hal_uart_ex.h ../stm32_inc/stm32xx_lpm.h \
- ../stm32_inc/stm32xx_lpm_conf.h ../inc/my_main.h ../inc/my_bt01_def.h \
- ../inc/role_type.h ../inc/bt01.h ../bluenrg_inc/ble_status.h \
- ../bluenrg_inc/hal_types.h ../bluenrg_inc/stm32_bluenrg_ble.h \
- ../inc/my_stm32l0xx_nucleo.h ../bluenrg_inc/stm32l0xx_nucleo_bluenrg.h \
- ../stm32_inc/stm32f0xx_hal_tim.h ../stm32_inc/stm32f0xx_hal_tim_ex.h \
- ../inc/my_service.h ../inc/cube_hal.h ../inc/my_stm32l0xx_nucleo.h \
- ../bluenrg_inc/stm32l0xx_nucleo_bluenrg.h ../inc/stm32f0xx_hal_conf.h \
- ../bluenrg_inc/bluenrg_gatt_server.h ../bluenrg_inc/compiler.h \
- ../bluenrg_inc/ble_status.h ../bluenrg_inc/bluenrg_gap.h \
- ../bluenrg_inc/link_layer.h ../bluenrg_inc/bluenrg_gap_aci.h \
- ../inc/events.h ../bluenrg_inc/bluenrg_gatt_aci.h \
- ../bluenrg_inc/bluenrg_gatt_server.h ../bluenrg_inc/hci_const.h \
- ../bluenrg_inc/hal_types.h ../bluenrg_inc/clock.h \
- ../bluenrg_inc/link_layer.h ../bluenrg_inc/hci.h ../bluenrg_inc/list.h \
- ../bluenrg_inc/gp_timer.h ../bluenrg_inc/bluenrg_hal_aci.h \
- ../bluenrg_inc/bluenrg_aci_const.h ../bluenrg_inc/hci_const.h \
- ../bluenrg_inc/hci.h ../bluenrg_inc/hal.h ../bluenrg_inc/sm.h \
- ../bluenrg_inc/debug.h ../inc/bt01.h ../inc/role_type.h \
- ../bluenrg_inc/osal.h ../inc/deviceid.h
+src/my_function.o: ../src/my_function.c \
+ /home/jet/work/workspace/expedition/system/inc/cmsis/stm32f0xx.h \
+ /home/jet/work/workspace/expedition/system/inc/cmsis/core_cm0.h \
+ /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmInstr.h \
+ /home/jet/work/workspace/expedition/system/inc/cmsis/cmsis_gcc.h \
+ /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmFunc.h \
+ /home/jet/work/workspace/expedition/system/inc/cmsis/system_stm32f0xx.h \
+ /home/jet/work/workspace/expedition/inc/stm32f0xx_conf.h \
+ /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_dma.h \
+ /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_exti.h \
+ /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_gpio.h \
+ /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_rcc.h \
+ /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_rtc.h \
+ /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_usart.h \
+ /home/jet/work/workspace/expedition/inc/my_main.h \
+ /home/jet/work/workspace/expedition/inc/my_bt01_def.h \
+ /home/jet/work/workspace/expedition/inc/role_type.h \
+ /home/jet/work/workspace/expedition/inc/deviceid.h
 
-../stm32_inc/stm32f0xx_hal.h:
+/home/jet/work/workspace/expedition/system/inc/cmsis/stm32f0xx.h:
 
-../inc/stm32f0xx_hal_conf.h:
+/home/jet/work/workspace/expedition/system/inc/cmsis/core_cm0.h:
 
-../stm32_inc/stm32f0xx_hal_rcc.h:
+/home/jet/work/workspace/expedition/system/inc/cmsis/core_cmInstr.h:
 
-../stm32_inc/stm32f0xx_hal_def.h:
+/home/jet/work/workspace/expedition/system/inc/cmsis/cmsis_gcc.h:
 
-../stm32_inc/stm32f0xx.h:
+/home/jet/work/workspace/expedition/system/inc/cmsis/core_cmFunc.h:
 
-../stm32_inc/stm32f030x6.h:
+/home/jet/work/workspace/expedition/system/inc/cmsis/system_stm32f0xx.h:
 
-../stm32_inc/core_cm0.h:
+/home/jet/work/workspace/expedition/inc/stm32f0xx_conf.h:
 
-../system/inc/cmsis/core_cmInstr.h:
+/home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_dma.h:
 
-../system/inc/cmsis/cmsis_gcc.h:
+/home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_exti.h:
 
-../system/inc/cmsis/core_cmFunc.h:
+/home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_gpio.h:
 
-../stm32_inc/system_stm32f0xx.h:
+/home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_rcc.h:
 
-../stm32_inc/Legacy/stm32_hal_legacy.h:
+/home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_rtc.h:
 
-../stm32_inc/stm32f0xx_hal_rcc_ex.h:
+/home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_usart.h:
 
-../stm32_inc/stm32f0xx_hal_gpio.h:
+/home/jet/work/workspace/expedition/inc/my_main.h:
 
-../stm32_inc/stm32f0xx_hal_gpio_ex.h:
+/home/jet/work/workspace/expedition/inc/my_bt01_def.h:
 
-../stm32_inc/stm32f0xx_hal_dma.h:
+/home/jet/work/workspace/expedition/inc/role_type.h:
 
-../stm32_inc/stm32f0xx_hal_dma_ex.h:
-
-../stm32_inc/stm32f0xx_hal_cortex.h:
-
-../stm32_inc/stm32f0xx_hal_flash.h:
-
-../stm32_inc/stm32f0xx_hal_flash_ex.h:
-
-../stm32_inc/stm32f0xx_hal_pwr.h:
-
-../stm32_inc/stm32f0xx_hal_pwr_ex.h:
-
-../stm32_inc/stm32f0xx_hal_spi.h:
-
-../stm32_inc/stm32f0xx_hal_dma.h:
-
-../stm32_inc/stm32f0xx_hal_spi_ex.h:
-
-../stm32_inc/stm32f0xx_hal_uart.h:
-
-../stm32_inc/stm32f0xx_hal_uart_ex.h:
-
-../stm32_inc/stm32xx_lpm.h:
-
-../stm32_inc/stm32xx_lpm_conf.h:
-
-../inc/my_main.h:
-
-../inc/my_bt01_def.h:
-
-../inc/role_type.h:
-
-../inc/bt01.h:
-
-../bluenrg_inc/ble_status.h:
-
-../bluenrg_inc/hal_types.h:
-
-../bluenrg_inc/stm32_bluenrg_ble.h:
-
-../inc/my_stm32l0xx_nucleo.h:
-
-../bluenrg_inc/stm32l0xx_nucleo_bluenrg.h:
-
-../stm32_inc/stm32f0xx_hal_tim.h:
-
-../stm32_inc/stm32f0xx_hal_tim_ex.h:
-
-../inc/my_service.h:
-
-../inc/cube_hal.h:
-
-../inc/my_stm32l0xx_nucleo.h:
-
-../bluenrg_inc/stm32l0xx_nucleo_bluenrg.h:
-
-../inc/stm32f0xx_hal_conf.h:
-
-../bluenrg_inc/bluenrg_gatt_server.h:
-
-../bluenrg_inc/compiler.h:
-
-../bluenrg_inc/ble_status.h:
-
-../bluenrg_inc/bluenrg_gap.h:
-
-../bluenrg_inc/link_layer.h:
-
-../bluenrg_inc/bluenrg_gap_aci.h:
-
-../inc/events.h:
-
-../bluenrg_inc/bluenrg_gatt_aci.h:
-
-../bluenrg_inc/bluenrg_gatt_server.h:
-
-../bluenrg_inc/hci_const.h:
-
-../bluenrg_inc/hal_types.h:
-
-../bluenrg_inc/clock.h:
-
-../bluenrg_inc/link_layer.h:
-
-../bluenrg_inc/hci.h:
-
-../bluenrg_inc/list.h:
-
-../bluenrg_inc/gp_timer.h:
-
-../bluenrg_inc/bluenrg_hal_aci.h:
-
-../bluenrg_inc/bluenrg_aci_const.h:
-
-../bluenrg_inc/hci_const.h:
-
-../bluenrg_inc/hci.h:
-
-../bluenrg_inc/hal.h:
-
-../bluenrg_inc/sm.h:
-
-../bluenrg_inc/debug.h:
-
-../inc/bt01.h:
-
-../inc/role_type.h:
-
-../bluenrg_inc/osal.h:
-
-../inc/deviceid.h:
+/home/jet/work/workspace/expedition/inc/deviceid.h:
