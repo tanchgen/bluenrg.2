@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/_write.c \
+../src/eeprom.c \
 ../src/init.c \
 ../src/logger.c \
 ../src/main.c \
@@ -15,6 +16,7 @@ C_SRCS += \
 
 OBJS += \
 ./src/_write.o \
+./src/eeprom.o \
 ./src/init.o \
 ./src/logger.o \
 ./src/main.o \
@@ -25,6 +27,7 @@ OBJS += \
 
 C_DEPS += \
 ./src/_write.d \
+./src/eeprom.d \
 ./src/init.d \
 ./src/logger.d \
 ./src/main.d \

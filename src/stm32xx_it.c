@@ -90,6 +90,7 @@ void SysTick_Handler(void)
 //  HAL_IncTick();
 
   myTick++;
+  timersHandler();
   // Если disconnCount > 0, значит таймер ожидания SHA-хэша включен.
 }
 
@@ -119,6 +120,9 @@ void BNRG_SPI_EXTI_IRQHandler(void)
 * @brief This function handles USART1 global interrupt.
 */
 
+void I2C_IRQHandler(void) {
+	epprom_IRQHandler();
+}
 
 void USART1_IRQHandler(void)
 {

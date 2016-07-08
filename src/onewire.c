@@ -13,7 +13,6 @@ uint8_t owDevNum;
 eOwStatus owStatus;
 tOwToDev owToDev[ TO_DEV_NUM ]; 			// Массив структур термометров 1-Wire;
 tOwDdDev owDdDev[ DD_DEV_NUM ]; 			// Массив структур Датчиков Двери 1-Wire;
-uint32_t ddReadTout;										// Таймаут для считывания температуры
 
 #define OW_0	0x00
 #define OW_1	0xff
@@ -346,3 +345,10 @@ static void OW_SendBits(uint8_t num_bits) {
 
 }
 
+void toReadTemperature( void ) {
+
+}
+
+void ddReadDoor( void ){
+
+}

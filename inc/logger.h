@@ -9,11 +9,17 @@
 #define LOGGER_H_
 
 #include "onewire.h"
+#include "my_time.h"
 
 typedef struct {
-	uint32_t time;
+	tXtime xTime;
 	uint16_t toData[TO_DEV_NUM];
-};
+} tToLogUnit;
+
+typedef struct {
+	tXtime xTime;
+	uint16_t ddData;
+} tDdLogUnit;
 
 typedef struct {
 	uint8_t begin;
@@ -24,15 +30,25 @@ typedef struct {
 	uint32_t len;
 } tLogBuf;
 
+#define TO_LOG_RECORD_NUM			10080
+#define TO_LOG_RECORD_SIZE		sizeof(tToLogUnit)
+#define TO_LOG_START_ADDR			512
+#define TO_LOG_END_ADDR				(TO_LOG_START_ADDR + (TO_LOG_RECORD_NUM * TO_LOG_RECORD_SIZE) - 1)
+
+#define DD_LOG_RECORD_NUM			1600
+#define DD_LOG_RECORD_SIZE		sizeof(tDdLogUnit)
+#define DD_LOG_START_ADDR			(TO_LOG_END_ADDR + 1)
+#define DD_LOG_END_ADDR				(DD_LOG_START_ADDR + (DD_LOG_RECORD_NUM * DD_LOG_RECORD_SIZE) - 1)
+
 extern tLogBuf toLogBuff;
+extern tLogBuf ddLogBuff;
+
 // Записывает байт в буфер
 int8_t logWriteBuff( tLogBuf * buf, uint8_t * data );
 
 // Считывает байт из буфера. Если буфер пуст - возвращает (-1)
-int16_t logReadBuff( tLogBuf * buf, uint8_t * data, uint16_t len );
+int16_t logReadBuff( tLogBuf * buf, uint8_t * data );
 
-int8_t sendEprom( uint32_t addr, uint8_t * data, uint16_t len);
-int8_t readEprom( uint32_t addr, uint8_t * data, uint16_t len);
 int8_t toLogWrite( void );
 
 #endif /* LOGGER_H_ */

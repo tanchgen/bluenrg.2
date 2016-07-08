@@ -11,14 +11,15 @@ Archive member included because of file (symbol)
 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
                               /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o) (_impure_ptr)
 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
-                              ./src/init.o (memcpy)
+                              ./src/eeprom.o (memcpy)
 
 Allocating common symbols
 Common symbol       size              file
 
-ddReadTout          0x4               ./src/onewire.o
+ddReadTout          0x4               ./src/init.o
 appearance_char_handle
                     0x2               ./src/my_function.o
+eeprom              0x20c             ./src/eeprom.o
 disconnCount        0x4               ./src/my_function.o
 errno               0x4               ./system/src/newlib/_syscalls.o
 owDevNum            0x1               ./src/onewire.o
@@ -27,18 +28,23 @@ toReadTout          0x4               ./src/init.o
 toLogTout           0x4               ./src/init.o
 owDdDev             0x18              ./src/onewire.o
 toMesgTout          0x4               ./src/init.o
+toReadTimer         0x4               ./src/init.o
 dev_name_char_handle
                     0x2               ./src/my_function.o
 toLogBuff           0x10              ./src/logger.o
 owToDev             0x60              ./src/onewire.o
 ow_buf              0x8               ./src/onewire.o
+toLogTimer          0x4               ./src/init.o
 ddLogBuff           0x10              ./src/logger.o
 myWD                0x2               ./src/main.o
 owStatus            0x1               ./src/onewire.o
 service_handle      0x2               ./src/my_function.o
+ddReadTimer         0x4               ./src/init.o
+toMesgTimer         0x4               ./src/init.o
 
 Discarded input sections
 
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
@@ -70,6 +76,7 @@ Discarded input sections
                 0x00000000       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .text.DMA_ClearITPendingBit
                 0x00000000        0xc ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
@@ -119,7 +126,7 @@ Discarded input sections
  .debug_aranges
                 0x00000000       0x80 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_ranges  0x00000000       0x70 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
- .debug_macro   0x00000000       0xcb ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
+ .debug_macro   0x00000000       0xd4 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000      0x850 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000       0x7a ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000      0x34e ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
@@ -129,17 +136,132 @@ Discarded input sections
  .debug_macro   0x00000000     0x5b9e ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000      0x28f ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000       0xd7 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
+ .debug_macro   0x00000000      0x2a0 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000      0x522 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000      0x4c5 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000      0x353 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_macro   0x00000000      0x17f ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
- .debug_line    0x00000000      0x378 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
- .debug_str     0x00000000    0x2de39 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
+ .debug_line    0x00000000      0x38b ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
+ .debug_str     0x00000000    0x2f37f ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .comment       0x00000000       0x71 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .debug_frame   0x00000000      0x108 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
  .ARM.attributes
                 0x00000000       0x31 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text          0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .data          0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .bss           0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_Init
+                0x00000000       0x64 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_StructInit
+                0x00000000       0x18 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_Cmd  0x00000000       0x18 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_SoftwareResetCmd
+                0x00000000       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_ITConfig
+                0x00000000       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_StretchClockCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_StopModeCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_DualAddressCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_OwnAddress2Config
+                0x00000000       0x24 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_GeneralCallCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_SlaveByteControlCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_SlaveAddressConfig
+                0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_10BitAddressingModeCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_AutoEndCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_ReloadCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_NumberOfBytesConfig
+                0x00000000       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_MasterRequestConfig
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_GenerateSTART
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_GenerateSTOP
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_10BitAddressHeaderCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_AcknowledgeConfig
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_GetAddressMatched
+                0x00000000        0xc ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_GetTransferDirection
+                0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_TransferHandling
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_SMBusAlertCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_ClockTimeoutCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_ExtendedClockTimeoutCmd
+                0x00000000       0x1c ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_IdleClockTimeoutCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_TimeoutAConfig
+                0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_TimeoutBConfig
+                0x00000000       0x1c ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_CalculatePEC
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_PECRequestCmd
+                0x00000000       0x20 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_GetPEC
+                0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_ReadRegister
+                0x00000000       0x18 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_SendData
+                0x00000000        0x4 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_ReceiveData
+                0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_DMACmd
+                0x00000000       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_GetFlagStatus
+                0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_ClearFlag
+                0x00000000        0x4 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_GetITStatus
+                0x00000000       0x38 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .text.I2C_ClearITPendingBit
+                0x00000000        0x4 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000      0x850 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000       0x7a ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000      0x34e ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000       0x35 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000       0x26 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000      0x30d ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000     0x5b9e ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000      0x28f ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000       0xd7 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000      0x185 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000      0x522 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000      0x4c5 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000      0x353 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
@@ -223,8 +345,6 @@ Discarded input sections
                 0x00000000       0x1c ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .text.RCC_APB2PeriphResetCmd
                 0x00000000       0x1c ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
- .text.RCC_APB1PeriphResetCmd
-                0x00000000       0x1c ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .text.RCC_ITConfig
                 0x00000000       0x1c ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .text.RCC_GetFlagStatus
@@ -247,9 +367,11 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .debug_macro   0x00000000       0xd7 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .debug_macro   0x00000000      0x185 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_macro   0x00000000      0x2a0 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .debug_macro   0x00000000      0x4c5 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .debug_macro   0x00000000      0x353 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .debug_macro   0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
@@ -269,8 +391,6 @@ Discarded input sections
  .bss           0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_ByteToBcd2
                 0x00000000       0x18 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .text.RTC_Bcd2ToByte
-                0x00000000       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_StructInit
                 0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_WriteProtectionCmd
@@ -293,16 +413,12 @@ Discarded input sections
                 0x00000000       0xa8 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_TimeStructInit
                 0x00000000        0xc ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .text.RTC_GetTime
-                0x00000000       0x48 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_GetSubSecond
                 0x00000000        0xc ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_SetDate
                 0x00000000       0x9c ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_DateStructInit
                 0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .text.RTC_GetDate
-                0x00000000       0x44 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_SetAlarm
                 0x00000000       0x94 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_AlarmStructInit
@@ -373,13 +489,6 @@ Discarded input sections
                 0x00000000       0x38 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .text.RTC_ClearITPendingBit
                 0x00000000       0x1c ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_info    0x00000000     0x10f5 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_abbrev  0x00000000      0x1e0 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_loc     0x00000000      0xf0c ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_aranges
-                0x00000000      0x1c0 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_ranges  0x00000000      0x1b0 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_macro   0x00000000      0x10b ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_macro   0x00000000      0x850 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_macro   0x00000000       0x7a ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_macro   0x00000000      0x34e ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
@@ -390,16 +499,11 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_macro   0x00000000       0xd7 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_macro   0x00000000      0x185 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_macro   0x00000000      0x2a0 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_macro   0x00000000      0x522 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_macro   0x00000000      0x353 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_macro   0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_macro   0x00000000      0x4bf ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_line    0x00000000      0x7fa ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_str     0x00000000    0x2e5db ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .comment       0x00000000       0x71 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .debug_frame   0x00000000      0x42c ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
- .ARM.attributes
-                0x00000000       0x31 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .group         0x00000000        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
@@ -511,6 +615,7 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .debug_macro   0x00000000       0xd7 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .debug_macro   0x00000000      0x185 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_macro   0x00000000      0x2a0 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .debug_macro   0x00000000      0x522 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .debug_macro   0x00000000      0x4c5 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .debug_macro   0x00000000       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
@@ -894,6 +999,7 @@ Discarded input sections
  .group         0x00000000        0x8 ./system/src/cortexm/_initialize_hardware.o
  .group         0x00000000        0x8 ./system/src/cortexm/_initialize_hardware.o
  .group         0x00000000        0x8 ./system/src/cortexm/_initialize_hardware.o
+ .group         0x00000000        0x8 ./system/src/cortexm/_initialize_hardware.o
  .text          0x00000000        0x0 ./system/src/cortexm/_initialize_hardware.o
  .data          0x00000000        0x0 ./system/src/cortexm/_initialize_hardware.o
  .bss           0x00000000        0x0 ./system/src/cortexm/_initialize_hardware.o
@@ -907,10 +1013,12 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./system/src/cortexm/_initialize_hardware.o
  .debug_macro   0x00000000       0xd7 ./system/src/cortexm/_initialize_hardware.o
  .debug_macro   0x00000000      0x185 ./system/src/cortexm/_initialize_hardware.o
+ .debug_macro   0x00000000      0x2a0 ./system/src/cortexm/_initialize_hardware.o
  .debug_macro   0x00000000      0x522 ./system/src/cortexm/_initialize_hardware.o
  .debug_macro   0x00000000      0x4c5 ./system/src/cortexm/_initialize_hardware.o
  .debug_macro   0x00000000      0x353 ./system/src/cortexm/_initialize_hardware.o
  .debug_macro   0x00000000       0x10 ./system/src/cortexm/_initialize_hardware.o
+ .group         0x00000000        0x8 ./system/src/cortexm/_reset_hardware.o
  .group         0x00000000        0x8 ./system/src/cortexm/_reset_hardware.o
  .group         0x00000000        0x8 ./system/src/cortexm/_reset_hardware.o
  .group         0x00000000        0x8 ./system/src/cortexm/_reset_hardware.o
@@ -935,7 +1043,7 @@ Discarded input sections
  .debug_aranges
                 0x00000000       0x20 ./system/src/cortexm/_reset_hardware.o
  .debug_ranges  0x00000000       0x10 ./system/src/cortexm/_reset_hardware.o
- .debug_macro   0x00000000       0xcb ./system/src/cortexm/_reset_hardware.o
+ .debug_macro   0x00000000       0xd4 ./system/src/cortexm/_reset_hardware.o
  .debug_macro   0x00000000      0x850 ./system/src/cortexm/_reset_hardware.o
  .debug_macro   0x00000000       0x7a ./system/src/cortexm/_reset_hardware.o
  .debug_macro   0x00000000      0x34e ./system/src/cortexm/_reset_hardware.o
@@ -946,16 +1054,18 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./system/src/cortexm/_reset_hardware.o
  .debug_macro   0x00000000       0xd7 ./system/src/cortexm/_reset_hardware.o
  .debug_macro   0x00000000      0x185 ./system/src/cortexm/_reset_hardware.o
+ .debug_macro   0x00000000      0x2a0 ./system/src/cortexm/_reset_hardware.o
  .debug_macro   0x00000000      0x522 ./system/src/cortexm/_reset_hardware.o
  .debug_macro   0x00000000      0x4c5 ./system/src/cortexm/_reset_hardware.o
  .debug_macro   0x00000000      0x353 ./system/src/cortexm/_reset_hardware.o
  .debug_macro   0x00000000       0x10 ./system/src/cortexm/_reset_hardware.o
- .debug_line    0x00000000      0x277 ./system/src/cortexm/_reset_hardware.o
- .debug_str     0x00000000    0x2db77 ./system/src/cortexm/_reset_hardware.o
+ .debug_line    0x00000000      0x28a ./system/src/cortexm/_reset_hardware.o
+ .debug_str     0x00000000    0x2f0bd ./system/src/cortexm/_reset_hardware.o
  .comment       0x00000000       0x71 ./system/src/cortexm/_reset_hardware.o
  .debug_frame   0x00000000       0x20 ./system/src/cortexm/_reset_hardware.o
  .ARM.attributes
                 0x00000000       0x31 ./system/src/cortexm/_reset_hardware.o
+ .group         0x00000000        0x8 ./system/src/cortexm/exception_handlers.o
  .group         0x00000000        0x8 ./system/src/cortexm/exception_handlers.o
  .group         0x00000000        0x8 ./system/src/cortexm/exception_handlers.o
  .group         0x00000000        0x8 ./system/src/cortexm/exception_handlers.o
@@ -1002,6 +1112,7 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./system/src/cortexm/exception_handlers.o
  .debug_macro   0x00000000       0xd7 ./system/src/cortexm/exception_handlers.o
  .debug_macro   0x00000000      0x185 ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x00000000      0x2a0 ./system/src/cortexm/exception_handlers.o
  .debug_macro   0x00000000      0x522 ./system/src/cortexm/exception_handlers.o
  .debug_macro   0x00000000      0x4c5 ./system/src/cortexm/exception_handlers.o
  .debug_macro   0x00000000      0x353 ./system/src/cortexm/exception_handlers.o
@@ -1034,6 +1145,7 @@ Discarded input sections
  .group         0x00000000        0x8 ./system/src/cmsis/system_stm32f0xx.o
  .group         0x00000000        0x8 ./system/src/cmsis/system_stm32f0xx.o
  .group         0x00000000        0x8 ./system/src/cmsis/system_stm32f0xx.o
+ .group         0x00000000        0x8 ./system/src/cmsis/system_stm32f0xx.o
  .text          0x00000000        0x0 ./system/src/cmsis/system_stm32f0xx.o
  .data          0x00000000        0x0 ./system/src/cmsis/system_stm32f0xx.o
  .bss           0x00000000        0x0 ./system/src/cmsis/system_stm32f0xx.o
@@ -1047,6 +1159,7 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./system/src/cmsis/system_stm32f0xx.o
  .debug_macro   0x00000000       0xd7 ./system/src/cmsis/system_stm32f0xx.o
  .debug_macro   0x00000000      0x185 ./system/src/cmsis/system_stm32f0xx.o
+ .debug_macro   0x00000000      0x2a0 ./system/src/cmsis/system_stm32f0xx.o
  .debug_macro   0x00000000      0x522 ./system/src/cmsis/system_stm32f0xx.o
  .debug_macro   0x00000000      0x4c5 ./system/src/cmsis/system_stm32f0xx.o
  .debug_macro   0x00000000      0x353 ./system/src/cmsis/system_stm32f0xx.o
@@ -1073,6 +1186,83 @@ Discarded input sections
  .comment       0x00000000       0x71 ./src/_write.o
  .ARM.attributes
                 0x00000000       0x31 ./src/_write.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/eeprom.o
+ .text          0x00000000        0x0 ./src/eeprom.o
+ .data          0x00000000        0x0 ./src/eeprom.o
+ .bss           0x00000000        0x0 ./src/eeprom.o
+ .text.eepromRead
+                0x00000000      0x118 ./src/eeprom.o
+ .text.reseiveEprom
+                0x00000000       0x30 ./src/eeprom.o
+ .text.epprom_IRQHandler
+                0x00000000       0xac ./src/eeprom.o
+ .text.i2cMspInit
+                0x00000000       0x6c ./src/eeprom.o
+ .text.i2cInit  0x00000000       0x50 ./src/eeprom.o
+ .text.eepromErrorCallBack
+                0x00000000        0x4 ./src/eeprom.o
+ .text.eepromTxCpltCallback
+                0x00000000        0x4 ./src/eeprom.o
+ .debug_macro   0x00000000      0x850 ./src/eeprom.o
+ .debug_macro   0x00000000       0x58 ./src/eeprom.o
+ .debug_macro   0x00000000       0x22 ./src/eeprom.o
+ .debug_macro   0x00000000       0x35 ./src/eeprom.o
+ .debug_macro   0x00000000       0x9c ./src/eeprom.o
+ .debug_macro   0x00000000      0x16d ./src/eeprom.o
+ .debug_macro   0x00000000       0x4a ./src/eeprom.o
+ .debug_macro   0x00000000       0x52 ./src/eeprom.o
+ .debug_macro   0x00000000       0x16 ./src/eeprom.o
+ .debug_macro   0x00000000       0x43 ./src/eeprom.o
+ .debug_macro   0x00000000      0x180 ./src/eeprom.o
+ .debug_macro   0x00000000      0x27a ./src/eeprom.o
+ .debug_macro   0x00000000       0x10 ./src/eeprom.o
+ .debug_macro   0x00000000       0x35 ./src/eeprom.o
+ .debug_macro   0x00000000       0x7a ./src/eeprom.o
+ .debug_macro   0x00000000      0x34e ./src/eeprom.o
+ .debug_macro   0x00000000       0x35 ./src/eeprom.o
+ .debug_macro   0x00000000       0x26 ./src/eeprom.o
+ .debug_macro   0x00000000      0x30d ./src/eeprom.o
+ .debug_macro   0x00000000     0x5b9e ./src/eeprom.o
+ .debug_macro   0x00000000      0x28f ./src/eeprom.o
+ .debug_macro   0x00000000       0xd7 ./src/eeprom.o
+ .debug_macro   0x00000000      0x185 ./src/eeprom.o
+ .debug_macro   0x00000000      0x2a0 ./src/eeprom.o
+ .debug_macro   0x00000000      0x522 ./src/eeprom.o
+ .debug_macro   0x00000000      0x4c5 ./src/eeprom.o
+ .debug_macro   0x00000000      0x353 ./src/eeprom.o
+ .debug_macro   0x00000000       0x10 ./src/eeprom.o
+ .group         0x00000000        0x8 ./src/init.o
+ .group         0x00000000        0x8 ./src/init.o
+ .group         0x00000000        0x8 ./src/init.o
+ .group         0x00000000        0x8 ./src/init.o
  .group         0x00000000        0x8 ./src/init.o
  .group         0x00000000        0x8 ./src/init.o
  .group         0x00000000        0x8 ./src/init.o
@@ -1127,10 +1317,15 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./src/init.o
  .debug_macro   0x00000000       0xd7 ./src/init.o
  .debug_macro   0x00000000      0x185 ./src/init.o
+ .debug_macro   0x00000000      0x2a0 ./src/init.o
  .debug_macro   0x00000000      0x522 ./src/init.o
  .debug_macro   0x00000000      0x4c5 ./src/init.o
  .debug_macro   0x00000000      0x353 ./src/init.o
  .debug_macro   0x00000000       0x10 ./src/init.o
+ .debug_macro   0x00000000       0x6a ./src/init.o
+ .group         0x00000000        0x8 ./src/logger.o
+ .group         0x00000000        0x8 ./src/logger.o
+ .group         0x00000000        0x8 ./src/logger.o
  .group         0x00000000        0x8 ./src/logger.o
  .group         0x00000000        0x8 ./src/logger.o
  .group         0x00000000        0x8 ./src/logger.o
@@ -1150,23 +1345,10 @@ Discarded input sections
  .text          0x00000000        0x0 ./src/logger.o
  .data          0x00000000        0x0 ./src/logger.o
  .bss           0x00000000        0x0 ./src/logger.o
- .text.sendEprom
-                0x00000000        0x4 ./src/logger.o
- .text.logWriteBuff
-                0x00000000       0x60 ./src/logger.o
- .text.readEprom
-                0x00000000        0x4 ./src/logger.o
  .text.logReadBuff
-                0x00000000       0x48 ./src/logger.o
- .text.toLogWrite
-                0x00000000       0x44 ./src/logger.o
- .debug_info    0x00000000      0x394 ./src/logger.o
- .debug_abbrev  0x00000000      0x173 ./src/logger.o
- .debug_loc     0x00000000      0x17d ./src/logger.o
- .debug_aranges
-                0x00000000       0x40 ./src/logger.o
- .debug_ranges  0x00000000       0x30 ./src/logger.o
- .debug_macro   0x00000000       0xe3 ./src/logger.o
+                0x00000000       0x50 ./src/logger.o
+ .text.ddLogWrite
+                0x00000000       0x3c ./src/logger.o
  .debug_macro   0x00000000      0x850 ./src/logger.o
  .debug_macro   0x00000000       0x7a ./src/logger.o
  .debug_macro   0x00000000      0x34e ./src/logger.o
@@ -1177,19 +1359,15 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./src/logger.o
  .debug_macro   0x00000000       0xd7 ./src/logger.o
  .debug_macro   0x00000000      0x185 ./src/logger.o
+ .debug_macro   0x00000000      0x2a0 ./src/logger.o
  .debug_macro   0x00000000      0x522 ./src/logger.o
  .debug_macro   0x00000000      0x4c5 ./src/logger.o
  .debug_macro   0x00000000      0x353 ./src/logger.o
  .debug_macro   0x00000000       0x10 ./src/logger.o
- .debug_macro   0x00000000       0xe2 ./src/logger.o
  .debug_macro   0x00000000       0x16 ./src/logger.o
- .debug_line    0x00000000      0x2e1 ./src/logger.o
- .debug_str     0x00000000    0x2dec6 ./src/logger.o
- .comment       0x00000000       0x71 ./src/logger.o
- .debug_frame   0x00000000       0x80 ./src/logger.o
- .ARM.attributes
-                0x00000000       0x31 ./src/logger.o
- COMMON         0x00000000       0x20 ./src/logger.o
+ .debug_macro   0x00000000       0x34 ./src/logger.o
+ .debug_macro   0x00000000       0x6a ./src/logger.o
+ .group         0x00000000        0x8 ./src/main.o
  .group         0x00000000        0x8 ./src/main.o
  .group         0x00000000        0x8 ./src/main.o
  .group         0x00000000        0x8 ./src/main.o
@@ -1259,12 +1437,14 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./src/main.o
  .debug_macro   0x00000000       0xd7 ./src/main.o
  .debug_macro   0x00000000      0x185 ./src/main.o
+ .debug_macro   0x00000000      0x2a0 ./src/main.o
  .debug_macro   0x00000000      0x522 ./src/main.o
  .debug_macro   0x00000000      0x4c5 ./src/main.o
  .debug_macro   0x00000000      0x353 ./src/main.o
  .debug_macro   0x00000000       0x10 ./src/main.o
  .debug_macro   0x00000000       0xe8 ./src/main.o
  COMMON         0x00000000        0x2 ./src/main.o
+ .group         0x00000000        0x8 ./src/my_function.o
  .group         0x00000000        0x8 ./src/my_function.o
  .group         0x00000000        0x8 ./src/my_function.o
  .group         0x00000000        0x8 ./src/my_function.o
@@ -1308,7 +1488,7 @@ Discarded input sections
  .debug_aranges
                 0x00000000       0x48 ./src/my_function.o
  .debug_ranges  0x00000000       0x50 ./src/my_function.o
- .debug_macro   0x00000000       0xf8 ./src/my_function.o
+ .debug_macro   0x00000000      0x101 ./src/my_function.o
  .debug_macro   0x00000000      0x850 ./src/my_function.o
  .debug_macro   0x00000000       0x7a ./src/my_function.o
  .debug_macro   0x00000000      0x34e ./src/my_function.o
@@ -1319,6 +1499,7 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./src/my_function.o
  .debug_macro   0x00000000       0xd7 ./src/my_function.o
  .debug_macro   0x00000000      0x185 ./src/my_function.o
+ .debug_macro   0x00000000      0x2a0 ./src/my_function.o
  .debug_macro   0x00000000      0x522 ./src/my_function.o
  .debug_macro   0x00000000      0x4c5 ./src/my_function.o
  .debug_macro   0x00000000      0x353 ./src/my_function.o
@@ -1326,13 +1507,14 @@ Discarded input sections
  .debug_macro   0x00000000      0x19c ./src/my_function.o
  .debug_macro   0x00000000       0x64 ./src/my_function.o
  .debug_macro   0x00000000       0x10 ./src/my_function.o
- .debug_line    0x00000000      0x411 ./src/my_function.o
- .debug_str     0x00000000    0x2e932 ./src/my_function.o
+ .debug_line    0x00000000      0x424 ./src/my_function.o
+ .debug_str     0x00000000    0x2fe78 ./src/my_function.o
  .comment       0x00000000       0x71 ./src/my_function.o
  .debug_frame   0x00000000       0xb8 ./src/my_function.o
  .ARM.attributes
                 0x00000000       0x31 ./src/my_function.o
  COMMON         0x00000000        0xc ./src/my_function.o
+ .group         0x00000000        0x8 ./src/onewire.o
  .group         0x00000000        0x8 ./src/onewire.o
  .group         0x00000000        0x8 ./src/onewire.o
  .group         0x00000000        0x8 ./src/onewire.o
@@ -1361,6 +1543,7 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./src/onewire.o
  .debug_macro   0x00000000       0xd7 ./src/onewire.o
  .debug_macro   0x00000000      0x185 ./src/onewire.o
+ .debug_macro   0x00000000      0x2a0 ./src/onewire.o
  .debug_macro   0x00000000      0x522 ./src/onewire.o
  .debug_macro   0x00000000      0x4c5 ./src/onewire.o
  .debug_macro   0x00000000      0x353 ./src/onewire.o
@@ -1380,11 +1563,14 @@ Discarded input sections
  .group         0x00000000        0x8 ./src/stm32xx_it.o
  .group         0x00000000        0x8 ./src/stm32xx_it.o
  .group         0x00000000        0x8 ./src/stm32xx_it.o
+ .group         0x00000000        0x8 ./src/stm32xx_it.o
  .text          0x00000000        0x0 ./src/stm32xx_it.o
  .data          0x00000000        0x0 ./src/stm32xx_it.o
  .bss           0x00000000        0x0 ./src/stm32xx_it.o
  .text.DebugMon_Handler
                 0x00000000        0x4 ./src/stm32xx_it.o
+ .text.I2C_IRQHandler
+                0x00000000        0x8 ./src/stm32xx_it.o
  .text.PUSH_BUTTON_EXTI_IRQHandler
                 0x00000000        0xc ./src/stm32xx_it.o
  .text.HAL_GPIO_EXTI_Callback
@@ -1403,10 +1589,13 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./src/stm32xx_it.o
  .debug_macro   0x00000000       0xd7 ./src/stm32xx_it.o
  .debug_macro   0x00000000      0x185 ./src/stm32xx_it.o
+ .debug_macro   0x00000000      0x2a0 ./src/stm32xx_it.o
  .debug_macro   0x00000000      0x522 ./src/stm32xx_it.o
  .debug_macro   0x00000000      0x4c5 ./src/stm32xx_it.o
  .debug_macro   0x00000000      0x353 ./src/stm32xx_it.o
  .debug_macro   0x00000000       0x10 ./src/stm32xx_it.o
+ .group         0x00000000        0x8 ./src/time.o
+ .group         0x00000000        0x8 ./src/time.o
  .group         0x00000000        0x8 ./src/time.o
  .group         0x00000000        0x8 ./src/time.o
  .group         0x00000000        0x8 ./src/time.o
@@ -1430,21 +1619,9 @@ Discarded input sections
  .text.timeInit
                 0x00000000       0x4c ./src/time.o
  .text.getTick  0x00000000        0xc ./src/time.o
- .text.xtmtot   0x00000000       0x70 ./src/time.o
  .text.xttotm   0x00000000       0xe8 ./src/time.o
  .text.setRtcTime
                 0x00000000       0x24 ./src/time.o
- .text.getRtcTime
-                0x00000000       0x20 ./src/time.o
- .rodata.lmos   0x00000000       0x18 ./src/time.o
- .rodata.mos    0x00000000       0x18 ./src/time.o
- .debug_info    0x00000000      0x58c ./src/time.o
- .debug_abbrev  0x00000000      0x203 ./src/time.o
- .debug_loc     0x00000000      0x318 ./src/time.o
- .debug_aranges
-                0x00000000       0x48 ./src/time.o
- .debug_ranges  0x00000000       0x38 ./src/time.o
- .debug_macro   0x00000000      0x114 ./src/time.o
  .debug_macro   0x00000000      0x850 ./src/time.o
  .debug_macro   0x00000000       0x7a ./src/time.o
  .debug_macro   0x00000000      0x34e ./src/time.o
@@ -1455,6 +1632,7 @@ Discarded input sections
  .debug_macro   0x00000000      0x28f ./src/time.o
  .debug_macro   0x00000000       0xd7 ./src/time.o
  .debug_macro   0x00000000      0x185 ./src/time.o
+ .debug_macro   0x00000000      0x2a0 ./src/time.o
  .debug_macro   0x00000000      0x522 ./src/time.o
  .debug_macro   0x00000000      0x4c5 ./src/time.o
  .debug_macro   0x00000000      0x353 ./src/time.o
@@ -1462,12 +1640,7 @@ Discarded input sections
  .debug_macro   0x00000000       0x16 ./src/time.o
  .debug_macro   0x00000000      0x19c ./src/time.o
  .debug_macro   0x00000000       0x64 ./src/time.o
- .debug_line    0x00000000      0x359 ./src/time.o
- .debug_str     0x00000000    0x2e8da ./src/time.o
- .comment       0x00000000       0x71 ./src/time.o
- .debug_frame   0x00000000       0xa4 ./src/time.o
- .ARM.attributes
-                0x00000000       0x31 ./src/time.o
+ .debug_macro   0x00000000       0xe8 ./src/time.o
  COMMON         0x00000000        0x4 ./src/time.o
  .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
  .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
@@ -1521,6 +1694,7 @@ Linker script and memory map
 
 LOAD ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
 LOAD ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
+LOAD ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
 LOAD ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
 LOAD ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
 LOAD ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
@@ -1538,6 +1712,7 @@ LOAD ./system/src/cortexm/exception_handlers.o
 LOAD ./system/src/cmsis/system_stm32f0xx.o
 LOAD ./system/src/cmsis/vectors_stm32f0xx.o
 LOAD ./src/_write.o
+LOAD ./src/eeprom.o
 LOAD ./src/init.o
 LOAD ./src/logger.o
 LOAD ./src/main.o
@@ -1559,7 +1734,7 @@ END GROUP
                 0x20000c00                __Main_Stack_Limit = (__stack - __Main_Stack_Size)
                 0x20000c00                PROVIDE (_Main_Stack_Limit, __Main_Stack_Limit)
                 0x00000100                _Minimum_Stack_Size = 0x100
-                0x200000e0                PROVIDE (_Heap_Begin, _end_noinit)
+                0x20000320                PROVIDE (_Heap_Begin, _end_noinit)
                 0x20000c00                PROVIDE (_Heap_Limit, (__stack - __Main_Stack_Size))
 
 .isr_vector     0x08000000      0x218
@@ -1618,16 +1793,16 @@ END GROUP
 
 .inits          0x08000218       0x28
                 0x08000218                __data_regions_array_start = .
-                0x08000218        0x4 LONG 0x8001068 LOADADDR (.data)
+                0x08000218        0x4 LONG 0x8001588 LOADADDR (.data)
                 0x0800021c        0x4 LONG 0x20000000 ADDR (.data)
                 0x08000220        0x4 LONG 0x20000034 (ADDR (.data) + SIZEOF (.data))
-                0x08000224        0x4 LONG 0x8001068 LOADADDR (.data_CCMRAM)
+                0x08000224        0x4 LONG 0x8001588 LOADADDR (.data_CCMRAM)
                 0x08000228        0x4 LONG 0x0 ADDR (.data_CCMRAM)
                 0x0800022c        0x4 LONG 0x0 (ADDR (.data_CCMRAM) + SIZEOF (.data_CCMRAM))
                 0x08000230                __data_regions_array_end = .
                 0x08000230                __bss_regions_array_start = .
                 0x08000230        0x4 LONG 0x20000038 ADDR (.bss)
-                0x08000234        0x4 LONG 0x200000e0 (ADDR (.bss) + SIZEOF (.bss))
+                0x08000234        0x4 LONG 0x20000320 (ADDR (.bss) + SIZEOF (.bss))
                 0x08000238        0x4 LONG 0x0 ADDR (.bss_CCMRAM)
                 0x0800023c        0x4 LONG 0x0 (ADDR (.bss_CCMRAM) + SIZEOF (.bss_CCMRAM))
                 0x08000240                __bss_regions_array_end = .
@@ -1653,7 +1828,7 @@ END GROUP
 .flashtext
  *(.flashtext .flashtext.*)
 
-.text           0x08000240      0xe28
+.text           0x08000240     0x1348
  *(.text .text.*)
  .text.DMA_DeInit
                 0x08000240       0xc0 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
@@ -1666,116 +1841,166 @@ END GROUP
  .text.DMA_GetFlagStatus
                 0x08000358       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
                 0x08000358                DMA_GetFlagStatus
+ .text.I2C_DeInit
+                0x0800036c       0x38 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+                0x0800036c                I2C_DeInit
  .text.RCC_GetClocksFreq
-                0x0800036c      0x19c ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
-                0x0800036c                RCC_GetClocksFreq
+                0x080003a4      0x19c ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+                0x080003a4                RCC_GetClocksFreq
+ .text.RCC_APB1PeriphResetCmd
+                0x08000540       0x1c ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+                0x08000540                RCC_APB1PeriphResetCmd
+ .text.RTC_Bcd2ToByte
+                0x0800055c       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .text.RTC_GetTime
+                0x08000570       0x48 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+                0x08000570                RTC_GetTime
+ .text.RTC_GetDate
+                0x080005b8       0x44 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+                0x080005b8                RTC_GetDate
  .text.USART_Init
-                0x08000508       0xcc ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
-                0x08000508                USART_Init
+                0x080005fc       0xcc ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                0x080005fc                USART_Init
  .text.USART_Cmd
-                0x080005d4       0x18 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
-                0x080005d4                USART_Cmd
+                0x080006c8       0x18 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                0x080006c8                USART_Cmd
  .text.USART_SendData
-                0x080005ec        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
-                0x080005ec                USART_SendData
+                0x080006e0        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                0x080006e0                USART_SendData
  .text.USART_ReceiveData
-                0x080005f4        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
-                0x080005f4                USART_ReceiveData
+                0x080006e8        0x8 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                0x080006e8                USART_ReceiveData
  .text.USART_DMACmd
-                0x080005fc       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
-                0x080005fc                USART_DMACmd
+                0x080006f0       0x14 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                0x080006f0                USART_DMACmd
  .text.USART_GetFlagStatus
-                0x08000610       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
-                0x08000610                USART_GetFlagStatus
+                0x08000704       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                0x08000704                USART_GetFlagStatus
  .text.USART_ClearFlag
-                0x08000620        0x4 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
-                0x08000620                USART_ClearFlag
- .text._exit    0x08000624        0x4 ./system/src/newlib/_exit.o
-                0x08000624                _exit
+                0x08000714        0x4 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                0x08000714                USART_ClearFlag
+ .text._exit    0x08000718        0x4 ./system/src/newlib/_exit.o
+                0x08000718                _exit
  .text.__initialize_args
-                0x08000628       0x10 ./system/src/newlib/_syscalls.o
-                0x08000628                __initialize_args
+                0x0800071c       0x10 ./system/src/newlib/_syscalls.o
+                0x0800071c                __initialize_args
  .text.__initialize_hardware_early
-                0x08000638        0x8 ./system/src/cortexm/_initialize_hardware.o
-                0x08000638                __initialize_hardware_early
+                0x0800072c        0x8 ./system/src/cortexm/_initialize_hardware.o
+                0x0800072c                __initialize_hardware_early
  .text.__initialize_hardware
-                0x08000640        0x8 ./system/src/cortexm/_initialize_hardware.o
-                0x08000640                __initialize_hardware
+                0x08000734        0x8 ./system/src/cortexm/_initialize_hardware.o
+                0x08000734                __initialize_hardware
  .text.SetSysClock
-                0x08000648       0xb0 ./system/src/cmsis/system_stm32f0xx.o
+                0x0800073c       0xb0 ./system/src/cmsis/system_stm32f0xx.o
  .text.SystemInit
-                0x080006f8       0x64 ./system/src/cmsis/system_stm32f0xx.o
-                0x080006f8                SystemInit
+                0x080007ec       0x64 ./system/src/cmsis/system_stm32f0xx.o
+                0x080007ec                SystemInit
  .text.SystemCoreClockUpdate
-                0x0800075c       0x94 ./system/src/cmsis/system_stm32f0xx.o
-                0x0800075c                SystemCoreClockUpdate
- .text.logInit  0x080007f0        0x4 ./src/init.o
-                0x080007f0                logInit
- .text.myDelay  0x080007f4       0x10 ./src/init.o
-                0x080007f4                myDelay
+                0x08000850       0x94 ./system/src/cmsis/system_stm32f0xx.o
+                0x08000850                SystemCoreClockUpdate
+ .text.eepromInit
+                0x080008e4       0x28 ./src/eeprom.o
+                0x080008e4                eepromInit
+ .text.sendEepromAddr
+                0x0800090c       0xd0 ./src/eeprom.o
+                0x0800090c                sendEepromAddr
+ .text.eepromSendIT
+                0x080009dc       0xa0 ./src/eeprom.o
+                0x080009dc                eepromSendIT
+ .text.sendEeprom
+                0x08000a7c       0x30 ./src/eeprom.o
+                0x08000a7c                sendEeprom
+ .text.logInit  0x08000aac       0x48 ./src/init.o
+                0x08000aac                logInit
+ .text.myDelay  0x08000af4       0x10 ./src/init.o
+                0x08000af4                myDelay
  .text.owToDevInit
-                0x08000804       0xe0 ./src/init.o
-                0x08000804                owToDevInit
- .text.owInit   0x080008e4       0xdc ./src/init.o
-                0x080008e4                owInit
+                0x08000b04       0xd8 ./src/init.o
+                0x08000b04                owToDevInit
+ .text.owInit   0x08000bdc       0xfc ./src/init.o
+                0x08000bdc                owInit
+ .text.logWriteBuff
+                0x08000cd8       0x64 ./src/logger.o
+                0x08000cd8                logWriteBuff
+ .text.toLogWrite
+                0x08000d3c       0x44 ./src/logger.o
+                0x08000d3c                toLogWrite
  .text.SetSysClock
-                0x080009c0      0x10c ./src/main.o
- .text.main     0x08000acc       0x10 ./src/main.o
-                0x08000acc                main
+                0x08000d80      0x10c ./src/main.o
+ .text.main     0x08000e8c       0x10 ./src/main.o
+                0x08000e8c                main
  .text.OW_toBits
-                0x08000adc       0x20 ./src/onewire.o
+                0x08000e9c       0x20 ./src/onewire.o
  .text.OW_toByte
-                0x08000afc       0x24 ./src/onewire.o
+                0x08000ebc       0x24 ./src/onewire.o
  .text.OW_SendBits
-                0x08000b20       0xc0 ./src/onewire.o
+                0x08000ee0       0xc0 ./src/onewire.o
  .text.OW_Reset
-                0x08000be0       0x78 ./src/onewire.o
- .text.OW_Init  0x08000c58       0xa8 ./src/onewire.o
-                0x08000c58                OW_Init
- .text.OW_Send  0x08000d00       0x6c ./src/onewire.o
-                0x08000d00                OW_Send
- .text.OW_Scan  0x08000d6c      0x128 ./src/onewire.o
-                0x08000d6c                OW_Scan
+                0x08000fa0       0x78 ./src/onewire.o
+ .text.OW_Init  0x08001018       0xa4 ./src/onewire.o
+                0x08001018                OW_Init
+ .text.OW_Send  0x080010bc       0x6c ./src/onewire.o
+                0x080010bc                OW_Send
+ .text.OW_Scan  0x08001128      0x128 ./src/onewire.o
+                0x08001128                OW_Scan
+ .text.toReadTemperature
+                0x08001250        0x4 ./src/onewire.o
+                0x08001250                toReadTemperature
+ .text.ddReadDoor
+                0x08001254        0x4 ./src/onewire.o
+                0x08001254                ddReadDoor
  .text.NMI_Handler
-                0x08000e94        0x4 ./src/stm32xx_it.o
-                0x08000e94                NMI_Handler
+                0x08001258        0x4 ./src/stm32xx_it.o
+                0x08001258                NMI_Handler
  .text.HardFault_Handler
-                0x08000e98        0x4 ./src/stm32xx_it.o
-                0x08000e98                HardFault_Handler
+                0x0800125c        0x4 ./src/stm32xx_it.o
+                0x0800125c                HardFault_Handler
  .text.SVC_Handler
-                0x08000e9c        0x4 ./src/stm32xx_it.o
-                0x08000e9c                SVC_Handler
+                0x08001260        0x4 ./src/stm32xx_it.o
+                0x08001260                SVC_Handler
  .text.PendSV_Handler
-                0x08000ea0        0x4 ./src/stm32xx_it.o
-                0x08000ea0                PendSV_Handler
+                0x08001264        0x4 ./src/stm32xx_it.o
+                0x08001264                PendSV_Handler
  .text.SysTick_Handler
-                0x08000ea4       0x10 ./src/stm32xx_it.o
-                0x08000ea4                SysTick_Handler
+                0x08001268       0x14 ./src/stm32xx_it.o
+                0x08001268                SysTick_Handler
  .text.USART1_IRQHandler
-                0x08000eb4        0x4 ./src/stm32xx_it.o
-                0x08000eb4                USART1_IRQHandler
+                0x0800127c        0x4 ./src/stm32xx_it.o
+                0x0800127c                USART1_IRQHandler
  .text.TIM3_IRQHandler
-                0x08000eb8        0x4 ./src/stm32xx_it.o
-                0x08000eb8                TIM3_IRQHandler
+                0x08001280        0x4 ./src/stm32xx_it.o
+                0x08001280                TIM3_IRQHandler
  .text.TIM16_IRQHandler
-                0x08000ebc        0x4 ./src/stm32xx_it.o
-                0x08000ebc                TIM16_IRQHandler
+                0x08001284        0x4 ./src/stm32xx_it.o
+                0x08001284                TIM16_IRQHandler
  .text.TIM17_IRQHandler
-                0x08000ec0        0x4 ./src/stm32xx_it.o
-                0x08000ec0                TIM17_IRQHandler
- .text          0x08000ec4      0x120 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
-                0x08000ec4                __udivsi3
-                0x08000ec4                __aeabi_uidiv
-                0x08000fd0                __aeabi_uidivmod
- .text          0x08000fe4        0x4 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
-                0x08000fe4                __aeabi_ldiv0
-                0x08000fe4                __aeabi_idiv0
- .text.memcpy   0x08000fe8       0x7c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
-                0x08000fe8                memcpy
+                0x08001288        0x4 ./src/stm32xx_it.o
+                0x08001288                TIM17_IRQHandler
+ .text.xtmtot   0x0800128c       0x70 ./src/time.o
+                0x0800128c                xtmtot
+ .text.getRtcTime
+                0x080012fc       0x20 ./src/time.o
+                0x080012fc                getRtcTime
+ .text.timersHandler
+                0x0800131c       0x98 ./src/time.o
+                0x0800131c                timersHandler
+ .text          0x080013b4      0x120 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+                0x080013b4                __udivsi3
+                0x080013b4                __aeabi_uidiv
+                0x080014c0                __aeabi_uidivmod
+ .text          0x080014d4        0x4 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+                0x080014d4                __aeabi_ldiv0
+                0x080014d4                __aeabi_idiv0
+ .text.memcpy   0x080014d8       0x7c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+                0x080014d8                memcpy
  *(.rodata .rodata.* .constdata .constdata.*)
  .rodata.str1.4
-                0x08001064        0x4 ./src/onewire.o
+                0x08001554        0x4 ./src/onewire.o
                                   0x2 (size before relaxing)
+ .rodata.lmos   0x08001558       0x18 ./src/time.o
+                0x08001558                lmos
+ .rodata.mos    0x08001570       0x18 ./src/time.o
+                0x08001570                mos
  *(vtable)
  *(.eh_frame*)
  *(.glue_7)
@@ -1783,37 +2008,37 @@ END GROUP
  *(.glue_7t)
  .glue_7t       0x00000000        0x0 linker stubs
 
-.vfp11_veneer   0x08001068        0x0
+.vfp11_veneer   0x08001588        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x08001068        0x0
+.v4_bx          0x08001588        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x08001068        0x0
+.iplt           0x08001588        0x0
  .iplt          0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
 
-.rel.dyn        0x08001068        0x0
+.rel.dyn        0x08001588        0x0
  .rel.iplt      0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x08001068                . = ALIGN (0x4)
-                0x08001068                __exidx_start = .
+                0x08001588                . = ALIGN (0x4)
+                0x08001588                __exidx_start = .
 
 .ARM.exidx
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-                0x08001068                __exidx_end = .
-                0x08001068                . = ALIGN (0x4)
-                0x08001068                _etext = .
-                0x08001068                __etext = .
+                0x08001588                __exidx_end = .
+                0x08001588                . = ALIGN (0x4)
+                0x08001588                _etext = .
+                0x08001588                __etext = .
 
-.data_CCMRAM    0x00000000        0x0 load address 0x08001068
+.data_CCMRAM    0x00000000        0x0 load address 0x08001588
  FILL mask 0xff
  *(.data.CCMRAM .data.CCMRAM.*)
                 0x00000000                . = ALIGN (0x4)
-                0x08001068                _sidata = LOADADDR (.data)
+                0x08001588                _sidata = LOADADDR (.data)
 
-.data           0x20000000       0x34 load address 0x08001068
+.data           0x20000000       0x34 load address 0x08001588
  FILL mask 0xff
                 0x20000000                _sdata = .
                 0x20000000                __data_start__ = .
@@ -1836,13 +2061,13 @@ END GROUP
                 0x20000034                _edata = .
                 0x20000034                __data_end__ = .
 
-.igot.plt       0x20000034        0x0 load address 0x0800109c
+.igot.plt       0x20000034        0x0 load address 0x080015bc
  .igot.plt      0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
 
 .bss_CCMRAM     0x00000000        0x0
  *(.bss.CCMRAM .bss.CCMRAM.*)
 
-.bss            0x20000038       0xa8
+.bss            0x20000038      0x2e8
                 0x20000038                __bss_start__ = .
                 0x20000038                _sbss = .
  *(.bss_begin .bss_begin.*)
@@ -1854,40 +2079,49 @@ END GROUP
  .bss.myTick    0x20000040        0x4 ./src/stm32xx_it.o
                 0x20000040                myTick
  *(COMMON)
- COMMON         0x20000044        0xc ./src/init.o
-                0x20000044                toReadTout
-                0x20000048                toLogTout
-                0x2000004c                toMesgTout
- COMMON         0x20000050       0x89 ./src/onewire.o
-                0x20000050                ddReadTout
-                0x20000054                owDevNum
-                0x20000058                owDdDev
-                0x20000070                owToDev
-                0x200000d0                ow_buf
-                0x200000d8                owStatus
+ COMMON         0x20000044      0x20c ./src/eeprom.o
+                0x20000044                eeprom
+ COMMON         0x20000250       0x20 ./src/init.o
+                0x20000250                ddReadTout
+                0x20000254                toReadTout
+                0x20000258                toLogTout
+                0x2000025c                toMesgTout
+                0x20000260                toReadTimer
+                0x20000264                toLogTimer
+                0x20000268                ddReadTimer
+                0x2000026c                toMesgTimer
+ COMMON         0x20000270       0x20 ./src/logger.o
+                0x20000270                toLogBuff
+                0x20000280                ddLogBuff
+ COMMON         0x20000290       0x89 ./src/onewire.o
+                0x20000290                owDevNum
+                0x20000298                owDdDev
+                0x200002b0                owToDev
+                0x20000310                ow_buf
+                0x20000318                owStatus
  *(.bss_end .bss_end.*)
- *fill*         0x200000d9        0x3 
- .bss_end       0x200000dc        0x4 ./system/src/newlib/_startup.o
-                0x200000e0                . = ALIGN (0x4)
-                0x200000e0                __bss_end__ = .
-                0x200000e0                _ebss = .
+ *fill*         0x20000319        0x3 
+ .bss_end       0x2000031c        0x4 ./system/src/newlib/_startup.o
+                0x20000320                . = ALIGN (0x4)
+                0x20000320                __bss_end__ = .
+                0x20000320                _ebss = .
 
 .noinit_CCMRAM
  *(.noinit.CCMRAM .noinit.CCMRAM.*)
 
-.noinit         0x200000e0        0x0
-                0x200000e0                _noinit = .
+.noinit         0x20000320        0x0
+                0x20000320                _noinit = .
  *(.noinit .noinit.*)
-                0x200000e0                . = ALIGN (0x4)
-                0x200000e0                _end_noinit = .
-                0x200000e0                PROVIDE (end, _end_noinit)
-                0x200000e0                PROVIDE (_end, _end_noinit)
-                0x200000e0                PROVIDE (__end, _end_noinit)
-                0x200000e0                PROVIDE (__end__, _end_noinit)
+                0x20000320                . = ALIGN (0x4)
+                0x20000320                _end_noinit = .
+                0x20000320                PROVIDE (end, _end_noinit)
+                0x20000320                PROVIDE (_end, _end_noinit)
+                0x20000320                PROVIDE (__end, _end_noinit)
+                0x20000320                PROVIDE (__end__, _end_noinit)
 
-._check_stack   0x200000e0      0x100
-                0x200001e0                . = (. + _Minimum_Stack_Size)
- *fill*         0x200000e0      0x100 
+._check_stack   0x20000320      0x100
+                0x20000420                . = (. + _Minimum_Stack_Size)
+ *fill*         0x20000320      0x100 
 
 .b1text
  *(.b1text)
@@ -1936,7 +2170,9 @@ END GROUP
  *(.comment)
  .comment       0x00000000       0x70 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
                                  0x71 (size before relaxing)
+ .comment       0x00000000       0x71 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
  .comment       0x00000000       0x71 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .comment       0x00000000       0x71 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .comment       0x00000000       0x71 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .comment       0x00000000       0x71 ./system/src/newlib/_exit.o
  .comment       0x00000000       0x71 ./system/src/newlib/_startup.o
@@ -1945,47 +2181,60 @@ END GROUP
  .comment       0x00000000       0x71 ./system/src/cortexm/exception_handlers.o
  .comment       0x00000000       0x71 ./system/src/cmsis/system_stm32f0xx.o
  .comment       0x00000000       0x71 ./system/src/cmsis/vectors_stm32f0xx.o
+ .comment       0x00000000       0x71 ./src/eeprom.o
  .comment       0x00000000       0x71 ./src/init.o
+ .comment       0x00000000       0x71 ./src/logger.o
  .comment       0x00000000       0x71 ./src/main.o
  .comment       0x00000000       0x71 ./src/onewire.o
  .comment       0x00000000       0x71 ./src/stm32xx_it.o
+ .comment       0x00000000       0x71 ./src/time.o
 
 .ARM.attributes
                 0x00000000       0x31
  .ARM.attributes
                 0x00000000       0x31 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .ARM.attributes
-                0x00000031       0x31 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+                0x00000031       0x31 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
  .ARM.attributes
-                0x00000062       0x31 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                0x00000062       0x31 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .ARM.attributes
-                0x00000093       0x31 ./system/src/newlib/_exit.o
+                0x00000093       0x31 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .ARM.attributes
-                0x000000c4       0x31 ./system/src/newlib/_startup.o
+                0x000000c4       0x31 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .ARM.attributes
-                0x000000f5       0x31 ./system/src/newlib/_syscalls.o
+                0x000000f5       0x31 ./system/src/newlib/_exit.o
  .ARM.attributes
-                0x00000126       0x31 ./system/src/cortexm/_initialize_hardware.o
+                0x00000126       0x31 ./system/src/newlib/_startup.o
  .ARM.attributes
-                0x00000157       0x31 ./system/src/cortexm/exception_handlers.o
+                0x00000157       0x31 ./system/src/newlib/_syscalls.o
  .ARM.attributes
-                0x00000188       0x31 ./system/src/cmsis/system_stm32f0xx.o
+                0x00000188       0x31 ./system/src/cortexm/_initialize_hardware.o
  .ARM.attributes
-                0x000001b9       0x31 ./system/src/cmsis/vectors_stm32f0xx.o
+                0x000001b9       0x31 ./system/src/cortexm/exception_handlers.o
  .ARM.attributes
-                0x000001ea       0x31 ./src/init.o
+                0x000001ea       0x31 ./system/src/cmsis/system_stm32f0xx.o
  .ARM.attributes
-                0x0000021b       0x31 ./src/main.o
+                0x0000021b       0x31 ./system/src/cmsis/vectors_stm32f0xx.o
  .ARM.attributes
-                0x0000024c       0x31 ./src/onewire.o
+                0x0000024c       0x31 ./src/eeprom.o
  .ARM.attributes
-                0x0000027d       0x31 ./src/stm32xx_it.o
+                0x0000027d       0x31 ./src/init.o
  .ARM.attributes
-                0x000002ae       0x1e /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+                0x000002ae       0x31 ./src/logger.o
  .ARM.attributes
-                0x000002cc       0x1e /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+                0x000002df       0x31 ./src/main.o
  .ARM.attributes
-                0x000002ea       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+                0x00000310       0x31 ./src/onewire.o
+ .ARM.attributes
+                0x00000341       0x31 ./src/stm32xx_it.o
+ .ARM.attributes
+                0x00000372       0x31 ./src/time.o
+ .ARM.attributes
+                0x000003a3       0x1e /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+ .ARM.attributes
+                0x000003c1       0x1e /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+ .ARM.attributes
+                0x000003df       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
 
 .debug
  *(.debug)
@@ -1999,152 +2248,197 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x600
+.debug_aranges  0x00000000      0xa38
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x70 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_aranges
-                0x00000070      0x160 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+                0x00000070      0x168 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
  .debug_aranges
-                0x000001d0      0x1a0 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                0x000001d8      0x160 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
  .debug_aranges
-                0x00000370       0x28 ./system/src/newlib/_exit.o
+                0x00000338      0x1c0 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_aranges
-                0x00000398       0x40 ./system/src/newlib/_startup.o
+                0x000004f8      0x1a0 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .debug_aranges
-                0x000003d8       0x30 ./system/src/newlib/_syscalls.o
+                0x00000698       0x28 ./system/src/newlib/_exit.o
  .debug_aranges
-                0x00000408       0x28 ./system/src/cortexm/_initialize_hardware.o
+                0x000006c0       0x40 ./system/src/newlib/_startup.o
  .debug_aranges
-                0x00000430       0x50 ./system/src/cortexm/exception_handlers.o
+                0x00000700       0x30 ./system/src/newlib/_syscalls.o
  .debug_aranges
-                0x00000480       0x30 ./system/src/cmsis/system_stm32f0xx.o
+                0x00000730       0x28 ./system/src/cortexm/_initialize_hardware.o
  .debug_aranges
-                0x000004b0       0x20 ./system/src/cmsis/vectors_stm32f0xx.o
+                0x00000758       0x50 ./system/src/cortexm/exception_handlers.o
  .debug_aranges
-                0x000004d0       0x38 ./src/init.o
+                0x000007a8       0x30 ./system/src/cmsis/system_stm32f0xx.o
  .debug_aranges
-                0x00000508       0x30 ./src/main.o
+                0x000007d8       0x20 ./system/src/cmsis/vectors_stm32f0xx.o
  .debug_aranges
-                0x00000538       0x50 ./src/onewire.o
+                0x000007f8       0x70 ./src/eeprom.o
  .debug_aranges
-                0x00000588       0x78 ./src/stm32xx_it.o
+                0x00000868       0x38 ./src/init.o
+ .debug_aranges
+                0x000008a0       0x38 ./src/logger.o
+ .debug_aranges
+                0x000008d8       0x30 ./src/main.o
+ .debug_aranges
+                0x00000908       0x60 ./src/onewire.o
+ .debug_aranges
+                0x00000968       0x80 ./src/stm32xx_it.o
+ .debug_aranges
+                0x000009e8       0x50 ./src/time.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x45b5
+.debug_info     0x00000000     0x77d5
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x417 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_info    0x00000417      0xa5f ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
- .debug_info    0x00000e76      0xf39 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_info    0x00001daf       0xee ./system/src/newlib/_exit.o
- .debug_info    0x00001e9d      0x474 ./system/src/newlib/_startup.o
- .debug_info    0x00002311      0x1bc ./system/src/newlib/_syscalls.o
- .debug_info    0x000024cd       0xc3 ./system/src/cortexm/_initialize_hardware.o
- .debug_info    0x00002590      0x1c0 ./system/src/cortexm/exception_handlers.o
- .debug_info    0x00002750      0x2e8 ./system/src/cmsis/system_stm32f0xx.o
- .debug_info    0x00002a38       0xd1 ./system/src/cmsis/vectors_stm32f0xx.o
- .debug_info    0x00002b09      0x5b6 ./src/init.o
- .debug_info    0x000030bf      0x6d7 ./src/main.o
- .debug_info    0x00003796      0xc6c ./src/onewire.o
- .debug_info    0x00004402      0x1b3 ./src/stm32xx_it.o
+ .debug_info    0x00000417      0xbf5 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_info    0x0000100c      0xa5f ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_info    0x00001a6b     0x10f5 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_info    0x00002b60      0xf39 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_info    0x00003a99       0xee ./system/src/newlib/_exit.o
+ .debug_info    0x00003b87      0x474 ./system/src/newlib/_startup.o
+ .debug_info    0x00003ffb      0x1bc ./system/src/newlib/_syscalls.o
+ .debug_info    0x000041b7       0xc3 ./system/src/cortexm/_initialize_hardware.o
+ .debug_info    0x0000427a      0x1c0 ./system/src/cortexm/exception_handlers.o
+ .debug_info    0x0000443a      0x2e8 ./system/src/cmsis/system_stm32f0xx.o
+ .debug_info    0x00004722       0xd1 ./system/src/cmsis/vectors_stm32f0xx.o
+ .debug_info    0x000047f3      0x924 ./src/eeprom.o
+ .debug_info    0x00005117      0x69a ./src/init.o
+ .debug_info    0x000057b1      0x454 ./src/logger.o
+ .debug_info    0x00005c05      0x6db ./src/main.o
+ .debug_info    0x000062e0      0xc7e ./src/onewire.o
+ .debug_info    0x00006f5e      0x220 ./src/stm32xx_it.o
+ .debug_info    0x0000717e      0x657 ./src/time.o
 
-.debug_abbrev   0x00000000     0x1394
+.debug_abbrev   0x00000000     0x1d75
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x170 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_abbrev  0x00000170      0x233 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
- .debug_abbrev  0x000003a3      0x1bf ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_abbrev  0x00000562       0xb7 ./system/src/newlib/_exit.o
- .debug_abbrev  0x00000619      0x1e9 ./system/src/newlib/_startup.o
- .debug_abbrev  0x00000802       0xee ./system/src/newlib/_syscalls.o
- .debug_abbrev  0x000008f0       0x63 ./system/src/cortexm/_initialize_hardware.o
- .debug_abbrev  0x00000953       0xfd ./system/src/cortexm/exception_handlers.o
- .debug_abbrev  0x00000a50      0x146 ./system/src/cmsis/system_stm32f0xx.o
- .debug_abbrev  0x00000b96       0x9d ./system/src/cmsis/vectors_stm32f0xx.o
- .debug_abbrev  0x00000c33      0x225 ./src/init.o
- .debug_abbrev  0x00000e58      0x255 ./src/main.o
- .debug_abbrev  0x000010ad      0x254 ./src/onewire.o
- .debug_abbrev  0x00001301       0x93 ./src/stm32xx_it.o
+ .debug_abbrev  0x00000170      0x1b2 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_abbrev  0x00000322      0x233 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_abbrev  0x00000555      0x1e0 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_abbrev  0x00000735      0x1bf ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_abbrev  0x000008f4       0xb7 ./system/src/newlib/_exit.o
+ .debug_abbrev  0x000009ab      0x1e9 ./system/src/newlib/_startup.o
+ .debug_abbrev  0x00000b94       0xee ./system/src/newlib/_syscalls.o
+ .debug_abbrev  0x00000c82       0x63 ./system/src/cortexm/_initialize_hardware.o
+ .debug_abbrev  0x00000ce5       0xfd ./system/src/cortexm/exception_handlers.o
+ .debug_abbrev  0x00000de2      0x146 ./system/src/cmsis/system_stm32f0xx.o
+ .debug_abbrev  0x00000f28       0x9d ./system/src/cmsis/vectors_stm32f0xx.o
+ .debug_abbrev  0x00000fc5      0x282 ./src/eeprom.o
+ .debug_abbrev  0x00001247      0x22f ./src/init.o
+ .debug_abbrev  0x00001476      0x171 ./src/logger.o
+ .debug_abbrev  0x000015e7      0x255 ./src/main.o
+ .debug_abbrev  0x0000183c      0x25d ./src/onewire.o
+ .debug_abbrev  0x00001a99       0xc7 ./src/stm32xx_it.o
+ .debug_abbrev  0x00001b60      0x215 ./src/time.o
 
-.debug_line     0x00000000     0x3422
+.debug_line     0x00000000     0x4ef1
  *(.debug_line)
- .debug_line    0x00000000      0x341 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_line    0x00000341      0x5e9 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
- .debug_line    0x0000092a      0x651 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_line    0x00000f7b      0x2b6 ./system/src/newlib/_exit.o
- .debug_line    0x00001231      0x306 ./system/src/newlib/_startup.o
- .debug_line    0x00001537      0x36a ./system/src/newlib/_syscalls.o
- .debug_line    0x000018a1      0x27d ./system/src/cortexm/_initialize_hardware.o
- .debug_line    0x00001b1e      0x520 ./system/src/cortexm/exception_handlers.o
- .debug_line    0x0000203e      0x2bb ./system/src/cmsis/system_stm32f0xx.o
- .debug_line    0x000022f9      0x118 ./system/src/cmsis/vectors_stm32f0xx.o
- .debug_line    0x00002411      0x481 ./src/init.o
- .debug_line    0x00002892      0x4d7 ./src/main.o
- .debug_line    0x00002d69      0x39f ./src/onewire.o
- .debug_line    0x00003108      0x31a ./src/stm32xx_it.o
+ .debug_line    0x00000000      0x354 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_line    0x00000354      0x5d0 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_line    0x00000924      0x5fc ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_line    0x00000f20      0x80d ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_line    0x0000172d      0x664 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_line    0x00001d91      0x2b6 ./system/src/newlib/_exit.o
+ .debug_line    0x00002047      0x306 ./system/src/newlib/_startup.o
+ .debug_line    0x0000234d      0x36a ./system/src/newlib/_syscalls.o
+ .debug_line    0x000026b7      0x290 ./system/src/cortexm/_initialize_hardware.o
+ .debug_line    0x00002947      0x533 ./system/src/cortexm/exception_handlers.o
+ .debug_line    0x00002e7a      0x2ce ./system/src/cmsis/system_stm32f0xx.o
+ .debug_line    0x00003148      0x118 ./system/src/cmsis/vectors_stm32f0xx.o
+ .debug_line    0x00003260      0x525 ./src/eeprom.o
+ .debug_line    0x00003785      0x4ca ./src/init.o
+ .debug_line    0x00003c4f      0x302 ./src/logger.o
+ .debug_line    0x00003f51      0x4ea ./src/main.o
+ .debug_line    0x0000443b      0x3d4 ./src/onewire.o
+ .debug_line    0x0000480f      0x340 ./src/stm32xx_it.o
+ .debug_line    0x00004b4f      0x3a2 ./src/time.o
 
-.debug_frame    0x00000000      0xbd0
+.debug_frame    0x00000000     0x1554
  *(.debug_frame)
  .debug_frame   0x00000000       0xc8 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_frame   0x000000c8      0x2bc ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
- .debug_frame   0x00000384      0x354 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_frame   0x000006d8       0x38 ./system/src/newlib/_exit.o
- .debug_frame   0x00000710       0x80 ./system/src/newlib/_startup.o
- .debug_frame   0x00000790       0x50 ./system/src/newlib/_syscalls.o
- .debug_frame   0x000007e0       0x40 ./system/src/cortexm/_initialize_hardware.o
- .debug_frame   0x00000820       0x88 ./system/src/cortexm/exception_handlers.o
- .debug_frame   0x000008a8       0x54 ./system/src/cmsis/system_stm32f0xx.o
- .debug_frame   0x000008fc       0x20 ./system/src/cmsis/vectors_stm32f0xx.o
- .debug_frame   0x0000091c       0x70 ./src/init.o
- .debug_frame   0x0000098c       0x50 ./src/main.o
- .debug_frame   0x000009dc       0xd8 ./src/onewire.o
- .debug_frame   0x00000ab4       0xd0 ./src/stm32xx_it.o
- .debug_frame   0x00000b84       0x20 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
- .debug_frame   0x00000ba4       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+ .debug_frame   0x000000c8      0x2dc ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_frame   0x000003a4      0x2bc ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_frame   0x00000660      0x42c ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_frame   0x00000a8c      0x354 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_frame   0x00000de0       0x38 ./system/src/newlib/_exit.o
+ .debug_frame   0x00000e18       0x80 ./system/src/newlib/_startup.o
+ .debug_frame   0x00000e98       0x50 ./system/src/newlib/_syscalls.o
+ .debug_frame   0x00000ee8       0x40 ./system/src/cortexm/_initialize_hardware.o
+ .debug_frame   0x00000f28       0x88 ./system/src/cortexm/exception_handlers.o
+ .debug_frame   0x00000fb0       0x54 ./system/src/cmsis/system_stm32f0xx.o
+ .debug_frame   0x00001004       0x20 ./system/src/cmsis/vectors_stm32f0xx.o
+ .debug_frame   0x00001024      0x108 ./src/eeprom.o
+ .debug_frame   0x0000112c       0x78 ./src/init.o
+ .debug_frame   0x000011a4       0x70 ./src/logger.o
+ .debug_frame   0x00001214       0x50 ./src/main.o
+ .debug_frame   0x00001264       0xf8 ./src/onewire.o
+ .debug_frame   0x0000135c       0xf0 ./src/stm32xx_it.o
+ .debug_frame   0x0000144c       0xbc ./src/time.o
+ .debug_frame   0x00001508       0x20 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+ .debug_frame   0x00001528       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
 
-.debug_str      0x00000000    0x35d4d
+.debug_str      0x00000000    0x388a6
  *(.debug_str)
- .debug_str     0x00000000    0x2de7f ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
-                              0x2dfff (size before relaxing)
- .debug_str     0x0002de7f      0x66f ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
-                              0x2e1d0 (size before relaxing)
- .debug_str     0x0002e4ee      0x836 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
-                              0x2e467 (size before relaxing)
- .debug_str     0x0002ed24     0x398b ./system/src/newlib/_exit.o
+ .debug_str     0x00000000    0x2f3c5 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+                              0x2f545 (size before relaxing)
+ .debug_str     0x0002f3c5      0x552 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+                              0x2f5da (size before relaxing)
+ .debug_str     0x0002f917      0x650 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+                              0x2f716 (size before relaxing)
+ .debug_str     0x0002ff67      0xa6e ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+                              0x2fb21 (size before relaxing)
+ .debug_str     0x000309d5      0x80e ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+                              0x2f9ad (size before relaxing)
+ .debug_str     0x000311e3     0x398b ./system/src/newlib/_exit.o
                                0x5ec6 (size before relaxing)
- .debug_str     0x000326af      0x271 ./system/src/newlib/_startup.o
+ .debug_str     0x00034b6e      0x26b ./system/src/newlib/_startup.o
                                0x4eaf (size before relaxing)
- .debug_str     0x00032920     0x162d ./system/src/newlib/_syscalls.o
+ .debug_str     0x00034dd9     0x162d ./system/src/newlib/_syscalls.o
                                0x64d7 (size before relaxing)
- .debug_str     0x00033f4d       0x67 ./system/src/cortexm/_initialize_hardware.o
-                              0x2db64 (size before relaxing)
- .debug_str     0x00033fb4      0x15f ./system/src/cortexm/exception_handlers.o
-                              0x315b4 (size before relaxing)
- .debug_str     0x00034113       0x67 ./system/src/cmsis/system_stm32f0xx.o
-                              0x2dc12 (size before relaxing)
- .debug_str     0x0003417a       0x56 ./system/src/cmsis/vectors_stm32f0xx.o
+ .debug_str     0x00036406       0x67 ./system/src/cortexm/_initialize_hardware.o
+                              0x2f0aa (size before relaxing)
+ .debug_str     0x0003646d      0x15f ./system/src/cortexm/exception_handlers.o
+                              0x32afa (size before relaxing)
+ .debug_str     0x000365cc       0x67 ./system/src/cmsis/system_stm32f0xx.o
+                              0x2f158 (size before relaxing)
+ .debug_str     0x00036633       0x56 ./system/src/cmsis/vectors_stm32f0xx.o
                                0x2f24 (size before relaxing)
- .debug_str     0x000341d0      0x43f ./src/init.o
-                              0x3050e (size before relaxing)
- .debug_str     0x0003460f     0x155d ./src/main.o
-                              0x31ed6 (size before relaxing)
- .debug_str     0x00035b6c      0x124 ./src/onewire.o
-                              0x2e25e (size before relaxing)
- .debug_str     0x00035c90       0xbd ./src/stm32xx_it.o
-                              0x2dc10 (size before relaxing)
+ .debug_str     0x00036689      0x485 ./src/eeprom.o
+                              0x31bec (size before relaxing)
+ .debug_str     0x00036b0e      0x5bf ./src/init.o
+                              0x31da9 (size before relaxing)
+ .debug_str     0x000370cd       0x90 ./src/logger.o
+                              0x2f721 (size before relaxing)
+ .debug_str     0x0003715d     0x13bc ./src/main.o
+                              0x3341a (size before relaxing)
+ .debug_str     0x00038519      0x141 ./src/onewire.o
+                              0x2f7b2 (size before relaxing)
+ .debug_str     0x0003865a       0xda ./src/stm32xx_it.o
+                              0x2f185 (size before relaxing)
+ .debug_str     0x00038734      0x172 ./src/time.o
+                              0x30139 (size before relaxing)
 
-.debug_loc      0x00000000     0x1c67
+.debug_loc      0x00000000     0x37f9
  *(.debug_loc)
  .debug_loc     0x00000000      0x143 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_loc     0x00000143      0x903 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
- .debug_loc     0x00000a46      0x8e6 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_loc     0x0000132c      0x265 ./system/src/newlib/_startup.o
- .debug_loc     0x00001591       0x63 ./system/src/newlib/_syscalls.o
- .debug_loc     0x000015f4       0xe2 ./system/src/cmsis/system_stm32f0xx.o
- .debug_loc     0x000016d6      0x15d ./src/init.o
- .debug_loc     0x00001833       0x59 ./src/main.o
- .debug_loc     0x0000188c      0x3db ./src/onewire.o
+ .debug_loc     0x00000143      0x613 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_loc     0x00000756      0x903 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_loc     0x00001059      0xf0c ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_loc     0x00001f65      0x8e6 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_loc     0x0000284b      0x265 ./system/src/newlib/_startup.o
+ .debug_loc     0x00002ab0       0x63 ./system/src/newlib/_syscalls.o
+ .debug_loc     0x00002b13       0xe2 ./system/src/cmsis/system_stm32f0xx.o
+ .debug_loc     0x00002bf5      0x230 ./src/eeprom.o
+ .debug_loc     0x00002e25      0x15d ./src/init.o
+ .debug_loc     0x00002f82      0x12b ./src/logger.o
+ .debug_loc     0x000030ad       0x59 ./src/main.o
+ .debug_loc     0x00003106      0x3db ./src/onewire.o
+ .debug_loc     0x000034e1      0x318 ./src/time.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -2162,86 +2456,103 @@ END GROUP
  *(.debug_varnames)
 OUTPUT(expedition.elf elf32-littlearm)
 
-.debug_ranges   0x00000000      0x550
+.debug_ranges   0x00000000      0x938
  .debug_ranges  0x00000000       0x60 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_ranges  0x00000060      0x150 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
- .debug_ranges  0x000001b0      0x190 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_ranges  0x00000340       0x18 ./system/src/newlib/_exit.o
- .debug_ranges  0x00000358       0x48 ./system/src/newlib/_startup.o
- .debug_ranges  0x000003a0       0x20 ./system/src/newlib/_syscalls.o
- .debug_ranges  0x000003c0       0x18 ./system/src/cortexm/_initialize_hardware.o
- .debug_ranges  0x000003d8       0x40 ./system/src/cortexm/exception_handlers.o
- .debug_ranges  0x00000418       0x20 ./system/src/cmsis/system_stm32f0xx.o
- .debug_ranges  0x00000438       0x10 ./system/src/cmsis/vectors_stm32f0xx.o
- .debug_ranges  0x00000448       0x40 ./src/init.o
- .debug_ranges  0x00000488       0x20 ./src/main.o
- .debug_ranges  0x000004a8       0x40 ./src/onewire.o
- .debug_ranges  0x000004e8       0x68 ./src/stm32xx_it.o
+ .debug_ranges  0x00000060      0x158 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_ranges  0x000001b8      0x150 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_ranges  0x00000308      0x1b0 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_ranges  0x000004b8      0x190 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_ranges  0x00000648       0x18 ./system/src/newlib/_exit.o
+ .debug_ranges  0x00000660       0x48 ./system/src/newlib/_startup.o
+ .debug_ranges  0x000006a8       0x20 ./system/src/newlib/_syscalls.o
+ .debug_ranges  0x000006c8       0x18 ./system/src/cortexm/_initialize_hardware.o
+ .debug_ranges  0x000006e0       0x40 ./system/src/cortexm/exception_handlers.o
+ .debug_ranges  0x00000720       0x20 ./system/src/cmsis/system_stm32f0xx.o
+ .debug_ranges  0x00000740       0x10 ./system/src/cmsis/vectors_stm32f0xx.o
+ .debug_ranges  0x00000750       0x60 ./src/eeprom.o
+ .debug_ranges  0x000007b0       0x40 ./src/init.o
+ .debug_ranges  0x000007f0       0x28 ./src/logger.o
+ .debug_ranges  0x00000818       0x20 ./src/main.o
+ .debug_ranges  0x00000838       0x50 ./src/onewire.o
+ .debug_ranges  0x00000888       0x70 ./src/stm32xx_it.o
+ .debug_ranges  0x000008f8       0x40 ./src/time.o
 
-.debug_macro    0x00000000     0xa82d
- .debug_macro   0x00000000       0xfb ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x000000fb      0x850 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x0000094b       0x7a ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x000009c5      0x34e ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00000d13       0x35 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00000d48       0x26 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00000d6e      0x30d ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x0000107b     0x5b9e ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00006c19       0xd1 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00006cea      0x185 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00006e6f      0x522 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00007391      0x4c5 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00007856      0x353 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00007ba9       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00007bb9      0x28f ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
- .debug_macro   0x00007e48       0xe9 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
- .debug_macro   0x00007f31      0x51c ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
- .debug_macro   0x0000844d       0xe3 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_macro   0x00008530      0x34d ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_macro   0x0000887d      0x131 ./system/src/newlib/_exit.o
- .debug_macro   0x000089ae       0x9c ./system/src/newlib/_exit.o
- .debug_macro   0x00008a4a      0x10e ./system/src/newlib/_exit.o
- .debug_macro   0x00008b58       0x86 ./system/src/newlib/_exit.o
- .debug_macro   0x00008bde       0x43 ./system/src/newlib/_exit.o
- .debug_macro   0x00008c21      0x27a ./system/src/newlib/_exit.o
- .debug_macro   0x00008e9b       0x35 ./system/src/newlib/_exit.o
- .debug_macro   0x00008ed0       0xf7 ./system/src/newlib/_startup.o
- .debug_macro   0x00008fc7      0x1ad ./system/src/newlib/_syscalls.o
- .debug_macro   0x00009174       0x1c ./system/src/newlib/_syscalls.o
- .debug_macro   0x00009190       0x10 ./system/src/newlib/_syscalls.o
- .debug_macro   0x000091a0       0x10 ./system/src/newlib/_syscalls.o
- .debug_macro   0x000091b0       0x10 ./system/src/newlib/_syscalls.o
- .debug_macro   0x000091c0       0x10 ./system/src/newlib/_syscalls.o
- .debug_macro   0x000091d0       0x35 ./system/src/newlib/_syscalls.o
- .debug_macro   0x00009205      0x122 ./system/src/newlib/_syscalls.o
- .debug_macro   0x00009327       0x2e ./system/src/newlib/_syscalls.o
- .debug_macro   0x00009355       0x82 ./system/src/newlib/_syscalls.o
- .debug_macro   0x000093d7       0x2b ./system/src/newlib/_syscalls.o
- .debug_macro   0x00009402      0x118 ./system/src/newlib/_syscalls.o
- .debug_macro   0x0000951a      0x159 ./system/src/newlib/_syscalls.o
- .debug_macro   0x00009673       0x16 ./system/src/newlib/_syscalls.o
- .debug_macro   0x00009689       0xcb ./system/src/cortexm/_initialize_hardware.o
- .debug_macro   0x00009754      0x1f4 ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x00009948       0x3b ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x00009983       0x22 ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x000099a5       0x10 ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x000099b5       0xc8 ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x00009a7d       0x19 ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x00009a96       0xbe ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x00009b54       0x10 ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x00009b64       0xc1 ./system/src/cmsis/system_stm32f0xx.o
- .debug_macro   0x00009c25       0x34 ./system/src/cmsis/vectors_stm32f0xx.o
- .debug_macro   0x00009c59      0x1a2 ./src/init.o
- .debug_macro   0x00009dfb       0xe8 ./src/init.o
- .debug_macro   0x00009ee3      0x223 ./src/main.o
- .debug_macro   0x0000a106       0x16 ./src/main.o
- .debug_macro   0x0000a11c       0x97 ./src/main.o
- .debug_macro   0x0000a1b3       0xf6 ./src/main.o
- .debug_macro   0x0000a2a9       0x10 ./src/main.o
- .debug_macro   0x0000a2b9       0x16 ./src/main.o
- .debug_macro   0x0000a2cf      0x197 ./src/main.o
- .debug_macro   0x0000a466       0x16 ./src/main.o
- .debug_macro   0x0000a47c      0x19c ./src/main.o
- .debug_macro   0x0000a618       0x64 ./src/main.o
- .debug_macro   0x0000a67c       0xe2 ./src/onewire.o
- .debug_macro   0x0000a75e       0xcf ./src/stm32xx_it.o
+.debug_macro    0x00000000     0xba10
+ .debug_macro   0x00000000      0x104 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00000104      0x850 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00000954       0x7a ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x000009ce      0x34e ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00000d1c       0x35 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00000d51       0x26 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00000d77      0x30d ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00001084     0x5b9e ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00006c22       0xd1 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00006cf3      0x185 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00006e78      0x2a0 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00007118      0x522 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x0000763a      0x4c5 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00007aff      0x353 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00007e52       0x10 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x00007e62      0x28f ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_macro   0x000080f1       0xf2 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x000081e3      0x29a ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
+ .debug_macro   0x0000847d       0xf2 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_macro   0x0000856f      0x51c ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_macro   0x00008a8b      0x114 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_macro   0x00008b9f      0x4bf ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_macro   0x0000905e       0xec ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_macro   0x0000914a      0x34d ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_macro   0x00009497      0x131 ./system/src/newlib/_exit.o
+ .debug_macro   0x000095c8       0x9c ./system/src/newlib/_exit.o
+ .debug_macro   0x00009664      0x10e ./system/src/newlib/_exit.o
+ .debug_macro   0x00009772       0x86 ./system/src/newlib/_exit.o
+ .debug_macro   0x000097f8       0x43 ./system/src/newlib/_exit.o
+ .debug_macro   0x0000983b      0x27a ./system/src/newlib/_exit.o
+ .debug_macro   0x00009ab5       0x35 ./system/src/newlib/_exit.o
+ .debug_macro   0x00009aea       0xf7 ./system/src/newlib/_startup.o
+ .debug_macro   0x00009be1      0x1ad ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009d8e       0x1c ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009daa       0x10 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009dba       0x10 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009dca       0x10 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009dda       0x10 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009dea       0x35 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009e1f      0x122 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009f41       0x2e ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009f6f       0x82 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00009ff1       0x2b ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000a01c      0x118 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000a134      0x159 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000a28d       0x16 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000a2a3       0xd4 ./system/src/cortexm/_initialize_hardware.o
+ .debug_macro   0x0000a377      0x1fd ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000a574       0x3b ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000a5af       0x22 ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000a5d1       0x10 ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000a5e1       0xc8 ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000a6a9       0x19 ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000a6c2       0xbe ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000a780       0x10 ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000a790       0xca ./system/src/cmsis/system_stm32f0xx.o
+ .debug_macro   0x0000a85a       0x34 ./system/src/cmsis/vectors_stm32f0xx.o
+ .debug_macro   0x0000a88e      0x1a1 ./src/eeprom.o
+ .debug_macro   0x0000aa2f       0x6a ./src/eeprom.o
+ .debug_macro   0x0000aa99      0x1d0 ./src/init.o
+ .debug_macro   0x0000ac69       0xe8 ./src/init.o
+ .debug_macro   0x0000ad51       0x16 ./src/init.o
+ .debug_macro   0x0000ad67       0x34 ./src/init.o
+ .debug_macro   0x0000ad9b       0xfe ./src/logger.o
+ .debug_macro   0x0000ae99       0xe2 ./src/logger.o
+ .debug_macro   0x0000af7b      0x22c ./src/main.o
+ .debug_macro   0x0000b1a7       0x16 ./src/main.o
+ .debug_macro   0x0000b1bd       0x97 ./src/main.o
+ .debug_macro   0x0000b254       0xf6 ./src/main.o
+ .debug_macro   0x0000b34a       0x10 ./src/main.o
+ .debug_macro   0x0000b35a       0x16 ./src/main.o
+ .debug_macro   0x0000b370      0x197 ./src/main.o
+ .debug_macro   0x0000b507       0x16 ./src/main.o
+ .debug_macro   0x0000b51d      0x19c ./src/main.o
+ .debug_macro   0x0000b6b9       0x64 ./src/main.o
+ .debug_macro   0x0000b71d       0xeb ./src/onewire.o
+ .debug_macro   0x0000b808       0xd8 ./src/stm32xx_it.o
+ .debug_macro   0x0000b8e0      0x130 ./src/time.o

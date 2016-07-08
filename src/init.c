@@ -8,13 +8,20 @@
 
 #include <string.h>
 #include "stm32xx_it.h"
-#include "init.h"
 #include "onewire.h"
+#include "logger.h"
+#include "eeprom.h"
+#include "init.h"
 
 uint32_t toLogTout;										// Таймаут для логгирования температуры
+uint32_t toLogTimer;
 uint32_t toReadTout;									// Таймаут для считывания температуры
+uint32_t toReadTimer;
 uint32_t toMesgTout;									// Таймаут для предачи температуры
+uint32_t toMesgTimer;
 
+uint32_t ddReadTout;										// Таймаут для считывания температуры
+uint32_t ddReadTimer;
 
 eOwStatus owInit( void ) {
 
@@ -55,12 +62,18 @@ eOwStatus owInit( void ) {
   }
 // Устанавливаем таймаут сбора информации
 	toLogTout = TO_LOG_TOUT;
+	toLogTimer = TO_LOG_TOUT;
+
 	toReadTout = TO_READ_TOUT;
+	toReadTimer = TO_READ_TOUT;
+
 	toMesgTout = TO_MESG_TOUT;
+	toMesgTimer = TO_MESG_TOUT;
 
 // Установки для датчиков дверей
 // Устанавливаем таймаут сбора информации
  	ddReadTout = DD_READ_TOUT;
+ 	ddReadTimer = DD_READ_TOUT;
 
   return OW_OK;
 }
@@ -105,10 +118,25 @@ eOwStatus owToDevInit( uint8_t toDev ) {
 	return err;
 }
 
-void logInit( void ){
-	//TODO
-}
+int8_t logInit( void ){
+	// Инициализация Логирования TO
+	toLogBuff.begin = 0;
+	toLogBuff.end = 0;
+	toLogBuff.full = 0;
+	toLogBuff.size = TO_LOG_RECORD_SIZE;
+	toLogBuff.bufAddr = TO_LOG_START_ADDR;
+	toLogBuff.len = TO_LOG_RECORD_NUM;
+	// Инициализация Логирования DD
+	ddLogBuff.begin = 0;
+	ddLogBuff.end = 0;
+	ddLogBuff.full = 0;
+	ddLogBuff.size = DD_LOG_RECORD_SIZE;
+	ddLogBuff.bufAddr = DD_LOG_START_ADDR;
+	ddLogBuff.len = DD_LOG_RECORD_NUM;
 
+	// Иициализация EEPROM
+	return eepromInit();
+}
 
 // Задержка в мс
 void myDelay( uint32_t del ){

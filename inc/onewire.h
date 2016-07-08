@@ -31,10 +31,10 @@
 
 
 #define OW_PORT					GPIOA
-#define OW_TX_PIN				GPIO_Pin_9
-#define OW_TX_PIN_NUM		9
-#define OW_RX_PIN				GPIO_Pin_10
-#define OW_RX_PIN_NUM		10
+#define OW_TX_PIN				GPIO_Pin_2
+#define OW_TX_PIN_NUM		2
+#define OW_RX_PIN				GPIO_Pin_3
+#define OW_RX_PIN_NUM		3
 
 #define TO_DEV_NUM			4				// Количество термометров
 #define DD_DEV_NUM			1				// Количество Датчиков Дверей (DD)
@@ -63,7 +63,7 @@ typedef struct {
 typedef struct {
 	uint64_t addr;						//  Адрес устройства
 	uint32_t readTout;
-	uint32_t prevData;				// Действующее значение датчика двери
+	uint32_t ddData;					// Действующее значение датчика двери
 	eOwStatus devStatus;
 } tOwDdDev;
 
@@ -106,5 +106,7 @@ extern tOwDdDev owDdDev[]; 			// Массив структур Датчиков 
 uint8_t OW_Init();
 uint8_t OW_Send(uint8_t sendReset, uint8_t *command, uint8_t cLen, uint8_t *data, uint8_t dLen, uint8_t readStart);
 uint8_t OW_Scan(uint8_t *buf, uint8_t num);
+void toReadTemperature( void );
+void ddReadDoor( void );
 
 #endif /* ONEWIRE_H_ */

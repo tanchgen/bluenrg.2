@@ -6,6 +6,7 @@
 C_SRCS += \
 ../system/src/stm32f0-stdperiph/stm32f0xx_dma.c \
 ../system/src/stm32f0-stdperiph/stm32f0xx_gpio.c \
+../system/src/stm32f0-stdperiph/stm32f0xx_i2c.c \
 ../system/src/stm32f0-stdperiph/stm32f0xx_rcc.c \
 ../system/src/stm32f0-stdperiph/stm32f0xx_rtc.c \
 ../system/src/stm32f0-stdperiph/stm32f0xx_usart.c 
@@ -13,6 +14,7 @@ C_SRCS += \
 OBJS += \
 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o \
 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o \
+./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o \
 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o \
 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o \
 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o 
@@ -20,6 +22,7 @@ OBJS += \
 C_DEPS += \
 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.d \
 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.d \
+./system/src/stm32f0-stdperiph/stm32f0xx_i2c.d \
 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.d \
 ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.d \
 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.d 

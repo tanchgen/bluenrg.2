@@ -15,7 +15,7 @@
 #include "my_time.h"
 #include "stm32xx_it.h"
 #include "my_main.h"
-
+#include "init.h"
 tXtime uxTime;
 
 // *********** Инициализация структуры ВРЕМЯ (сейчас - системное ) ************
@@ -155,4 +155,38 @@ tXtime getRtcTime( void ){
 	RTC_GetDate( RTC_Format_BIN, &mdate );
 
 	return xtmtot( &mdate, &mtime );
+}
+
+void timersHandler( void ) {
+
+	// Таймаут для логгирования температуры
+	if ( toLogTimer > 1) {
+		if ( !( --toLogTimer ) ) {
+			toLogTimer = toLogTout;
+			toLogWrite();
+		}
+	}
+	// Таймаут для считывания температуры
+	if ( toReadTimer > 1) {
+		if ( !( --toReadTimer ) ) {
+			toReadTimer = toReadTout;
+			toReadTemperature();
+		}
+	}
+	// Таймаут для предачи температуры
+	if ( toMesgTimer > 1) {
+		if ( !( --toMesgTimer ) ) {
+			toMesgTimer = toMesgTout;
+			// TODO: Отправка сообщения по BLUETOOTH
+		}
+	}
+
+	// Таймаут для считывания датчиков двери
+	if ( ddReadTimer > 1) {
+		if ( !( --ddReadTimer ) ) {
+			ddReadTimer = ddReadTout;
+			ddReadDoor();
+		}
+	}
+
 }
