@@ -4,6 +4,7 @@
  *  Version 1.0.3
  */
 
+#include "stm32xx_it.h"
 #include "onewire.h"
 
 // Буфер для приема/передачи по 1-wire
@@ -13,6 +14,9 @@ uint8_t owDevNum;
 eOwStatus owStatus;
 tOwToDev owToDev[ TO_DEV_NUM ]; 			// Массив структур термометров 1-Wire;
 tOwDdDev owDdDev[ DD_DEV_NUM ]; 			// Массив структур Датчиков Двери 1-Wire;
+
+uint8_t rxCount;
+uint8_t txCount;
 
 #define OW_0	0x00
 #define OW_1	0xff
@@ -32,7 +36,7 @@ static uint8_t OW_toByte(uint8_t *ow_bits);
 static uint8_t OW_Reset( void );
 
 // внутренняя процедура. Записывает указанное число бит
-static void OW_SendBits(uint8_t num_bits);
+static int8_t OW_SendBits(uint8_t num_bits);
 
 
 //-----------------------------------------------------------------------------
@@ -42,25 +46,28 @@ uint8_t OW_Init() {
 	USART_InitTypeDef USART_InitStructure;
 
 		// Clock USART1 enable
-		RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+
+	RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
 		// Clock GPIOA enable
 		RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 		// Clock DMA enable
 		RCC->AHBENR |= RCC_AHBENR_DMAEN;
-
+		RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;               // включить тактирование SYSCFG
 
 		// USART TX
 		OW_PORT->MODER |= 2 << (OW_TX_PIN_NUM*2);					// Выставляем в Alternate Function
-		OW_PORT->OTYPER &= ~(3 << (OW_TX_PIN_NUM*2));			// PullUp-PullDown
+		OW_PORT->OTYPER &= ~(OW_TX_PIN);			// PullUp-PullDown
 		OW_PORT->PUPDR &= ~(3 << (OW_TX_PIN_NUM*2));			// NoPULL
-		OW_PORT->OSPEEDR = ~(3 << (OW_TX_PIN_NUM*2));			// Low Speed
+		OW_PORT->PUPDR |= 1 << (OW_TX_PIN_NUM*2);			// PULLUP
+		OW_PORT->OSPEEDR &= ~(3 << (OW_TX_PIN_NUM*2));			// Low Speed
 		OW_PORT->AFR[OW_TX_PIN_NUM >> 0x3] |= 1 << ((OW_TX_PIN_NUM & 0x7) * 4);		// AF1
 
 		// USART RX
 		OW_PORT->MODER |= 2 << (OW_RX_PIN_NUM*2);					// Выставляем в Alternate Function
-		OW_PORT->OTYPER &= ~(3 << (OW_RX_PIN_NUM*2));			// PullUp-PullDown
+		OW_PORT->OTYPER &= ~(OW_RX_PIN);			// PullUp-PullDown
 		OW_PORT->PUPDR &= ~(3 << (OW_RX_PIN_NUM*2));			// NoPULL
-		OW_PORT->OSPEEDR = ~(3 << (OW_RX_PIN_NUM*2));			// Low Speed
+		OW_PORT->PUPDR |= 1 << (OW_RX_PIN_NUM*2);			// PULLUP
+		OW_PORT->OSPEEDR &= ~(3 << (OW_RX_PIN_NUM*2));			// Low Speed
 		OW_PORT->AFR[OW_RX_PIN_NUM >> 0x3] |= 1 << ((OW_RX_PIN_NUM & 0x7) * 4);		// AF1
 
 
@@ -100,7 +107,9 @@ uint8_t OW_Scan(uint8_t *buf, uint8_t num) {
 		for (numBit = 1; numBit <= 64; numBit++) {
 			// читаем два бита. Основной и комплементарный
 			OW_toBits(OW_READ_SLOT, ow_buf);
-			OW_SendBits(2);
+			if (OW_SendBits(2) < 0) {
+				return -1;
+			}
 
 			if (ow_buf[0] == OW_R_1) {
 				if (ow_buf[1] == OW_R_1) {
@@ -154,7 +163,9 @@ uint8_t OW_Scan(uint8_t *buf, uint8_t num) {
 				curDevice[(numBit - 1) >> 3] &= ~(1 << ((numBit - 1) & 0x07));
 				OW_toBits(0x00, ow_buf);
 			}
-			OW_SendBits(1);
+			if (OW_SendBits(1) < 0) {
+				return -1;
+			}
 		}
 		found++;
 		lastDevice = curDevice;
@@ -195,7 +206,9 @@ uint8_t OW_Send(uint8_t sendReset, uint8_t *command, uint8_t cLen,
 		command++;
 		cLen--;
 
-		OW_SendBits(8);
+		if (OW_SendBits(8) < 0) {
+			return -1;
+		}
 
 		// если прочитанные данные кому-то нужны - выкинем их в буфер
 		if (readStart == 0 && dLen > 0) {
@@ -252,39 +265,50 @@ static uint8_t OW_toByte(uint8_t *ow_bits) {
 // осуществляет сброс и проверку на наличие устройств на шине
 //-----------------------------------------------------------------------------
 static uint8_t OW_Reset() {
-	uint8_t ow_presence;
+	uint32_t owtout;
+	uint8_t ow_presence = 0xf0;
 	USART_InitTypeDef USART_InitStructure;
 
 	USART_InitStructure.USART_BaudRate = 9600;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
-	USART_InitStructure.USART_HardwareFlowControl =
-			USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_HardwareFlowControl =	USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
 	USART_Init(OW_USART, &USART_InitStructure);
+	USART_Cmd(OW_USART, ENABLE);
+
+
 
 	// отправляем 0xf0 на скорости 9600
-	USART_ClearFlag(OW_USART, USART_FLAG_TC);
-	USART_SendData(OW_USART, 0xf0);
-	while (USART_GetFlagStatus(OW_USART, USART_FLAG_TC) == RESET) {
-#ifdef OW_GIVE_TICK_RTOS
-		taskYIELD();
-#endif
-	}
+	USART1->TDR = 0xf0;
+	while ((OW_USART->ISR & USART_FLAG_TC) == RESET)
+	{}
 
+	USART1->ICR |= USART_ICR_TCCF; /* Clear transfer complete flag */
+
+	owtout = myTick + OW_TRANS_TOUT;
+	// Ждем, пока нe примем байт
+	while ( (OW_USART->ISR & USART_ISR_RXNE) == RESET){
+		if ( myTick > owtout ) {
+			Error_Handler();
+		}
+	}
+	// Сохраняем принятое по RX
 	ow_presence = USART_ReceiveData(OW_USART);
+	while ( (OW_USART->ISR & USART_ISR_RXNE) == USART_ISR_RXNE)
+	{}
 
 	USART_InitStructure.USART_BaudRate = 115200;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
-	USART_InitStructure.USART_HardwareFlowControl =
-			USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_HardwareFlowControl =	USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
 	USART_Init(OW_USART, &USART_InitStructure);
+	USART_Cmd(OW_USART, ENABLE);
 
-	if (ow_presence != 0xf0) {
+	if ( ow_presence != 0xf0 ) {
 		return OW_OK;
 	}
 
@@ -292,12 +316,13 @@ static uint8_t OW_Reset() {
 }
 
 // внутренняя процедура. Записывает указанное число бит
-static void OW_SendBits(uint8_t num_bits) {
+static int8_t OW_SendBits(uint8_t num_bits) {
 	DMA_InitTypeDef DMA_InitStructure;
+	uint32_t owTout;
 
 	// DMA на чтение
 	DMA_DeInit(OW_DMA_CH_RX);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(USART2->RDR);
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(OW_USART->RDR);
 	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) ow_buf;
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
 	DMA_InitStructure.DMA_BufferSize = num_bits;
@@ -312,7 +337,7 @@ static void OW_SendBits(uint8_t num_bits) {
 
 	// DMA на запись
 	DMA_DeInit(OW_DMA_CH_TX);
-	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(USART2->TDR);
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(OW_USART->TDR);
 	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) ow_buf;
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
 	DMA_InitStructure.DMA_BufferSize = num_bits;
@@ -326,16 +351,18 @@ static void OW_SendBits(uint8_t num_bits) {
 	DMA_Init(OW_DMA_CH_TX, &DMA_InitStructure);
 
 	// старт цикла отправки
-	USART_ClearFlag(OW_USART, USART_FLAG_RXNE | USART_FLAG_TC | USART_FLAG_TXE);
+	OW_DMA_CH_RX->CCR |= DMA_CCR_EN;
+	OW_DMA_CH_TX->CCR |= DMA_CCR_EN;
+	USART_ClearFlag(OW_USART, USART_FLAG_RXNE | USART_FLAG_TXE);
+	OW_USART->ICR |= USART_ICR_TCCF; /* Clear transfer complete flag */
 	USART_DMACmd(OW_USART, USART_DMAReq_Tx | USART_DMAReq_Rx, ENABLE);
-	DMA_Cmd(OW_DMA_CH_RX, ENABLE);
-	DMA_Cmd(OW_DMA_CH_TX, ENABLE);
 
+	owTout = myTick + OW_TRANS_TOUT;
 	// Ждем, пока не примем 8 байт
-	while (DMA_GetFlagStatus(OW_DMA_FLAG) == RESET) {
-#ifdef OW_GIVE_TICK_RTOS
-		taskYIELD();
-#endif
+	while (DMA_GetFlagStatus(OW_DMA_RX_FLAG) == RESET) {
+		if ( myTick > owTout ) {
+			return -1;
+		}
 	}
 
 	// отключаем DMA
@@ -343,6 +370,7 @@ static void OW_SendBits(uint8_t num_bits) {
 	DMA_Cmd(OW_DMA_CH_RX, DISABLE);
 	USART_DMACmd(OW_USART, USART_DMAReq_Tx | USART_DMAReq_Rx, DISABLE);
 
+	return num_bits;
 }
 
 void toReadTemperature( void ) {

@@ -1,13 +1,19 @@
 /* Includes ------------------------------------------------------------------*/
-#include "stdint.h"
+#include <stdint.h>
+#include "eeprom.h"
+#include "my_time.h"
+#include "onewire.h"
 #include "stm32xx_it.h"
 //#include "my_service.h"
 //#include "my_stm32l0xx_nucleo.h"
 //#include "stm32l0xx_nucleo_bluenrg.h"
 //#include "hci.h"
 
+extern uint8_t ow_buf[];
+extern uint8_t rxCount;
+extern uint8_t txCount;
 
-uint32_t myTick = 0;
+__IO uint32_t myTick = 0;
 
 /** @defgroup INTERRUPT_HANDLER
  * @{
@@ -124,10 +130,25 @@ void I2C_IRQHandler(void) {
 	epprom_IRQHandler();
 }
 
-void USART1_IRQHandler(void)
-{
-  // HAL_UART_IRQHandler(&huart1);
+/* USART1 interrupt handler */
+void USART1_IRQHandler(void) {
+	NVIC_ClearPendingIRQ(USART1_IRQn);
+	/* Data is ready */
+	if (OW_USART->ISR & USART_ISR_RXNE) {
+		/* Get data */
+		ow_buf[rxCount] = USART1->RDR & 0xFF;
+		rxCount++;
+	}
+	if (OW_USART->ISR & USART_ISR_TXE) {
+		/* Get data */
+//		USART1->TDR = ow_buf[txCount];
+		txCount++;
+	}
+
+// Если применяем HAL-библиотеку:
+//	HAL_UART_IRQHandler(&huart1);
 }
+
 
 /**
   * @brief  EXTI4_15_IRQHandler This function handles External lines 4 to 15 interrupt request.

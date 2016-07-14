@@ -24,20 +24,21 @@
 #undef OW_USART3
 #undef OW_USART4
 
-#define OW_USART 		USART1
-#define OW_DMA_CH_RX 	DMA1_Channel3
-#define OW_DMA_CH_TX 	DMA1_Channel2
-#define OW_DMA_FLAG		DMA1_FLAG_TC5
+#define OW_USART 				USART1
+#define OW_DMA_CH_RX 		DMA1_Channel3
+#define OW_DMA_CH_TX 		DMA1_Channel2
+#define OW_DMA_RX_FLAG	DMA1_FLAG_TC3
 
+#define OW_TRANS_TOUT		500
 
 #define OW_PORT					GPIOA
-#define OW_TX_PIN				GPIO_Pin_2
-#define OW_TX_PIN_NUM		2
-#define OW_RX_PIN				GPIO_Pin_3
-#define OW_RX_PIN_NUM		3
+#define OW_TX_PIN				GPIO_Pin_9
+#define OW_TX_PIN_NUM		9
+#define OW_RX_PIN				GPIO_Pin_10
+#define OW_RX_PIN_NUM		10
 
-#define TO_DEV_NUM			4				// Количество термометров
-#define DD_DEV_NUM			1				// Количество Датчиков Дверей (DD)
+#define TO_DEV_NUM			2				// Количество термометров
+#define DD_DEV_NUM			0				// Количество Датчиков Дверей (DD)
 #define OW_DEV_NUM			(TO_DEV_NUM + DD_DEV_NUM)
 
 #endif
@@ -74,8 +75,8 @@ typedef struct {
 #define TO_MESG_TOUT				1000				// Таймаут передачи показаний датчиков температуры
 #define MESURE_ACCUR				10					// Кол-во разрядов преобразования (10 бит - 0.25C, 12бит - 0.0625)
 
-#define TERM_MAX						0x7D
-#define TERM_MIN						0xC9
+#define TERM_MAX						0x7D				// Максимальная температура
+#define TERM_MIN						0xC9				// Минимальная температура
 
 // Команды 1-Wire
 #define SEARCH_ROM			0xF0

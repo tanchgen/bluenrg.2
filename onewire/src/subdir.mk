@@ -5,21 +5,33 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/_write.c \
+../src/eeprom.c \
+../src/init.c \
+../src/logger.c \
 ../src/main.c \
 ../src/onewire.c \
-../src/stm32xx_it.c 
+../src/stm32xx_it.c \
+../src/time.c 
 
 OBJS += \
 ./src/_write.o \
+./src/eeprom.o \
+./src/init.o \
+./src/logger.o \
 ./src/main.o \
 ./src/onewire.o \
-./src/stm32xx_it.o 
+./src/stm32xx_it.o \
+./src/time.o 
 
 C_DEPS += \
 ./src/_write.d \
+./src/eeprom.d \
+./src/init.d \
+./src/logger.d \
 ./src/main.d \
 ./src/onewire.d \
-./src/stm32xx_it.d 
+./src/stm32xx_it.d \
+./src/time.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

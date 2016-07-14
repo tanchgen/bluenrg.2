@@ -27,11 +27,15 @@ typedef RTC_DateTypeDef			tDate;
 
 extern tXtime uxTime;
 
-void getRtc( struct tm *time);
+// *********** Инициализация структуры ВРЕМЯ (сейчас - системное ) ************
+void timeInit( void );
+// Получение системного мремени
+uint32_t getTick( void );
 tXtime xtmtot( tDate *mdate, tTime *mtime );
-void xttotm( tDate *mdate, tTime *mtime, tXtime secsarg);
+void xttotm( tDate * mdate, tTime *mtime, tXtime secsarg);
 void setRtcTime( tXtime xtime );
 tXtime getRtcTime( void );
+void timersHandler( void );
 
 
 #endif /* UNIX_TIME_H_ */

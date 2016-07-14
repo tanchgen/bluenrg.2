@@ -16,6 +16,8 @@
 #include "stm32xx_it.h"
 #include "my_main.h"
 #include "init.h"
+#include "logger.h"
+
 tXtime uxTime;
 
 // *********** Инициализация структуры ВРЕМЯ (сейчас - системное ) ************

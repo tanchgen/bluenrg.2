@@ -59,19 +59,15 @@ int main(void)
 { 
   // Configure the system clock
   SetSysClock();
-  owInit();
+//  owInit();
   // Установки логирования
- 	logInit();
+// 	logInit();
 
-/*
+  uint8_t sendBuf[10] = { 0xcc, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+  uint8_t buf[16*8];
+
  // Тестирование 1-Wire
   OW_Init();
-  OW_Send(OW_SEND_RESET, (uint8_t *)"\xcc\x44", 2, NULL, 0, OW_NO_READ);
-  for (uint32_t i=0; i<1000000; i++);
-
-  uint8_t buf[2];
-  OW_Send(OW_SEND_RESET, (uint8_t *)"\xcc\xbe\xff\xff", 4, buf,2, 2);
-*/
 
 #if BLUENRG
   // Initialize the BlueNRG SPI driver
@@ -89,6 +85,16 @@ int main(void)
   
   while(1)
   {
+    for ( uint8_t i=0; i<16*8; i += 9){
+    	sendBuf[1] = 0x44;
+    	OW_Send(OW_SEND_RESET, (uint8_t *)sendBuf, 2, NULL, 0, OW_NO_READ);
+    	myDelay(1000);
+
+    	sendBuf[1] = 0xbe;
+    	OW_Send(OW_SEND_RESET, (uint8_t *)sendBuf, 10, &buf[i], 8, 2);
+    }
+
+    myDelay(1000);
 
 #if BLUENRG
     HCI_Process();
@@ -161,6 +167,9 @@ static void SetSysClock(void)
     /* Enable Prefetch Buffer and set Flash Latency */
     FLASH->ACR = FLASH_ACR_PRFTBE | FLASH_ACR_LATENCY;
 
+    /* Select PLL as system clock source */
+    RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_SW));
+
     /* HCLK = SYSCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;
 
@@ -169,8 +178,16 @@ static void SetSysClock(void)
 
     /* PLL configuration */
     RCC->CFGR2 |= RCC_CFGR2_PREDIV1_DIV4;
+
+    /* Enable PLL */
+    RCC->CR &= ~RCC_CR_PLLON;
+
+    /* Wait till PLL is ready */
+    while((RCC->CR & RCC_CR_PLLRDY) == 1)
+    {
+    }
     RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
-    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE_PREDIV | RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLMULL6);
+    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE_PREDIV | RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLMULL3);
 
     /* Enable PLL */
     RCC->CR |= RCC_CR_PLLON;
@@ -180,8 +197,6 @@ static void SetSysClock(void)
     {
     }
 
-    /* Select PLL as system clock source */
-    RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_SW));
     RCC->CFGR |= (uint32_t)RCC_CFGR_SW_PLL;
 
     /* Wait till PLL is used as system clock source */
@@ -198,6 +213,12 @@ static void SetSysClock(void)
 
   SysTick_Config(RCC_Clocks.HCLK_Frequency/1000);
   NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
+  NVIC_EnableIRQ(SysTick_IRQn);
+  NVIC_SetPriority(SysTick_IRQn, 0xF);
+//  NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
+#define SYSTICK_CLKSOURCE_HCLK         ((uint32_t)0x00000004)
+  SysTick->CTRL |= SYSTICK_CLKSOURCE_HCLK;
+
 }
 
 void Error_Handler( void ) {

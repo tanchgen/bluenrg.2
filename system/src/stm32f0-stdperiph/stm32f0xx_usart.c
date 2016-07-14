@@ -239,7 +239,13 @@ void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct)
   
   /* Write to USART CR2 */
   USARTx->CR2 = tmpreg;
-  
+
+  /* In asynchronous mode, the following bits must be kept cleared:
+  - LINEN and CLKEN bits in the USART_CR2 register,
+  - SCEN, HDSEL and IREN  bits in the USART_CR3 register.*/
+  USARTx->CR2 &= ~(USART_CR2_LINEN | USART_CR2_CLKEN);
+  USARTx->CR3 &= ~(USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
+
   /*---------------------------- USART CR1 Configuration -----------------------*/
   tmpreg = USARTx->CR1;
   /* Clear M, PCE, PS, TE and RE bits */
@@ -254,7 +260,7 @@ void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct)
   
   /* Write to USART CR1 */
   USARTx->CR1 = tmpreg;
-  
+
   /*---------------------------- USART CR3 Configuration -----------------------*/  
   tmpreg = USARTx->CR3;
   /* Clear CTSE and RTSE bits */
@@ -1988,7 +1994,7 @@ void USART_ClearFlag(USART_TypeDef* USARTx, uint32_t USART_FLAG)
   assert_param(IS_USART_ALL_PERIPH(USARTx));
   assert_param(IS_USART_CLEAR_FLAG(USART_FLAG));
      
-  USARTx->ICR = USART_FLAG;
+  USARTx->ICR |= USART_FLAG;
 }
 
 /**

@@ -81,7 +81,7 @@ typedef enum {
  * @}
  */
  
-extern uint32_t myTick;
+extern __IO uint32_t myTick;
 
 /* Exported functions ------------------------------------------------------- */
 
