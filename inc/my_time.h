@@ -36,6 +36,6 @@ void xttotm( tDate * mdate, tTime *mtime, tXtime secsarg);
 void setRtcTime( tXtime xtime );
 tXtime getRtcTime( void );
 void timersHandler( void );
-
+void myDelay( uint32_t del );
 
 #endif /* UNIX_TIME_H_ */

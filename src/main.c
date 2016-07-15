@@ -17,6 +17,9 @@
 
 //#include "logger.h"
 
+uint8_t crc;
+
+uint8_t crcDS(uint8_t inp, uint8_t crc);
 
 /* Private defines -----------------------------------------------------------*/
 #define BDADDR_SIZE 6
@@ -59,15 +62,14 @@ int main(void)
 { 
   // Configure the system clock
   SetSysClock();
-//  owInit();
+  owInit();
   // Установки логирования
-// 	logInit();
+ 	logInit();
 
-  uint8_t sendBuf[10] = { 0xcc, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-  uint8_t buf[16*8];
+  uint8_t sendBuf[11];
+  uint8_t readBuf[16*8];
+  uint64_t addr;
 
- // Тестирование 1-Wire
-  OW_Init();
 
 #if BLUENRG
   // Initialize the BlueNRG SPI driver
@@ -82,19 +84,24 @@ int main(void)
 #if WATCHDOG
   iwdgInit();
 #endif // WATCHDOG
-  
+
+  memset( sendBuf, 0xFF, 11);
+
+	sendBuf[0] = READ_ROM;
+	OW_Send(OW_SEND_RESET, sendBuf, 9, readBuf, 8, 1);
+	addr = *((uint64_t *)readBuf);
+
+	memcpy( &sendBuf[1], (void*)&addr, 8);
+ 	sendBuf[0] = MATCH_ROM;
+ 	OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ);
+  memset( sendBuf, 0xFF, 9);
+
+  sendBuf[0] = MEM_READ;
+ 	OW_Send(OW_NO_RESET, sendBuf, 11, readBuf, 8, 2);
+
   while(1)
   {
-    for ( uint8_t i=0; i<16*8; i += 9){
-    	sendBuf[1] = 0x44;
-    	OW_Send(OW_SEND_RESET, (uint8_t *)sendBuf, 2, NULL, 0, OW_NO_READ);
-    	myDelay(1000);
-
-    	sendBuf[1] = 0xbe;
-    	OW_Send(OW_SEND_RESET, (uint8_t *)sendBuf, 10, &buf[i], 8, 2);
-    }
-
-    myDelay(1000);
+  	timersProcess();
 
 #if BLUENRG
     HCI_Process();
@@ -223,4 +230,18 @@ static void SetSysClock(void)
 
 void Error_Handler( void ) {
 	while(1);
+}
+
+uint8_t crcDS(uint8_t inp, uint8_t crc) {
+ inp ^= crc;
+ crc = 0;
+ if(inp & 0x1)   crc ^= 0x5e;
+ if(inp & 0x2)   crc ^= 0xbc;
+ if(inp & 0x4)   crc ^= 0x61;
+ if(inp & 0x8)   crc ^= 0xc2;
+ if(inp & 0x10)  crc ^= 0x9d;
+ if(inp & 0x20)  crc ^= 0x23;
+ if(inp & 0x40)  crc ^= 0x46;
+ if(inp & 0x80)  crc ^= 0x8c;
+ return (crc);
 }

@@ -162,33 +162,52 @@ tXtime getRtcTime( void ){
 void timersHandler( void ) {
 
 	// Таймаут для логгирования температуры
-	if ( toLogTimer > 1) {
-		if ( !( --toLogTimer ) ) {
-			toLogTimer = toLogTout;
-			toLogWrite();
-		}
+	if ( toLogCount > 1) {
+		toLogCount--;
 	}
 	// Таймаут для считывания температуры
-	if ( toReadTimer > 1) {
-		if ( !( --toReadTimer ) ) {
-			toReadTimer = toReadTout;
-			toReadTemperature();
-		}
+	if ( toReadCount > 1) {
+		toReadCount--;
 	}
 	// Таймаут для предачи температуры
-	if ( toMesgTimer > 1) {
-		if ( !( --toMesgTimer ) ) {
-			toMesgTimer = toMesgTout;
-			// TODO: Отправка сообщения по BLUETOOTH
-		}
+	if ( toMesgCount > 1) {
+		toMesgCount--;
 	}
 
 	// Таймаут для считывания датчиков двери
-	if ( ddReadTimer > 1) {
-		if ( !( --ddReadTimer ) ) {
-			ddReadTimer = ddReadTout;
-			ddReadDoor();
-		}
+	if ( ddReadCount > 1) {
+		ddReadCount--;
 	}
 
+}
+
+void timersProcess( void ) {
+	// Таймаут для логгирования температуры
+	if ( toLogCount == 1 ) {
+		toLogCount = toLogTout+1;
+		toLogWrite();
+	}
+	// Таймаут для считывания температуры
+	if ( toReadCount == 1 ) {
+		toReadCount += toReadTout;
+		toReadTemperature();
+	}
+	// Таймаут для предачи температуры
+	if ( toMesgCount == 1) {
+		toMesgCount += toMesgTout;
+		// TODO: Отправка сообщения по BLUETOOTH
+	}
+
+	// Таймаут для считывания датчиков двери
+	if ( !ddReadCount == 1) {
+		ddReadCount += ddReadTout;
+		ddReadDoor();
+	}
+}
+
+// Задержка в мс
+void myDelay( uint32_t del ){
+	uint32_t finish = myTick + del;
+	while ( myTick < finish)
+	{}
 }

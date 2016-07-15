@@ -12,6 +12,7 @@ C_SRCS += \
 ../src/my_function.c \
 ../src/onewire.c \
 ../src/stm32xx_it.c \
+../src/thermo.c \
 ../src/time.c 
 
 OBJS += \
@@ -23,6 +24,7 @@ OBJS += \
 ./src/my_function.o \
 ./src/onewire.o \
 ./src/stm32xx_it.o \
+./src/thermo.o \
 ./src/time.o 
 
 C_DEPS += \
@@ -34,6 +36,7 @@ C_DEPS += \
 ./src/my_function.d \
 ./src/onewire.d \
 ./src/stm32xx_it.d \
+./src/thermo.d \
 ./src/time.d 
 
 

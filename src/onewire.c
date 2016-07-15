@@ -3,7 +3,6 @@
  *
  *  Version 1.0.3
  */
-
 #include "stm32xx_it.h"
 #include "onewire.h"
 
@@ -17,6 +16,9 @@ tOwDdDev owDdDev[ DD_DEV_NUM ]; 			// Массив структур Датчик
 
 uint8_t rxCount;
 uint8_t txCount;
+
+uint32_t tmpModerOut, tmpModerAf;			 // Значения регистра MODER для UART и для подтяжки UART_RX к Vdd
+
 
 #define OW_0	0x00
 #define OW_1	0xff
@@ -70,6 +72,10 @@ uint8_t OW_Init() {
 		OW_PORT->OSPEEDR &= ~(3 << (OW_RX_PIN_NUM*2));			// Low Speed
 		OW_PORT->AFR[OW_RX_PIN_NUM >> 0x3] |= 1 << ((OW_RX_PIN_NUM & 0x7) * 4);		// AF1
 
+		// Значения регистра MODER для UART и для подтяжки UART_RX к Vdd
+  	tmpModerAf = OW_PORT->MODER;
+  	tmpModerOut = tmpModerAf & (~(3 << (OW_RX_PIN_NUM*2)));
+  	tmpModerOut |= 1 << (OW_RX_PIN_NUM*2);
 
 	USART_InitStructure.USART_BaudRate = 115200;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
@@ -369,14 +375,10 @@ static int8_t OW_SendBits(uint8_t num_bits) {
 	DMA_Cmd(OW_DMA_CH_TX, DISABLE);
 	DMA_Cmd(OW_DMA_CH_RX, DISABLE);
 	USART_DMACmd(OW_USART, USART_DMAReq_Tx | USART_DMAReq_Rx, DISABLE);
-
 	return num_bits;
-}
-
-void toReadTemperature( void ) {
-
 }
 
 void ddReadDoor( void ){
 
 }
+

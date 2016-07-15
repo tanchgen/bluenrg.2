@@ -13,16 +13,15 @@
 eOwStatus owInit( void );
 eOwStatus owToDevInit( uint8_t toDev );
 int8_t logInit( void );
-void myDelay( uint32_t del );
 
 extern uint32_t toLogTout;										// Таймаут для логгирования температуры
-extern uint32_t toLogTimer;
+extern uint32_t toLogCount;
 extern uint32_t toReadTout;									// Таймаут для считывания температуры
-extern uint32_t toReadTimer;
+extern uint32_t toReadCount;
 extern uint32_t toMesgTout;									// Таймаут для предачи температуры
-extern uint32_t toMesgTimer;
+extern uint32_t toMesgCount;
 
 extern uint32_t ddReadTout;										// Таймаут для считывания температуры
-extern uint32_t ddReadTimer;
+extern uint32_t ddReadCount;
 
 #endif /* INIT_H_ */

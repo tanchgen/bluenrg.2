@@ -32,10 +32,10 @@
 #define OW_TRANS_TOUT		500
 
 #define OW_PORT					GPIOA
-#define OW_TX_PIN				GPIO_Pin_9
-#define OW_TX_PIN_NUM		9
-#define OW_RX_PIN				GPIO_Pin_10
-#define OW_RX_PIN_NUM		10
+#define OW_TX_PIN				GPIO_Pin_2
+#define OW_TX_PIN_NUM		2
+#define OW_RX_PIN				GPIO_Pin_3
+#define OW_RX_PIN_NUM		3
 
 #define TO_DEV_NUM			2				// Количество термометров
 #define DD_DEV_NUM			0				// Количество Датчиков Дверей (DD)
@@ -84,7 +84,7 @@ typedef struct {
 #define MATCH_ROM				0x55
 #define SCIP_ROM				0xCC
 #define ALARM_SEACH			0xEC
-#define TEMP_CONVERT		0x44
+#define TERM_CONVERT		0x44
 #define MEM_WRITE				0x4E
 #define MEM_READ				0xBE
 #define RAM_TO_EEPROM		0x48
@@ -104,10 +104,12 @@ extern eOwStatus owStatus;
 extern tOwToDev owToDev[]; 			// Массив структур устройств 1-Wire;
 extern tOwDdDev owDdDev[]; 			// Массив структур Датчиков Двери 1-Wire;
 
+extern uint32_t tmpModerOut, tmpModerAf;			 // Значения регистра MODER для UART и для подтяжки UART_RX к Vdd
+
 uint8_t OW_Init();
 uint8_t OW_Send(uint8_t sendReset, uint8_t *command, uint8_t cLen, uint8_t *data, uint8_t dLen, uint8_t readStart);
 uint8_t OW_Scan(uint8_t *buf, uint8_t num);
-void toReadTemperature( void );
+
 void ddReadDoor( void );
 
 #endif /* ONEWIRE_H_ */
