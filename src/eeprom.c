@@ -98,12 +98,9 @@ int8_t sendEepromAddr( uint32_t addr ) {
 	// Количество передаваемых байт
 	EEPROM_I2C->CR2 &= ~I2C_CR2_NBYTES;
 	EEPROM_I2C->CR2 |= 2<<16;
-	// Без перезагрузки
-	EEPROM_I2C->CR2 &= ~I2C_CR2_RELOAD;
-	// Без Автостопа
-	EEPROM_I2C->CR2 &= ~I2C_CR2_AUTOEND;
-	// Запись
-	EEPROM_I2C->CR2 &= ~I2C_CR2_RD_WRN;
+	// Без перезагрузки, Без Автостопа, Запись
+	EEPROM_I2C->CR2 &= ~(I2C_CR2_RELOAD | I2C_CR2_AUTOEND | I2C_CR2_RD_WRN);
+
 	// Стартуем
 	EEPROM_I2C->CR2 |= I2C_CR2_START;
 

@@ -1856,10 +1856,10 @@ END GROUP
 
 .inits          0x08000218       0x28
                 0x08000218                __data_regions_array_start = .
-                0x08000218        0x4 LONG 0x800194c LOADADDR (.data)
+                0x08000218        0x4 LONG 0x8001934 LOADADDR (.data)
                 0x0800021c        0x4 LONG 0x20000000 ADDR (.data)
                 0x08000220        0x4 LONG 0x20000034 (ADDR (.data) + SIZEOF (.data))
-                0x08000224        0x4 LONG 0x800194c LOADADDR (.data_CCMRAM)
+                0x08000224        0x4 LONG 0x8001934 LOADADDR (.data_CCMRAM)
                 0x08000228        0x4 LONG 0x0 ADDR (.data_CCMRAM)
                 0x0800022c        0x4 LONG 0x0 (ADDR (.data_CCMRAM) + SIZEOF (.data_CCMRAM))
                 0x08000230                __data_regions_array_end = .
@@ -1891,7 +1891,7 @@ END GROUP
 .flashtext
  *(.flashtext .flashtext.*)
 
-.text           0x08000240     0x170c
+.text           0x08000240     0x16f4
  *(.text .text.*)
  .text.DMA_DeInit
                 0x08000240       0xc0 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
@@ -1959,119 +1959,119 @@ END GROUP
                 0x080008e4       0x28 ./src/eeprom.o
                 0x080008e4                eepromInit
  .text.sendEepromAddr
-                0x0800090c       0xd8 ./src/eeprom.o
+                0x0800090c       0xc0 ./src/eeprom.o
                 0x0800090c                sendEepromAddr
  .text.eepromSendIT
-                0x080009e4       0xa0 ./src/eeprom.o
-                0x080009e4                eepromSendIT
+                0x080009cc       0xa0 ./src/eeprom.o
+                0x080009cc                eepromSendIT
  .text.sendEeprom
-                0x08000a84       0x30 ./src/eeprom.o
-                0x08000a84                sendEeprom
+                0x08000a6c       0x30 ./src/eeprom.o
+                0x08000a6c                sendEeprom
  .text.owToDevInit
-                0x08000ab4       0x90 ./src/init.o
-                0x08000ab4                owToDevInit
- .text.owInit   0x08000b44       0xf4 ./src/init.o
-                0x08000b44                owInit
- .text.logInit  0x08000c38       0x44 ./src/init.o
-                0x08000c38                logInit
+                0x08000a9c       0x90 ./src/init.o
+                0x08000a9c                owToDevInit
+ .text.owInit   0x08000b2c       0xf4 ./src/init.o
+                0x08000b2c                owInit
+ .text.logInit  0x08000c20       0x44 ./src/init.o
+                0x08000c20                logInit
  .text.logWriteBuff
-                0x08000c7c       0x64 ./src/logger.o
-                0x08000c7c                logWriteBuff
+                0x08000c64       0x64 ./src/logger.o
+                0x08000c64                logWriteBuff
  .text.toLogWrite
-                0x08000ce0       0x40 ./src/logger.o
-                0x08000ce0                toLogWrite
+                0x08000cc8       0x40 ./src/logger.o
+                0x08000cc8                toLogWrite
  .text.SetSysClock
-                0x08000d20      0x13c ./src/main.o
- .text.main     0x08000e5c       0x88 ./src/main.o
-                0x08000e5c                main
+                0x08000d08      0x13c ./src/main.o
+ .text.main     0x08000e44       0x88 ./src/main.o
+                0x08000e44                main
  .text.Error_Handler
-                0x08000ee4        0x4 ./src/main.o
-                0x08000ee4                Error_Handler
+                0x08000ecc        0x4 ./src/main.o
+                0x08000ecc                Error_Handler
  .text.OW_toBits
-                0x08000ee8       0x20 ./src/onewire.o
+                0x08000ed0       0x20 ./src/onewire.o
  .text.OW_toByte
-                0x08000f08       0x24 ./src/onewire.o
+                0x08000ef0       0x24 ./src/onewire.o
  .text.OW_SendBits
-                0x08000f2c       0xfc ./src/onewire.o
+                0x08000f14       0xfc ./src/onewire.o
  .text.OW_Reset
-                0x08001028       0xac ./src/onewire.o
- .text.OW_Init  0x080010d4       0xd4 ./src/onewire.o
-                0x080010d4                OW_Init
- .text.OW_Send  0x080011a8       0x74 ./src/onewire.o
-                0x080011a8                OW_Send
- .text.OW_Scan  0x0800121c      0x138 ./src/onewire.o
-                0x0800121c                OW_Scan
+                0x08001010       0xac ./src/onewire.o
+ .text.OW_Init  0x080010bc       0xd4 ./src/onewire.o
+                0x080010bc                OW_Init
+ .text.OW_Send  0x08001190       0x74 ./src/onewire.o
+                0x08001190                OW_Send
+ .text.OW_Scan  0x08001204      0x138 ./src/onewire.o
+                0x08001204                OW_Scan
  .text.ddReadDoor
-                0x08001354        0x4 ./src/onewire.o
-                0x08001354                ddReadDoor
+                0x0800133c        0x4 ./src/onewire.o
+                0x0800133c                ddReadDoor
  .text.NMI_Handler
-                0x08001358        0x4 ./src/stm32xx_it.o
-                0x08001358                NMI_Handler
+                0x08001340        0x4 ./src/stm32xx_it.o
+                0x08001340                NMI_Handler
  .text.HardFault_Handler
-                0x0800135c        0x4 ./src/stm32xx_it.o
-                0x0800135c                HardFault_Handler
+                0x08001344        0x4 ./src/stm32xx_it.o
+                0x08001344                HardFault_Handler
  .text.SVC_Handler
-                0x08001360        0x4 ./src/stm32xx_it.o
-                0x08001360                SVC_Handler
+                0x08001348        0x4 ./src/stm32xx_it.o
+                0x08001348                SVC_Handler
  .text.PendSV_Handler
-                0x08001364        0x4 ./src/stm32xx_it.o
-                0x08001364                PendSV_Handler
+                0x0800134c        0x4 ./src/stm32xx_it.o
+                0x0800134c                PendSV_Handler
  .text.SysTick_Handler
-                0x08001368       0x14 ./src/stm32xx_it.o
-                0x08001368                SysTick_Handler
+                0x08001350       0x14 ./src/stm32xx_it.o
+                0x08001350                SysTick_Handler
  .text.USART1_IRQHandler
-                0x0800137c       0x4c ./src/stm32xx_it.o
-                0x0800137c                USART1_IRQHandler
+                0x08001364       0x4c ./src/stm32xx_it.o
+                0x08001364                USART1_IRQHandler
  .text.TIM3_IRQHandler
-                0x080013c8        0x4 ./src/stm32xx_it.o
-                0x080013c8                TIM3_IRQHandler
+                0x080013b0        0x4 ./src/stm32xx_it.o
+                0x080013b0                TIM3_IRQHandler
  .text.TIM16_IRQHandler
-                0x080013cc        0x4 ./src/stm32xx_it.o
-                0x080013cc                TIM16_IRQHandler
+                0x080013b4        0x4 ./src/stm32xx_it.o
+                0x080013b4                TIM16_IRQHandler
  .text.TIM17_IRQHandler
-                0x080013d0        0x4 ./src/stm32xx_it.o
-                0x080013d0                TIM17_IRQHandler
+                0x080013b8        0x4 ./src/stm32xx_it.o
+                0x080013b8                TIM17_IRQHandler
  .text.toSetConfig
-                0x080013d4       0x34 ./src/thermo.o
-                0x080013d4                toSetConfig
+                0x080013bc       0x34 ./src/thermo.o
+                0x080013bc                toSetConfig
  .text.toWriteEeprom
-                0x08001408       0x88 ./src/thermo.o
-                0x08001408                toWriteEeprom
+                0x080013f0       0x88 ./src/thermo.o
+                0x080013f0                toWriteEeprom
  .text.toReadTemperature
-                0x08001490       0xf4 ./src/thermo.o
-                0x08001490                toReadTemperature
- .text.xtmtot   0x08001584       0x70 ./src/time.o
-                0x08001584                xtmtot
+                0x08001478       0xf4 ./src/thermo.o
+                0x08001478                toReadTemperature
+ .text.xtmtot   0x0800156c       0x70 ./src/time.o
+                0x0800156c                xtmtot
  .text.getRtcTime
-                0x080015f4       0x20 ./src/time.o
-                0x080015f4                getRtcTime
+                0x080015dc       0x20 ./src/time.o
+                0x080015dc                getRtcTime
  .text.timersHandler
-                0x08001614       0x4c ./src/time.o
-                0x08001614                timersHandler
+                0x080015fc       0x4c ./src/time.o
+                0x080015fc                timersHandler
  .text.timersProcess
-                0x08001660       0x78 ./src/time.o
-                0x08001660                timersProcess
- .text.myDelay  0x080016d8       0x14 ./src/time.o
-                0x080016d8                myDelay
- .text          0x080016ec      0x120 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
-                0x080016ec                __udivsi3
-                0x080016ec                __aeabi_uidiv
-                0x080017f8                __aeabi_uidivmod
- .text          0x0800180c        0x4 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
-                0x0800180c                __aeabi_ldiv0
-                0x0800180c                __aeabi_idiv0
- .text.memcpy   0x08001810       0x7c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
-                0x08001810                memcpy
- .text.memset   0x0800188c       0x8c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
-                0x0800188c                memset
+                0x08001648       0x78 ./src/time.o
+                0x08001648                timersProcess
+ .text.myDelay  0x080016c0       0x14 ./src/time.o
+                0x080016c0                myDelay
+ .text          0x080016d4      0x120 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+                0x080016d4                __udivsi3
+                0x080016d4                __aeabi_uidiv
+                0x080017e0                __aeabi_uidivmod
+ .text          0x080017f4        0x4 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+                0x080017f4                __aeabi_ldiv0
+                0x080017f4                __aeabi_idiv0
+ .text.memcpy   0x080017f8       0x7c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+                0x080017f8                memcpy
+ .text.memset   0x08001874       0x8c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
+                0x08001874                memset
  *(.rodata .rodata.* .constdata .constdata.*)
  .rodata.str1.4
-                0x08001918        0x4 ./src/onewire.o
+                0x08001900        0x4 ./src/onewire.o
                                   0x2 (size before relaxing)
- .rodata.lmos   0x0800191c       0x18 ./src/time.o
-                0x0800191c                lmos
- .rodata.mos    0x08001934       0x18 ./src/time.o
-                0x08001934                mos
+ .rodata.lmos   0x08001904       0x18 ./src/time.o
+                0x08001904                lmos
+ .rodata.mos    0x0800191c       0x18 ./src/time.o
+                0x0800191c                mos
  *(vtable)
  *(.eh_frame*)
  *(.glue_7)
@@ -2079,37 +2079,37 @@ END GROUP
  *(.glue_7t)
  .glue_7t       0x00000000        0x0 linker stubs
 
-.vfp11_veneer   0x0800194c        0x0
+.vfp11_veneer   0x08001934        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x0800194c        0x0
+.v4_bx          0x08001934        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x0800194c        0x0
+.iplt           0x08001934        0x0
  .iplt          0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
 
-.rel.dyn        0x0800194c        0x0
+.rel.dyn        0x08001934        0x0
  .rel.iplt      0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x0800194c                . = ALIGN (0x4)
-                0x0800194c                __exidx_start = .
+                0x08001934                . = ALIGN (0x4)
+                0x08001934                __exidx_start = .
 
 .ARM.exidx
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-                0x0800194c                __exidx_end = .
-                0x0800194c                . = ALIGN (0x4)
-                0x0800194c                _etext = .
-                0x0800194c                __etext = .
+                0x08001934                __exidx_end = .
+                0x08001934                . = ALIGN (0x4)
+                0x08001934                _etext = .
+                0x08001934                __etext = .
 
-.data_CCMRAM    0x00000000        0x0 load address 0x0800194c
+.data_CCMRAM    0x00000000        0x0 load address 0x08001934
  FILL mask 0xff
  *(.data.CCMRAM .data.CCMRAM.*)
                 0x00000000                . = ALIGN (0x4)
-                0x0800194c                _sidata = LOADADDR (.data)
+                0x08001934                _sidata = LOADADDR (.data)
 
-.data           0x20000000       0x34 load address 0x0800194c
+.data           0x20000000       0x34 load address 0x08001934
  FILL mask 0xff
                 0x20000000                _sdata = .
                 0x20000000                __data_start__ = .
@@ -2132,7 +2132,7 @@ END GROUP
                 0x20000034                _edata = .
                 0x20000034                __data_end__ = .
 
-.igot.plt       0x20000034        0x0 load address 0x08001980
+.igot.plt       0x20000034        0x0 load address 0x08001968
  .igot.plt      0x00000000        0x0 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
 
 .bss_CCMRAM     0x00000000        0x0
@@ -2420,7 +2420,7 @@ END GROUP
  .debug_abbrev  0x00001c61      0x17f ./src/thermo.o
  .debug_abbrev  0x00001de0      0x256 ./src/time.o
 
-.debug_line     0x00000000     0x529f
+.debug_line     0x00000000     0x529e
  *(.debug_line)
  .debug_line    0x00000000      0x354 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_line    0x00000354      0x5d0 ./system/src/stm32f0-stdperiph/stm32f0xx_i2c.o
@@ -2434,14 +2434,14 @@ END GROUP
  .debug_line    0x00002948      0x533 ./system/src/cortexm/exception_handlers.o
  .debug_line    0x00002e7b      0x2ce ./system/src/cmsis/system_stm32f0xx.o
  .debug_line    0x00003149      0x118 ./system/src/cmsis/vectors_stm32f0xx.o
- .debug_line    0x00003261      0x525 ./src/eeprom.o
- .debug_line    0x00003786      0x4af ./src/init.o
- .debug_line    0x00003c35      0x2f0 ./src/logger.o
- .debug_line    0x00003f25      0x553 ./src/main.o
- .debug_line    0x00004478      0x406 ./src/onewire.o
- .debug_line    0x0000487e      0x377 ./src/stm32xx_it.o
- .debug_line    0x00004bf5      0x2d0 ./src/thermo.o
- .debug_line    0x00004ec5      0x3da ./src/time.o
+ .debug_line    0x00003261      0x524 ./src/eeprom.o
+ .debug_line    0x00003785      0x4af ./src/init.o
+ .debug_line    0x00003c34      0x2f0 ./src/logger.o
+ .debug_line    0x00003f24      0x553 ./src/main.o
+ .debug_line    0x00004477      0x406 ./src/onewire.o
+ .debug_line    0x0000487d      0x377 ./src/stm32xx_it.o
+ .debug_line    0x00004bf4      0x2d0 ./src/thermo.o
+ .debug_line    0x00004ec4      0x3da ./src/time.o
 
 .debug_frame    0x00000000     0x1600
  *(.debug_frame)
@@ -2469,7 +2469,7 @@ END GROUP
  .debug_frame   0x000015a8       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
  .debug_frame   0x000015d4       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
 
-.debug_str      0x00000000    0x389aa
+.debug_str      0x00000000    0x389a7
  *(.debug_str)
  .debug_str     0x00000000    0x2f3c5 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
                               0x2f545 (size before relaxing)
@@ -2495,21 +2495,21 @@ END GROUP
                               0x2f158 (size before relaxing)
  .debug_str     0x00036633       0x56 ./system/src/cmsis/vectors_stm32f0xx.o
                                0x2f24 (size before relaxing)
- .debug_str     0x00036689      0x480 ./src/eeprom.o
-                              0x31bec (size before relaxing)
- .debug_str     0x00036b09      0x60e ./src/init.o
-                              0x31d84 (size before relaxing)
- .debug_str     0x00037117       0x90 ./src/logger.o
-                              0x2f736 (size before relaxing)
- .debug_str     0x000371a7     0x140d ./src/main.o
+ .debug_str     0x00036689      0x47d ./src/eeprom.o
+                              0x31be9 (size before relaxing)
+ .debug_str     0x00036b06      0x60e ./src/init.o
+                              0x31d81 (size before relaxing)
+ .debug_str     0x00037114       0x90 ./src/logger.o
+                              0x2f733 (size before relaxing)
+ .debug_str     0x000371a4     0x140d ./src/main.o
                               0x334b2 (size before relaxing)
- .debug_str     0x000385b4      0x164 ./src/onewire.o
+ .debug_str     0x000385b1      0x164 ./src/onewire.o
                               0x2f801 (size before relaxing)
- .debug_str     0x00038718       0xef ./src/stm32xx_it.o
-                              0x2f7c9 (size before relaxing)
- .debug_str     0x00038807       0x2a ./src/thermo.o
+ .debug_str     0x00038715       0xef ./src/stm32xx_it.o
+                              0x2f7c6 (size before relaxing)
+ .debug_str     0x00038804       0x2a ./src/thermo.o
                               0x2f769 (size before relaxing)
- .debug_str     0x00038831      0x179 ./src/time.o
+ .debug_str     0x0003882e      0x179 ./src/time.o
                               0x302dc (size before relaxing)
 
 .debug_loc      0x00000000     0x38e3
