@@ -16,7 +16,6 @@ Default_Handler(void);
 // to the Default_Handler, which is a 'forever' loop. When the application
 // defines a handler (with the same name), this will automatically take
 // precedence over these weak definitions
-
 void __attribute__ ((weak, alias ("Default_Handler")))
 WWDG_IRQHandler(void);
 void __attribute__ ((weak, alias ("Default_Handler")))

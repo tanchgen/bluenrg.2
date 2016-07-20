@@ -1,17 +1,16 @@
 #include "stm32f0xx.h"
 #include "my_main.h"
-#include "role_type.h"
 //#include "bt01.h"
 //#include "my_service.h"
 #include "deviceid.h"
+#include "my_service.h"
 
 #ifndef HAL_TIM_MODULE_ENABLED
 #define HAL_TIM_MODULE_ENABLED
 #endif
 
 
-uint8_t relayStatus( relayTypeDef rel ); // Состояние реле
-void HardFault_Handler( void ); // Прерывание ошибки железа
+//void HardFault_Handler( void ); // Прерывание ошибки железа
 //static void WakeupBlueNRG(void);
 /*
  *  Define the circular shift macro
@@ -215,33 +214,6 @@ int8_t setTokenStr( void ){
   return err;
 }
 
-/* Включение реле */
-uint8_t relayStart( relayTypeDef rel){
-  if ( relayStatus( rel ) == RELAY_OFF ) {
-    /* Включаем реле */
-    if (rel == RELAY1) {// Включаем нужное реле на 1000*0.1мс
-      /* Включаем выход сигнала OCxREF в togglesMode*/
-      TIM3->CCMR2 &= ~TIM_CCMR2_OC3M;
-      TIM3->CCMR2 |= TIM_OC3MODE_TOGGLE;
-      TIM3->CCR3 = (TIM3->CNT + 1); // Включить реле по прерыванию через 2мс
-      TIM3->SR &= ~TIM_SR_CC3IF;
-      TIM3->DIER |= TIM_DIER_CC3IE;
-      //relayCount1 = 1000;
-    }
-    else {
-      TIM3->CCMR2 &= ~TIM_CCMR2_OC4M;
-      TIM3->CCMR2 |= TIM_OC4MODE_TOGGLE;
-      TIM3->CCR4 = (TIM3->CNT + 1); // Включить реле по прерыванию через 2мс
-      TIM3->SR &= ~TIM_SR_CC4IF;
-      TIM3->DIER |= TIM_DIER_CC4IE;
-
-      //relayCount2 = 1000 ;
-    }
-    return 0;
-  }
-  return RELAYx_ON_ERR( rel );
-}
-
 void myTimeOut( void ){
   // Таймаут 2 мин для токена
   if ( disconnCount ) { 
@@ -258,19 +230,22 @@ void myTimeOut( void ){
   
 }  
 
+#if WATCHDOG
 void iwdgInit( void ){
   IWDG->KR = IWDG_START;          // Запуск WatchDog 
   IWDG->KR = IWDG_WRITE_ACCESS;   // Доступ записи в регистры
   IWDG->PR = IWDG_PR_PR_2;        // Прескалер = 64;
   IWDG->RLR = 2047;               // Записываем регистр перезагрузки
-  for ( uint32_t tickstart = myTick; !(IWDG->SR ) ; ) {
-    if ( (HAL_GetTick() - tickstart) > HW_TIMEOUT) {
+  for ( uint32_t tout = myTick+HW_TIMEOUT; !(IWDG->SR ) ; ) {
+    if ( myTick  > tout) {
       // Проблема с IWDG
       HardFault_Handler();
     }
   }
   IWDG->KR = IWDG_REFRESH;
 }
+#endif // WATCHDOG
+
 /*
 static void us50Delay(void)
 {

@@ -17,6 +17,7 @@
  * @brief User can use this section to tailor USARTx/UARTx instance used and 
  *        associated resources.
  */
+#define UNUSED(x)						(void)(x)
 
 #define  TICK_INT_PRIORITY            ((uint32_t)0)    /*!< tick interrupt priority (lowest by default)  */
 
@@ -81,7 +82,7 @@ typedef enum {
  * @}
  */
  
-extern __IO uint32_t myTick;
+extern volatile uint32_t myTick;
 
 /* Exported functions ------------------------------------------------------- */
 

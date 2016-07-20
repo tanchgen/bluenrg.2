@@ -4,6 +4,7 @@
  *  Version 1.0.3
  */
 #include "stm32xx_it.h"
+#include "my_main.h"
 #include "onewire.h"
 
 // Буфер для приема/передачи по 1-wire

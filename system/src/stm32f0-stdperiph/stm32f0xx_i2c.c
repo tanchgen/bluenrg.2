@@ -308,7 +308,8 @@ void I2C_SoftwareResetCmd(I2C_TypeDef* I2Cx)
 
   /* Perform a dummy read to delay the disable of peripheral for minimum
      3 APB clock cycles to perform the software reset functionality */
-  UNUSED(*(__IO uint32_t *)(uint32_t)I2Cx);
+  while ( I2Cx->CR1 & I2C_CR1_PE );
+  //*(__IO uint32_t *)(uint32_t)I2Cx;
 
   /* Enable peripheral */
   I2Cx->CR1 |= I2C_CR1_PE;

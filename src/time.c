@@ -17,6 +17,7 @@
 #include "my_main.h"
 #include "init.h"
 #include "logger.h"
+#include "thermo.h"
 
 tXtime uxTime;
 
@@ -199,7 +200,7 @@ void timersProcess( void ) {
 	}
 
 	// Таймаут для считывания датчиков двери
-	if ( !ddReadCount == 1) {
+	if ( ddReadCount == 1) {
 		ddReadCount += ddReadTout;
 		ddReadDoor();
 	}

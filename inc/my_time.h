@@ -9,6 +9,7 @@
 #define MY_TIME_H_
 
 #include <stdint.h>
+#include "stm32f0xx.h"
 
 typedef RTC_TimeTypeDef			tTime;
 typedef RTC_DateTypeDef			tDate;
@@ -27,6 +28,8 @@ typedef RTC_DateTypeDef			tDate;
 
 extern tXtime uxTime;
 
+extern __IO uint32_t myTick;
+
 // *********** Инициализация структуры ВРЕМЯ (сейчас - системное ) ************
 void timeInit( void );
 // Получение системного мремени
@@ -35,6 +38,8 @@ tXtime xtmtot( tDate *mdate, tTime *mtime );
 void xttotm( tDate * mdate, tTime *mtime, tXtime secsarg);
 void setRtcTime( tXtime xtime );
 tXtime getRtcTime( void );
+void timersProcess( void );
+
 void timersHandler( void );
 void myDelay( uint32_t del );
 

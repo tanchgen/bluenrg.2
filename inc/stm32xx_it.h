@@ -71,9 +71,11 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
+
 void BNRG_SPI_EXTI_IRQHandler(void);
 void PUSH_BUTTON_EXTI_IRQHandler(void);
 
+void BNRG_RST_Callback(uint16_t GPIO_Pin);
 /**
  * @}
  */

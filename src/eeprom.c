@@ -22,6 +22,8 @@ int8_t eepromInit( void ){
   /* Enable I2C1 Error interrupts */
   EEPROM_I2C->CR1 |= I2C_CR1_ERRIE;
 
+  NVIC_SetPriority(I2C1_IRQn, 3);
+
   NVIC_EnableIRQ(I2C1_IRQn);
 
   return 0;
@@ -67,13 +69,13 @@ int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	 *
 	 * Организовать проверку на превышение границы памяти
 	 */
-	if ( (eeprom.status = sendEepromAddr(addr)) != I2C_READY ) {
+	if ( (eeprom.status = sendEepromAddr(addr)) != EPR_READY ) {
 		return eeprom.status;
 	}
   return eepromSendIT( data, len);
 }
 
-int8_t reseiveEprom( uint32_t addr, uint8_t * data, uint16_t len) {
+int8_t receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	/* TODO: Чтение данных из EPROM
 	 * addr - стартовый адрес в Eprom
 	 * data - Указатель на буфер, куда будут складываться данные
@@ -81,14 +83,17 @@ int8_t reseiveEprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	 *
 	 * Организовать проверку на превышение границы памяти
 	 */
-	if ( (eeprom.status = sendEepromAddr(addr)) != I2C_READY ) {
+	if ( (eeprom.status = sendEepromAddr(addr)) != EPR_READY ) {
 			return eeprom.status;
 	}
-	return eepromRead( data, len);
+	if ( (eeprom.status = eepromRead( data, len)) == EPR_OK ){
+	  eeprom.status = EPR_READY;
+	}
+	return EPR_OK;
 }
 
 int8_t sendEepromAddr( uint32_t addr ) {
-	if(eeprom.status != I2C_READY) {
+	if(eeprom.status != EPR_READY) {
 		return eeprom.status;
 	}
 
@@ -107,29 +112,29 @@ int8_t sendEepromAddr( uint32_t addr ) {
 	uint32_t tout = myTick + I2C_TOUT;
 	while ( !(EEPROM_I2C->ISR & I2C_ISR_TXIS) ){
 		if ( myTick > tout ){
-			return I2C_TIMEOUT;
+			return EPR_TIMEOUT;
 		}
 	}
 	EEPROM_I2C->TXDR = (addr >> 8) & 0xFF;
 	while ( !(EEPROM_I2C->ISR & I2C_ISR_TXIS) ){
 		if ( myTick > tout ){
-			return I2C_TIMEOUT;
+			return EPR_TIMEOUT;
 		}
 	}
 	EEPROM_I2C->TXDR = addr & 0xFF;
 	while ( !(EEPROM_I2C->ISR & I2C_ISR_TC) ){
 		if ( myTick > tout ){
-			return I2C_TIMEOUT;
+			return EPR_TIMEOUT;
 		}
 	}
-	return I2C_READY;
+	return EPR_READY;
 }
 
 int8_t eepromSendIT(  uint8_t * data, uint16_t len ){
-	if(eeprom.status != I2C_READY) {
+	if(eeprom.status != EPR_READY) {
 		return eeprom.status;
 	}
-	eeprom.status = I2C_BUSY;
+	eeprom.status = EPR_BUSY;
 	memcpy( eeprom.txData, data, len);
 	eeprom.txSize = len;
 	eeprom.count = len;
@@ -149,14 +154,14 @@ int8_t eepromSendIT(  uint8_t * data, uint16_t len ){
 	// Стартуем
 	EEPROM_I2C->CR2 |= I2C_CR2_START;
 
-	return I2C_OK;
+	return EPR_OK;
 }
 
 int8_t eepromRead( uint8_t * data, uint16_t len ){
-	if(eeprom.status != I2C_READY) {
+	if(eeprom.status != EPR_READY) {
 		return eeprom.status;
 	}
-	eeprom.status = I2C_BUSY;
+	eeprom.status = EPR_BUSY;
 	eeprom.rxSize = len;
 	eeprom.count = len;
 	eeprom.rxPtr = data;
@@ -180,7 +185,7 @@ int8_t eepromRead( uint8_t * data, uint16_t len ){
 	while ( eeprom.count ) {
 		while ( !(EEPROM_I2C->ISR & I2C_ISR_RXNE) ){
 			if ( myTick > tout ){
-				return I2C_TIMEOUT;
+				return EPR_TIMEOUT;
 			}
 		}
 		*eeprom.rxPtr++ = EEPROM_I2C->RXDR;
@@ -189,7 +194,7 @@ int8_t eepromRead( uint8_t * data, uint16_t len ){
 	}
 	while ( EEPROM_I2C->ISR & I2C_ISR_STOPF) {
 		if ( myTick > tout ){
-			return I2C_TIMEOUT;
+			return EPR_TIMEOUT;
 		}
 	}
   /* Disable ERR, TC, STOP, NACK, TXI interrupt */
@@ -201,9 +206,7 @@ int8_t eepromRead( uint8_t * data, uint16_t len ){
   /* Clear Configuration Register 2 */
   EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_HEAD10R | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_RD_WRN);
 
-  eeprom.status = I2C_READY;
-
-	return I2C_OK;
+	return EPR_OK;
 }
 
 
@@ -224,7 +227,7 @@ void epprom_IRQHandler( void ) {
     else
     {
       /* Wrong size Status regarding TCR flag event */
-      eeprom.status = I2C_ERR;
+      eeprom.status = EPR_ERR;
       eepromErrorCallBack();
     }
   }
@@ -239,7 +242,7 @@ void epprom_IRQHandler( void ) {
     /* Clear Configuration Register 2 */
     EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_HEAD10R | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_RD_WRN);
 
-    eeprom.status = I2C_READY;
+    eeprom.status = EPR_READY;
 
     eepromTxCpltCallback();
 
@@ -248,7 +251,7 @@ void epprom_IRQHandler( void ) {
   {
     EEPROM_I2C->ICR |= I2C_ICR_NACKCF;
 
-    eeprom.status = I2C_ERR;
+    eeprom.status = EPR_ERR;
     eepromErrorCallBack();
   }
 

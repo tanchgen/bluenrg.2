@@ -1,2 +1,7 @@
-#define BDADDR          0x0200          // Изменяемый кусок MAC-адреса для сервера
-#define DEVICE_UUID      "5aec40b4138f410f9b435c10afceb2f1" // UUID для токена
+// Изменяемый кусок MAC-адреса для сервера !!!Не более 999!!!
+#define BDADDR          (uint16_t)1
+// UUID для токена
+#define DEVICE_UUID      "a6627fd945b14255b82ab66de6e1e186"
+#define VER_MAJOR		('0')
+#define VER_MINOR		('1')
+#define DEV_SUFFIX	('\0')

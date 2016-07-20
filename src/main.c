@@ -3,12 +3,11 @@
 #include <string.h>
 #include "stm32f0xx.h"
 #include "stm32f0xx_conf.h"
-//#include "stm32_bluenrg_ble.h"
+#include "stm32_bluenrg_ble.h"
 #include "my_main.h"
-//#include "cube_hal.h"
-
-//#include "sample_service.h"
-#include "role_type.h"
+#include "hci.h"
+#include "my_service.h"
+#include "my_time.h"
 #include "stm32xx_it.h"
 #include "onewire.h"
 #include "init.h"
@@ -29,12 +28,6 @@ uint8_t crcDS(uint8_t inp, uint8_t crc);
 
 // SPI handler declaration 
 #if BLUENRG
-// Uncomment the line corresponding to the role you want to have 
-BLE_RoleTypeDef BLE_Role = SERVER;
-
-extern volatile uint8_t set_connectable;
-extern volatile uint16_t connection_handle;
-extern volatile uint32_t resetCount;
 
 //uint8_t data[20]; //data for send to characteristic
 
@@ -62,14 +55,15 @@ int main(void)
 { 
   // Configure the system clock
   SetSysClock();
+#if ONE_WIRE
   owInit();
+#else
+	toLogCount = 0;
+	toReadCount = 0;
+	toMesgCount = 0;
+#endif  // ONE_WIRE
   // Установки логирования
- 	logInit();
-
-  uint8_t sendBuf[11];
-  uint8_t readBuf[16*8];
-  uint64_t addr;
-
+ logInit();
 
 #if BLUENRG
   // Initialize the BlueNRG SPI driver
@@ -84,20 +78,6 @@ int main(void)
 #if WATCHDOG
   iwdgInit();
 #endif // WATCHDOG
-
-  memset( sendBuf, 0xFF, 11);
-
-	sendBuf[0] = READ_ROM;
-	OW_Send(OW_SEND_RESET, sendBuf, 9, readBuf, 8, 1);
-	addr = *((uint64_t *)readBuf);
-
-	memcpy( &sendBuf[1], (void*)&addr, 8);
- 	sendBuf[0] = MATCH_ROM;
- 	OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ);
-  memset( sendBuf, 0xFF, 9);
-
-  sendBuf[0] = MEM_READ;
- 	OW_Send(OW_NO_RESET, sendBuf, 11, readBuf, 8, 2);
 
   while(1)
   {
@@ -117,18 +97,10 @@ int main(void)
 #if BLUENRG
 void User_Process(void)
 {
-  // Проверяем на програмный сброс
-  if ( resetCount == 1 ) {
-    aci_gap_terminate(connection_handle, SHA_TIMEOUT_REASON);
-//    GAP_DisconnectionComplete_CB();
-    HAL_Delay(2000);
-    NVIC_SystemReset();
-  }
-
-  if(set_connectable){
+  if(blue.connectable){
     /* Establish connection with remote device */
     Make_Connection();
-    set_connectable = FALSE;
+    blue.connectable = FALSE;
   }
 }
 #endif

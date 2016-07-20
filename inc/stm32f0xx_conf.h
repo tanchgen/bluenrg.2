@@ -42,13 +42,13 @@
 #include "stm32f0xx_rcc.h"
 #include "stm32f0xx_rtc.h"
 /* #include "stm32f10x_sdio.h" */
-//#include "stm32f10x_spi.h"
-/* #include "stm32f10x_tim.h" */
+#include "stm32f0xx_spi.h"
+#include "stm32f0xx_tim.h"
 #include "stm32f0xx_usart.h"
 /* #include "stm32f10x_wwdg.h" */
 //#include "misc.h"   /* High level functions for NVIC and SysTick (add-on to CMSIS functions) */
 
-#define UNUSED(x)		(void)(x)
+//#define UNUSED(x)		(void)(x)
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

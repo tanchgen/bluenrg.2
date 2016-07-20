@@ -32,12 +32,18 @@
 #define OW_TRANS_TOUT		500
 
 #define OW_PORT					GPIOA
-#define OW_TX_PIN				GPIO_Pin_2
-#define OW_TX_PIN_NUM		2
-#define OW_RX_PIN				GPIO_Pin_3
-#define OW_RX_PIN_NUM		3
+#define OW_TX_PIN				GPIO_Pin_9
+#define OW_TX_PIN_NUM		9
+#define OW_RX_PIN				GPIO_Pin_10
+#define OW_RX_PIN_NUM		10
+
+#define MAX_TO_DEV_NUM	4
 
 #define TO_DEV_NUM			2				// Количество термометров
+#if (MAX_TO_DEV_NUM < TO_DEV_NUM)
+#error "Число датчиков температуры превышает максимальное для данной EEPROM (128кБ) для Логов"
+#endif
+
 #define DD_DEV_NUM			0				// Количество Датчиков Дверей (DD)
 #define OW_DEV_NUM			(TO_DEV_NUM + DD_DEV_NUM)
 

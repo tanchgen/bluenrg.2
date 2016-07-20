@@ -1,12 +1,13 @@
 /**
-  ******************************************************************************
-  * @file    role_type.h 
-  * @author  CL
-  * @version V1.0.0
-  * @date    04-July-2014
-  * @brief   
-  ******************************************************************************
-  * @attention
+******************************************************************************
+* @file    osal.c 
+* @author  AMS - HEA&RF BU / CL
+* @version V1.0.0
+* @date    04-July-2014
+* @brief   Implementation of OS abstraction layer functions used by the
+*          library.
+******************************************************************************
+* @attention
   *
   * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
   *
@@ -35,58 +36,37 @@
   ******************************************************************************
   */
   
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef _ROLE_TYPE_H_
-#define _ROLE_TYPE_H_
-
-#ifdef __cplusplus
- extern "C" {
-#endif
-
-/** @addtogroup X-CUBE-BLE1_Applications
- *  @{
- */
-
-/** @addtogroup SampleApp
- *  @{
- */
+/* Includes ------------------------------------------------------------------*/
+#include <string.h>
+#include <osal.h>
  
-/** @defgroup ROLE_TYPE 
- * @{
+ /**
+ * @brief  Osal_MemCpy
+ * @param  dest: Pointer to the destination buffer
+ * @param  src : Pointer to the source buffer
+ * @param  size: Number of bytes to copy from the source to the destination
+ *               buffer
+ * @retval Pointer to the destination buffer
  */
-
-/** @defgroup ROLE_TYPE_Exported_Types
- *  @{
- */
-/* Exported types ------------------------------------------------------------*/
-/** 
-* @brief BlueNRG Role.
-*/
-typedef enum {
-  CLIENT = 0, /**< CLIENT is for Central role. */
-  SERVER = 1  /**< SERVER is for Peripheral role. */
-} BLE_RoleTypeDef;
-/**
- * @}
- */
-
-/**
- * @}
- */
-
-/**
- * @}
- */
- 
-/**
- * @}
- */
- 
-#ifdef __cplusplus
+void* Osal_MemCpy(void *dest, const void *src, unsigned int size)
+{
+    return(memcpy(dest,src,size)); 
 }
-#endif
 
-#endif /* _ROLE_TYPE_H_ */
+/**
+ * @brief  Osal_MemSet
+ * @param  ptr  : Pointer to block of memory to fill  
+ * @param  value: Value to assign to each byte of the memory block
+ * @param  size : Number of bytes to be set to "value"
+ * @retval Pointer to the filled block of memory
+ */
+void* Osal_MemSet(void *ptr, int value, unsigned int size)
+{
+    return(memset(ptr,value,size));
+}
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
+/******************************************************************************
+ * local Functions
+ *****************************************************************************/ 
+ 
+ /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

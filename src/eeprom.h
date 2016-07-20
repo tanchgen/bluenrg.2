@@ -31,12 +31,12 @@
 #define I2C_NO_RELOAD						0
 
 typedef enum {
-	I2C_OK,
-	I2C_READY,
-	I2C_BUSY,
-	I2C_TIMEOUT,
-	I2C_ERR
-} eI2CStatus;
+	EPR_OK,
+	EPR_READY,
+	EPR_BUSY,
+	EPR_TIMEOUT,
+	EPR_ERR
+} eEprStatus;
 
 typedef struct {
 	uint8_t txData[255];
@@ -46,7 +46,7 @@ typedef struct {
 	uint8_t txSize;
 	uint8_t rxSize;
 	uint8_t count;
-	eI2CStatus status;
+	eEprStatus status;
 } tEeprom;
 
 extern tEeprom eeprom;

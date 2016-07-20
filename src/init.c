@@ -105,21 +105,40 @@ eOwStatus owToDevInit( uint8_t toDev ) {
 }
 
 int8_t logInit( void ){
-	// Инициализация Логирования TO
-	toLogBuff.begin = 0;
-	toLogBuff.end = 0;
-	toLogBuff.full = 0;
-	toLogBuff.size = TO_LOG_RECORD_SIZE;
-	toLogBuff.bufAddr = TO_LOG_START_ADDR;
-	toLogBuff.len = TO_LOG_RECORD_NUM;
-	// Инициализация Логирования DD
-	ddLogBuff.begin = 0;
-	ddLogBuff.end = 0;
-	ddLogBuff.full = 0;
-	ddLogBuff.size = DD_LOG_RECORD_SIZE;
-	ddLogBuff.bufAddr = DD_LOG_START_ADDR;
-	ddLogBuff.len = DD_LOG_RECORD_NUM;
+	int8_t err = EPR_ERR;
+	toLogBuff.bufAddr = 0;
+	ddLogBuff.bufAddr = 0;
 
 	// Иициализация EEPROM
-	return eepromInit();
+	if ( !eepromInit() ){
+// ************ Инициализация Логирования TO ******************
+
+		// Восстанавливаем состояние данных буфера логгера
+		err = receiveEeprom( TO_LOG_START_ADDR, (uint8_t *)toLogBuff, sizeof(tLogBuf) );
+		if ( (err != EPR_OK) || (toLogBuff.bufAddr != TO_LOG_START_ADDR + sizeof(tLogBuf)) ) {
+			toLogBuff.begin = 0;
+			toLogBuff.end = 0;
+			toLogBuff.full = 0;
+			toLogBuff.size = TO_LOG_RECORD_SIZE;
+			toLogBuff.len = TO_LOG_RECORD_NUM;
+			// Оставляем место для сохранения состояния структуры toLogBuff
+			toLogBuff.bufAddr = TO_LOG_START_ADDR + sizeof(tLogBuf);
+		}
+
+// ************ Инициализация Логирования DD ******************
+
+		// Восстанавливаем состояние данных буфера логгера
+		err = receiveEeprom( DD_LOG_START_ADDR, (uint8_t *)ddLogBuff, sizeof(tLogBuf) );
+		if ( (err != EPR_OK) || (ddLogBuff.bufAddr != DD_LOG_START_ADDR + sizeof(tLogBuf)) ) {
+			// Инициализация Логирования DD
+			ddLogBuff.begin = 0;
+			ddLogBuff.end = 0;
+			ddLogBuff.full = 0;
+			ddLogBuff.size = DD_LOG_RECORD_SIZE;
+			ddLogBuff.len = DD_LOG_RECORD_NUM;
+			// Оставляем место для сохранения состояния структуры ddLogBuff
+			ddLogBuff.bufAddr = DD_LOG_START_ADDR + sizeof(tLogBuf);
+		}
+	}
+	return err;
 }

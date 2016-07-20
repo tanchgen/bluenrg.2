@@ -13,12 +13,12 @@
 
 typedef struct {
 	tXtime xTime;
-	uint16_t toData[TO_DEV_NUM];
+	uint8_t toData[TO_DEV_NUM*2];
 } tToLogUnit;
 
 typedef struct {
 	tXtime xTime;
-	uint16_t ddData;
+	uint8_t ddData;
 } tDdLogUnit;
 
 typedef struct {
@@ -35,7 +35,7 @@ typedef struct {
 #define TO_LOG_START_ADDR			512
 #define TO_LOG_END_ADDR				(TO_LOG_START_ADDR + (TO_LOG_RECORD_NUM * TO_LOG_RECORD_SIZE) - 1)
 
-#define DD_LOG_RECORD_NUM			1600
+#define DD_LOG_RECORD_NUM			5000
 #define DD_LOG_RECORD_SIZE		sizeof(tDdLogUnit)
 #define DD_LOG_START_ADDR			(TO_LOG_END_ADDR + 1)
 #define DD_LOG_END_ADDR				(DD_LOG_START_ADDR + (DD_LOG_RECORD_NUM * DD_LOG_RECORD_SIZE) - 1)
@@ -45,10 +45,12 @@ extern tLogBuf ddLogBuff;
 
 // Записывает байт в буфер
 int8_t logWriteBuff( tLogBuf * buf, uint8_t * data );
-
 // Считывает байт из буфера. Если буфер пуст - возвращает (-1)
 int16_t logReadBuff( tLogBuf * buf, uint8_t * data );
 
 int8_t toLogWrite( void );
+int8_t toLogRead( tToLogUnit * toLog );
+int8_t ddLogWrite( void );
+int8_t ddLogRead( tDdLogUnit * ddLog );
 
 #endif /* LOGGER_H_ */

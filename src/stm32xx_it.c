@@ -1,13 +1,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
 #include "eeprom.h"
+#include "my_main.h"
 #include "my_time.h"
 #include "onewire.h"
 #include "stm32xx_it.h"
+#include "stm32_bluenrg_ble.h"
 //#include "my_service.h"
 //#include "my_stm32l0xx_nucleo.h"
 //#include "stm32l0xx_nucleo_bluenrg.h"
-//#include "hci.h"
+#include "hci.h"
 
 extern uint8_t ow_buf[];
 extern uint8_t rxCount;
@@ -114,13 +116,17 @@ void SysTick_Handler(void)
   * @param  None
   * @retval None
   */
-/*
+
 void BNRG_SPI_EXTI_IRQHandler(void)
 {
-  HAL_GPIO_EXTI_IRQHandler(BNRG_SPI_EXTI_PIN);
+//  HAL_GPIO_EXTI_IRQHandler(BNRG_SPI_EXTI_PIN);
+  if( (EXTI->PR & BNRG_SPI_EXTI_PIN) != RESET) {
+    EXTI->PR = BNRG_SPI_EXTI_PIN;
+    BNRG_RST_Callback(BNRG_SPI_EXTI_PIN);
+  }
   NVIC_ClearPendingIRQ(BNRG_SPI_EXTI_IRQn);
 }
-*/
+
 
 /**
 * @brief This function handles USART1 global interrupt.
@@ -199,10 +205,10 @@ void PPP_IRQHandler(void)
  * @param  uint16_t GPIO_Pin Specifies the pins connected EXTI line
  * @retval None
  */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+void BNRG_RST_Callback(uint16_t GPIO_Pin)
 {
 	UNUSED(GPIO_Pin);
-  //HCI_Isr();
+  HCI_Isr();
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
