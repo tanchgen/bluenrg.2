@@ -12,6 +12,7 @@
 #include "thermo.h"
 #include "logger.h"
 #include "eeprom.h"
+#include "my_service.h"
 #include "init.h"
 
 uint32_t toLogTout;										// Таймаут для логгирования температуры
@@ -19,15 +20,15 @@ uint32_t toLogCount;
 uint32_t toReadTout;									// Таймаут для считывания температуры
 uint32_t toReadCount;
 uint32_t toMesgTout;									// Таймаут для предачи температуры
-uint32_t toMesgCount;
 
 uint32_t ddReadTout;										// Таймаут для считывания температуры
 uint32_t ddReadCount;
 
+void Error_Handler( void );
+
 eOwStatus owInit( void ) {
 
 	uint8_t termNum = 0;
-	uint8_t ddNum = 0;
 
 	owStatus = OW_OK;
 
@@ -42,16 +43,13 @@ eOwStatus owInit( void ) {
 		if ( (tmp & 0xFF) == 0x28 ){
 			owToDev[termNum++].addr = tmp;
 		}
-		else {
-			owDdDev[ddNum++].addr = tmp;
-		}
   }
-	if ( (termNum < TO_DEV_NUM) || (ddNum < DD_DEV_NUM) ) {
+	if ( (termNum < TO_DEV_NUM) ) {
 		// Не хватает термометров или не хватает датчиков двери -
 		// предполагаем, что проблема с проводом
 		return OW_WIRE_ERR;
 	}
-	else if( (termNum != TO_DEV_NUM) || (ddNum != DD_DEV_NUM) ) {
+	else if( (termNum > TO_DEV_NUM) ) {
  		// Количество термометров или всех устройств не соответствует указанным
  		// в "onewire.h"
  		return OW_DEV_ERR;
@@ -67,9 +65,6 @@ eOwStatus owInit( void ) {
 
 	toReadTout = TO_READ_TOUT;
 	toReadCount = TO_READ_TOUT;
-
-	toMesgTout = TO_MESG_TOUT;
-	toMesgCount = TO_MESG_TOUT;
 
 // Установки для датчиков дверей
 // Устанавливаем таймаут сбора информации
@@ -104,6 +99,51 @@ eOwStatus owToDevInit( uint8_t toDev ) {
 	return err;
 }
 
+void ddInit(){
+
+	if ( DD_1_PORT == GPIOA ) {
+		// Clock GPIOA enable
+		RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	}
+	else if( DD_1_PORT == GPIOB ) {
+		// Clock GPIOB enable
+		RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+	}
+	else {
+		Error_Handler();
+	}
+
+	if ( DD_2_PORT == GPIOA ) {
+		// Clock GPIOA enable
+		RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	}
+	else if( DD_2_PORT == GPIOB ) {
+		// Clock GPIOB enable
+		RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+	}
+	else {
+		Error_Handler();
+	}
+
+	// Датчик двери №1
+	DD_1_PORT->MODER &= ~(3 << (DD_1_PIN_NUM*2));			// Выставляем в INPUT
+	DD_1_PORT->OTYPER &= ~(DD_1_PIN);									// PullUp-PullDown
+	DD_1_PORT->PUPDR &= ~(3 << (DD_1_PIN_NUM*2));			// NoPULL
+	DD_1_PORT->OSPEEDR &= ~(3 << (DD_1_PIN_NUM*2));		// Low Speed
+
+	// Датчик двери №2
+	DD_2_PORT->MODER &= ~(3 << (DD_2_PIN_NUM*2));			// Выставляем в INPUT
+	DD_2_PORT->OTYPER &= ~(DD_2_PIN);									// PullUp-PullDown
+	DD_2_PORT->PUPDR &= ~(3 << (DD_2_PIN_NUM*2));			// NoPULL
+	DD_2_PORT->OSPEEDR &= ~(3 << (DD_2_PIN_NUM*2));		// Low Speed
+
+	ddDev[0].ddData = 1;
+	ddDev[0].ddDataPrev = 1;
+	ddDev[1].ddData = 1;
+	ddDev[1].ddDataPrev = 1;
+
+}
+
 int8_t logInit( void ){
 	int8_t err = EPR_ERR;
 	toLogBuff.bufAddr = 0;
@@ -114,7 +154,7 @@ int8_t logInit( void ){
 // ************ Инициализация Логирования TO ******************
 
 		// Восстанавливаем состояние данных буфера логгера
-		err = receiveEeprom( TO_LOG_START_ADDR, (uint8_t *)toLogBuff, sizeof(tLogBuf) );
+		err = receiveEeprom( TO_LOG_START_ADDR, (uint8_t *)&toLogBuff, sizeof(tLogBuf) );
 		if ( (err != EPR_OK) || (toLogBuff.bufAddr != TO_LOG_START_ADDR + sizeof(tLogBuf)) ) {
 			toLogBuff.begin = 0;
 			toLogBuff.end = 0;
@@ -128,7 +168,7 @@ int8_t logInit( void ){
 // ************ Инициализация Логирования DD ******************
 
 		// Восстанавливаем состояние данных буфера логгера
-		err = receiveEeprom( DD_LOG_START_ADDR, (uint8_t *)ddLogBuff, sizeof(tLogBuf) );
+		err = receiveEeprom( DD_LOG_START_ADDR, (uint8_t *)&ddLogBuff, sizeof(tLogBuf) );
 		if ( (err != EPR_OK) || (ddLogBuff.bufAddr != DD_LOG_START_ADDR + sizeof(tLogBuf)) ) {
 			// Инициализация Логирования DD
 			ddLogBuff.begin = 0;
@@ -141,4 +181,19 @@ int8_t logInit( void ){
 		}
 	}
 	return err;
+}
+
+int8_t alrmInit( void ){
+	blue.alrmId = ALARM_GENERIC | \
+								ALARM_DD_NEW_STATE | \
+								ALARM_TO_MAX | \
+								ALARM_TO_MIN | \
+								ALARM_DD_FAULT | \
+								ALARM_TO_FAULT;
+	blue.alrmNewId = 0;
+	blue.alrmNewCount = 0;
+	blue.alrmNoReadId = 0;
+	blue.alrmNoReadCount = 0;
+	blue.alrmSendId = 0;
+	return 0;
 }

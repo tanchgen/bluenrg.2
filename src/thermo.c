@@ -81,6 +81,3 @@ void toReadTemperature( void ) {
 		}
 	}
 }
-
-
-

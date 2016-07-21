@@ -13,7 +13,7 @@ uint8_t ow_buf[8];
 uint8_t owDevNum;
 eOwStatus owStatus;
 tOwToDev owToDev[ TO_DEV_NUM ]; 			// Массив структур термометров 1-Wire;
-tOwDdDev owDdDev[ DD_DEV_NUM ]; 			// Массив структур Датчиков Двери 1-Wire;
+tDdDev ddDev[ DD_DEV_NUM ]; 			// Массив структур Датчиков Двери 1-Wire;
 
 uint8_t rxCount;
 uint8_t txCount;
@@ -380,6 +380,7 @@ static int8_t OW_SendBits(uint8_t num_bits) {
 }
 
 void ddReadDoor( void ){
-
+		ddDev[0].ddData = DD_1_PORT->IDR & DD_1_PIN;
+		ddDev[1].ddData = DD_1_PORT->IDR & DD_1_PIN;
 }
 

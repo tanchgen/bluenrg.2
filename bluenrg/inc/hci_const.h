@@ -14,8 +14,6 @@
 #include "clock.h"
 #include "link_layer.h"
 
-#include "hci.h"
-
 #include "events.h"
 
 #define DEFAULT_TIMEOUT (CLOCK_SECOND/10)
@@ -524,38 +522,5 @@ typedef __packed struct _evt_le_long_term_key_request{
 #define EVT_VENDOR	0xFF
 
 #endif //__EVENTS_H
-
-/* Command opcode pack/unpack */
-#define cmd_opcode_pack(ogf, ocf)	(uint16_t)((ocf & 0x03ff)|(ogf << 10))
-#define cmd_opcode_ogf(op)		(op >> 10)
-#define cmd_opcode_ocf(op)		(op & 0x03ff)
-
-
-struct hci_request {
-  uint16_t ogf;
-  uint16_t ocf;
-  int      event;
-  void     *cparam;
-  int      clen;
-  void     *rparam;
-  int      rlen;
-};
-
-void hci_send_cmd(uint16_t ogf, uint16_t ocf, uint8_t plen, void *param);
-
-typedef enum {
-  WAITING_TYPE,
-  WAITING_OPCODE1,
-  WAITING_OPCODE2,
-  WAITING_EVENT_CODE,
-  WAITING_HANDLE,
-  WAITING_HANDLE_FLAG,
-  WAITING_PARAM_LEN,
-  WAITING_DATA_LEN1,
-  WAITING_DATA_LEN2,
-  WAITING_PAYLOAD
-}hci_state;
-
-typedef void (*hci_packet_complete_callback)(void *pckt, uint16_t len);
 
 #endif /* __HCI_INTERNAL_H_ */

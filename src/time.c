@@ -72,7 +72,7 @@ const int16_t	mos[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
 /////////////////////////////////////////////////////////////////////
 
-tXtime xtmtot( tDate *mdate, tTime *mtime ){
+tXtime xTm2Utime( tDate *mdate, tTime *mtime ){
 	/* convert time structure to scalar time */
 int32_t		days;
 int32_t		secs;
@@ -98,7 +98,7 @@ int32_t		mon, year;
 
 /////////////////////////////////////////////////////////////////////
 
-void xttotm( tDate * mdate, tTime *mtime, tXtime secsarg){
+void xUtime2Tm( tDate * mdate, tTime *mtime, tXtime secsarg){
 	uint32_t		secs;
 	int32_t		days;
 	int32_t		mon;
@@ -145,7 +145,7 @@ void setRtcTime( tXtime xtime ){
 	tTime mtime;
 	tDate mdate;
 
-	xttotm( &mdate, &mtime, xtime);
+	xUtime2Tm( &mdate, &mtime, xtime);
 	RTC_SetTime( RTC_Format_BIN, &mtime );
 	RTC_SetDate( RTC_Format_BIN, &mdate );
 }
@@ -157,7 +157,7 @@ tXtime getRtcTime( void ){
 	RTC_GetTime( RTC_Format_BIN, &mtime );
 	RTC_GetDate( RTC_Format_BIN, &mdate );
 
-	return xtmtot( &mdate, &mtime );
+	return xTm2Utime( &mdate, &mtime );
 }
 
 void timersHandler( void ) {
@@ -169,10 +169,6 @@ void timersHandler( void ) {
 	// Таймаут для считывания температуры
 	if ( toReadCount > 1) {
 		toReadCount--;
-	}
-	// Таймаут для предачи температуры
-	if ( toMesgCount > 1) {
-		toMesgCount--;
 	}
 
 	// Таймаут для считывания датчиков двери
@@ -192,17 +188,14 @@ void timersProcess( void ) {
 	if ( toReadCount == 1 ) {
 		toReadCount += toReadTout;
 		toReadTemperature();
-	}
-	// Таймаут для предачи температуры
-	if ( toMesgCount == 1) {
-		toMesgCount += toMesgTout;
-		// TODO: Отправка сообщения по BLUETOOTH
+		toCurCharUpdate();
 	}
 
 	// Таймаут для считывания датчиков двери
 	if ( ddReadCount == 1) {
 		ddReadCount += ddReadTout;
 		ddReadDoor();
+		ddCurCharUpdate();
 	}
 }
 

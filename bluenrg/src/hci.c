@@ -22,7 +22,6 @@
 #include "my_main.h"
 #include "osal.h"
 #include "ble_status.h"
-#include "hci_const.h"
 #include "hci.h"
 #include "gp_timer.h"
 

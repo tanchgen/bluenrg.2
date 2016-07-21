@@ -75,7 +75,7 @@ int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
   return eepromSendIT( data, len);
 }
 
-int8_t receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
+eEprStatus receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	/* TODO: Чтение данных из EPROM
 	 * addr - стартовый адрес в Eprom
 	 * data - Указатель на буфер, куда будут складываться данные

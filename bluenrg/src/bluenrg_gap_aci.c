@@ -15,7 +15,6 @@
 
 #include "osal.h"
 #include "ble_status.h"
-#include "hal.h"
 #include "osal.h"
 #include "hci_const.h"
 #include "hci.h"

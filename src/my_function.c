@@ -21,9 +21,6 @@
 
 extern volatile int connected;                  // Флаг действующего соединения
 extern volatile uint16_t connection_handle; 
-extern uint8_t tknStr[TOKEN_LEN+1];     // строка для вычесления токена
-extern uint8_t shaHash[41];             // Длина SHA-hash - 40 байт
-extern uint8_t tokenPart;
 
 
 static const uint8_t ch[] = {'0','1','2','3','4','5','6','7','8','9',
@@ -190,28 +187,6 @@ void getShaHash(uint8_t * str, uint8_t token[] )
       }
 
    return;
-}
-
-int8_t setTokenStr( void ){
-  int8_t err;
-  // uint8_t tempStr[] = { "Vm21CmA2LAV3uRyMCT2u" };  // Постоянная строка для теста
-
-  tokenPart = 0;          // Сбрасываем счетчик-"какая часть токена передана" 
-  getTokenStr(tknStr);    // Получаем случайную строку для токена
-  /* ============ Тестовый вариант : "Постоянная строка" ================
-    for (uint8_t i=0; i<20; i++ ) tknStr[i]=tempStr[i];
-  ==================================================================== */
-  getShaHash(tknStr, shaHash);    // Получаем SHA-hash строки tknStr (Token)
-  err = sendData(tknStr, (sizeof(tknStr)-33) );
-  if ( !err ){
-    disconnCount = 120; // Таймаут аутентификации по SHA1-хэш в мсек - 120 сек.
-  }
-  else {
-    BlueNRG_Init();
-//    aci_gap_terminate(connection_handle, SHA_TIMEOUT_REASON);
-//    GAP_DisconnectionComplete_CB();
-  }
-  return err;
 }
 
 void myTimeOut( void ){

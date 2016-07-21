@@ -32,13 +32,21 @@ typedef struct {
 
 #define TO_LOG_RECORD_NUM			10080
 #define TO_LOG_RECORD_SIZE		sizeof(tToLogUnit)
-#define TO_LOG_START_ADDR			512
+#define TO_LOG_START_ADDR			(uint32_t)512
 #define TO_LOG_END_ADDR				(TO_LOG_START_ADDR + (TO_LOG_RECORD_NUM * TO_LOG_RECORD_SIZE) - 1)
 
 #define DD_LOG_RECORD_NUM			5000
 #define DD_LOG_RECORD_SIZE		sizeof(tDdLogUnit)
 #define DD_LOG_START_ADDR			(TO_LOG_END_ADDR + 1)
 #define DD_LOG_END_ADDR				(DD_LOG_START_ADDR + (DD_LOG_RECORD_NUM * DD_LOG_RECORD_SIZE) - 1)
+
+#define TO_LOG_ENABLE					0x01
+#define TO_LOG_TXE						0x02
+#define TO_LOG_RNXE						0x04
+
+#define DD_LOG_ENABLE					0x10
+#define DD_LOG_TXE						0x20
+#define DD_LOG_RNXE						0x40
 
 extern tLogBuf toLogBuff;
 extern tLogBuf ddLogBuff;

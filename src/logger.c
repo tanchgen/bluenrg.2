@@ -4,9 +4,11 @@
  *  Created on: Jul 6, 2016
  *      Author: Gennady Tanchin <g.tanchin@yandex.ru>
  */
-#include "logger.h"
+#include <string.h>
 #include "eeprom.h"
 #include "my_time.h"
+#include "my_service.h"
+#include "logger.h"
 
 tLogBuf toLogBuff;
 tLogBuf ddLogBuff;
@@ -45,7 +47,7 @@ int16_t logReadBuff( tLogBuf * buf, uint8_t * data ) {
 	buf->full = 0;
 
 //	ch =*(buf->bufAddr + buf->begin);
-	if ( receiveEeprom( (buf->bufAddr + buf->begin * buf->size), data, buf->size ) < 0){
+	if ( receiveEeprom( (buf->bufAddr + buf->begin * buf->size), data, buf->size ) != EPR_OK){
 		return -1;
 	}
 	buf->begin++;
@@ -83,7 +85,7 @@ int8_t toLogRead( tToLogUnit * toLog ){
 #endif
 	uint8_t toBuf[sizeof(tXtime)+sizeof(uint64_t)];
 	uint64_t *toPtr = (uint64_t *)(toLog+sizeof(tXtime));
-	uint8_t rd;
+	int8_t rd;
 
 	switch( rd = logReadBuff( &toLogBuff, (uint8_t *)toBuf ) )  {
 		case -1:
@@ -115,7 +117,7 @@ int8_t ddLogWrite( void ) {
 	for( i = 0; i < DD_DEV_NUM; i++ ){
 		// Сохраняем номер датчика в старшей тетраде и значение температуры в младших трех тетрадах:
 		//		xxxx yyyy yyyy yyyy : x - номер датчика, y - 12-битное значение температуры этого датчика
-		ddLogUnit.ddData = owDdDev[i].ddData;
+		ddLogUnit.ddData = ddDev[i].ddData;
 	}
 	if( i ) {
 		return logWriteBuff( &ddLogBuff, (uint8_t *)&ddLogUnit );
@@ -124,7 +126,7 @@ int8_t ddLogWrite( void ) {
 }
 
 int8_t ddLogRead( tDdLogUnit * ddLog ) {
-	uint8_t rd;
+	int8_t rd;
 
 	switch( rd = logReadBuff( &ddLogBuff, (uint8_t *)ddLog ) ){
 		case -1:
@@ -140,4 +142,49 @@ int8_t ddLogRead( tDdLogUnit * ddLog ) {
 	return rd;
 }
 
+int8_t alrmUpdate( uint8_t alrmId ) {
+	uint8_t mask;
 
+	if ( (mask = alrmId & blue.alrmId) ) {
+		blue.alrmNewId |= mask;
+		blue.alrmNoReadId |= mask;
+		blue.alrmNewCount++;
+		blue.alrmNoReadCount++;
+
+		alarmCharUpdate();
+		return 0;
+	}
+	return -1;
+}
+
+int8_t logSend( uint8_t toLogReq, uint8_t ddLogReq ) {
+	uint8_t tmpBuf[15];
+	int8_t ret;
+
+	if ( toLogReq ) {
+		if ( blue.logStatus.toTxe ) {
+			ret = toLogRead( (tToLogUnit *)tmpBuf );
+			if ( ret < 0) {
+				alrmUpdate( ALARM_LOG_FAULT );
+			}
+		}
+	}
+	else {
+		memset( tmpBuf, 0x00, 12);
+	}
+	if ( ddLogReq ) {
+		if ( blue.logStatus.ddTxe ) {
+			ret = toLogRead( (tDdLogUnit *)&tmpBuf[12] );
+			if ( ret < 0) {
+				alrmUpdate( ALARM_LOG_FAULT );
+			}
+		}
+	}
+	else {
+		memset( &tmpBuf[12], 0x00, 3);
+	}
+
+	logCharUpdate( tmpBuf, 15);
+
+	return 0;
+}

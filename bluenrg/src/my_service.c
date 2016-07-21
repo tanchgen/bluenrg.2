@@ -1,7 +1,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
-#include "my_service.h"
 #include "connection_config.h"
 #include "stm32_bluenrg_ble.h"
 #include "my_main.h"
@@ -9,8 +8,9 @@
 #include "osal.h"
 #include "deviceid.h"
 #include "onewire.h"
+#include "logger.h"
+#include "my_service.h"
 
-tBleStatus setTokenStr();
 struct _blue blue;
 
 extern uint32_t Pin;
@@ -44,20 +44,20 @@ uint16_t rx_handle = 0x0014;
 #endif
 */
 
-uint16_t workServHandle;				// WORK Service Handle
-uint16_t timeCharHandle;				// Time charact handle
-uint16_t toMinMaxCharHandle;  	// Хэндл характеристики текущей температуры
-uint16_t toCurCharHandle;				// Хэндл характеристики текущей температуры
-uint16_t ddCharHandle;					// Хэндл характеристики текущего состояния датчикой двери
+static uint16_t workServHandle;				// WORK Service Handle
+static uint16_t timeCharHandle;				// Time charact handle
+static uint16_t toMinMaxCharHandle;  	// Хэндл характеристики текущей температуры
+static uint16_t toCurCharHandle;				// Хэндл характеристики текущей температуры
+static uint16_t ddCurCharHandle;					// Хэндл характеристики текущего состояния датчикой двери
 
-uint16_t alrmServHandle;				// ALARM Service Handle
-uint16_t alrmIdCharHandle;			// Хэндл характеристики идентификаторов поддерживаемых тревог
-uint16_t alrmNewCharHandle;			// Хэндл характеристики новых тревог
-uint16_t alrmNoReadCharHandle;	// Хэндл характеристики непрочитанных тревог
+// uint16_t alrmServHandle;				// ALARM Service Handle
+static uint16_t alrmIdCharHandle;			// Хэндл характеристики идентификаторов поддерживаемых тревог
+static uint16_t alrmNewCharHandle;			// Хэндл характеристики новых тревог
+static uint16_t alrmNoReadCharHandle;	// Хэндл характеристики непрочитанных тревог
 
-uint16_t logServHandle;					// LOG Service Handle
-uint16_t logReqCharHandle;			// Хэндл характеристики запроса логов
-uint16_t logCharHandle;					// Хэндл характеристики логов
+// uint16_t logServHandle;					// LOG Service Handle
+static uint16_t logCharHandle;					// Хэндл характеристики логов
+static uint16_t logReqDescHandle;			// Хэндл Дескриптора запроса логов
 
 
 //extern BLE_RoleTypeDef BLE_Role;
@@ -125,9 +125,9 @@ tBleStatus BlueNRG_Init( void )
                                      Pin,
                                      BONDING);
 
-  ret = addWorkService();
-  ret = addAlrmService();
-  ret = addLogService();
+  ret = addService();
+//  ret = addAlrmService();
+//  ret = addLogService();
 
   /* Set output power level */
   ret = aci_hal_set_tx_power_level(1,4);
@@ -141,7 +141,7 @@ tBleStatus BlueNRG_Init( void )
 }
 
 /* Добавляем сервис "РАБОЧИЕ ДАННЫЕ" и 4 характеристики */
-tBleStatus addWorkService(void)
+static tBleStatus addService(void)
 {
   tBleStatus ret;
 
@@ -159,6 +159,28 @@ tBleStatus addWorkService(void)
   const uint8_t toMinMaxCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x32,0xf2,0x73,0xd9};
   const uint8_t toCurCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x33,0xf2,0x73,0xd9};
   const uint8_t ddCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x34,0xf2,0x73,0xd9};
+
+  /*
+  UUIDs:
+  D973F241-B19E-11E2-9E96-0800200C9A66			- Characteristic UUID
+  D973F242-B19E-11E2-9E96-0800200C9A66
+  D973F243-B19E-11E2-9E96-0800200C9A66
+  */
+//  const uint8_t alrmServUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x40,0xf2,0x73,0xd9};
+  const uint8_t alrmIdCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x41,0xf2,0x73,0xd9};
+  const uint8_t alrmNewCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x42,0xf2,0x73,0xd9};
+  const uint8_t alrmNoReadCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x43,0xf2,0x73,0xd9};
+
+  /*
+  UUIDs:
+  D973F250-B19E-11E2-9E96-0800200C9A66			- Work Service UUID
+  D973F251-B19E-11E2-9E96-0800200C9A66			- Characteristic UUID
+  D973F252-B19E-11E2-9E96-0800200C9A66
+  */
+//  const uint8_t logServUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x50,0xf2,0x73,0xd9};
+  const uint8_t logCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x52,0xf2,0x73,0xd9};
+  const uint16_t logReqDescUuid = 0x29ff;
+
 
   ret = aci_gatt_add_serv(UUID_TYPE_128, workServUuid, PRIMARY_SERVICE, 24, &workServHandle); /* original is 9?? */
   if (ret != BLE_STATUS_SUCCESS) goto fail;
@@ -178,135 +200,85 @@ tBleStatus addWorkService(void)
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Температура сейчас"
-  ret =  aci_gatt_add_char(workServHandle, UUID_TYPE_128, toCurCharUuid, TO_DEV_NUM * 2,
-                           CHAR_PROP_READ|CHAR_PROP_INDICATE,
-													 ATTR_PERMISSION_NONE,
-													 0, 16, 0, &toCurCharHandle);
+  ret =  aci_gatt_add_char(	workServHandle, UUID_TYPE_128, toCurCharUuid, TO_DEV_NUM * 2,
+														CHAR_PROP_READ|CHAR_PROP_INDICATE,
+														ATTR_PERMISSION_NONE,
+														0, 16, 0, &toCurCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Датчик Двери"
-  ret =  aci_gatt_add_char(workServHandle, UUID_TYPE_128, ddCharUuid, 1,
-														CHAR_PROP_READ|CHAR_PROP_NOTIFY,
-													 ATTR_PERMISSION_NONE,
-                           0, 16, 0, &ddCharHandle);
+  ret =  aci_gatt_add_char(	workServHandle, UUID_TYPE_128, ddCharUuid, 1,
+														CHAR_PROP_READ|CHAR_PROP_INDICATE,
+														ATTR_PERMISSION_NONE,
+														0, 16, 0, &ddCurCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
-  return BLE_STATUS_SUCCESS;
-
-fail:
-  return BLE_STATUS_ERROR ;
-}
-
-
-/* Добавляем сервис "ТРЕВОГА" и характеристики:
- * 	- RX" на прием от клиента, "TX" на передачу клиенту */
-tBleStatus addAlrmService(void)
-{
-  tBleStatus ret;
-
-  /*
-  UUIDs:
-  D973F240-B19E-11E2-9E96-0800200C9A66			- Work Service UUID
-  D973F241-B19E-11E2-9E96-0800200C9A66			- Characteristic UUID
-  D973F242-B19E-11E2-9E96-0800200C9A66
-  D973F243-B19E-11E2-9E96-0800200C9A66
-  */
-
-  const uint8_t alrmServUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x40,0xf2,0x73,0xd9};
-  const uint8_t alrmIdCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x41,0xf2,0x73,0xd9};
-  const uint8_t alrmNewCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x42,0xf2,0x73,0xd9};
-  const uint8_t alrmNoReadCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x43,0xf2,0x73,0xd9};
-
-  ret = aci_gatt_add_serv(UUID_TYPE_128, alrmServUuid, PRIMARY_SERVICE, 24, &alrmServHandle); /* original is 9?? */
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
+// Добавляем сервис "ТРЕВОГА" и характеристики:
 
 // Характеристика "Идентификаторы Поддерживаемых Тревог"
-  ret =  aci_gatt_add_char( alrmServHandle, UUID_TYPE_128, alrmIdCharUuid, 1,
-														CHAR_PROP_READ,
- 													 ATTR_PERMISSION_NONE,
-                           0, 16, 0, &alrmIdCharHandle);
+  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, alrmIdCharUuid, 1,
+ 														CHAR_PROP_READ,
+														ATTR_PERMISSION_NONE,
+														0, 16, 0, &alrmIdCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Новая тревога"
-  ret =  aci_gatt_add_char( alrmServHandle, UUID_TYPE_128, alrmNewCharUuid, 4,
-													CHAR_PROP_READ|CHAR_PROP_NOTIFY,
-												  ATTR_PERMISSION_NONE,
-													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, 16, 0, &alrmNewCharHandle);
+  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, alrmNewCharUuid, 4,
+ 														CHAR_PROP_READ|CHAR_PROP_NOTIFY,
+														ATTR_PERMISSION_NONE,
+														GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, 16, 0, &alrmNewCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Непрочитанные тревоги"
-  ret =  aci_gatt_add_char( alrmServHandle, UUID_TYPE_128, alrmNoReadCharUuid, 2,
+  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, alrmNoReadCharUuid, 2,
+  													CHAR_PROP_READ|CHAR_PROP_NOTIFY,
+   												  ATTR_PERMISSION_NONE,
+   													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, 16, 0, &alrmNoReadCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+// Битовая маска Идентификаторов Тревог
+ 	blue.alrmId = ALARM_GENERIC	| \
+ 								ALARM_DD_NEW_STATE | \
+ 								ALARM_TO_MAX | \
+ 								ALARM_TO_MIN | \
+ 								ALARM_DD_FAULT | \
+ 								ALARM_TO_FAULT | \
+								ALARM_LOG_FAULT | \
+								ALARM_HW_FAULT;
+// Счетчики Новых Тревог (индекс соответствует номеру поля в alrmId )
+ 	blue.alrmNewCount = 0;
+// Счетчики Непрочитанных Тревог (индекс соответствует номеру поля в alrmId)
+ 	blue.alrmNoReadCount = 0;
+
+// Характеристика "Отправка логов"
+  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, logCharUuid, 15,
 													CHAR_PROP_READ|CHAR_PROP_NOTIFY,
- 												  ATTR_PERMISSION_NONE,
- 													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, 16, 0, &alrmNoReadCharHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  // Битовая маска Идентификаторов Тревог
-	blue.alrmId = ALARM_GENERAL	| \
-								ALARM_DD_NEW_STATE | \
-								ALARM_TO_MAX | \
-								ALARM_TOM_MIN | \
-								ALARM_DD_FAULT | \
-								ALARM_TO_FAULT;
-	// Счетчики Новых Тревог (индекс соответствует номеру поля в alrmId )
-	memset( blue.alrmNewCount, 0, 8);
-	// Счетчики Непрочитанных Тревог (индекс соответствует номеру поля в alrmId)
-	memset( blue.alrmNoReadCount, 0, 8);
-
-  return BLE_STATUS_SUCCESS;
-
-fail:
-  return BLE_STATUS_ERROR ;
-}
-
-/* Добавляем сервис "ЛОГИРОВАНИЕ" и характеристики */
-tBleStatus addLogService(void)
-{
-  tBleStatus ret;
-
-  /*
-  UUIDs:
-  D973F250-B19E-11E2-9E96-0800200C9A66			- Work Service UUID
-  D973F251-B19E-11E2-9E96-0800200C9A66			- Characteristic UUID
-  D973F252-B19E-11E2-9E96-0800200C9A66
-  */
-
-  const uint8_t logServUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x50,0xf2,0x73,0xd9};
-  const uint8_t logReqCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x51,0xf2,0x73,0xd9};
-  const uint8_t logCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x52,0xf2,0x73,0xd9};
-
-  ret = aci_gatt_add_serv(UUID_TYPE_128, logServUuid, PRIMARY_SERVICE, 24, &logServHandle); /* original is 9?? */
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-
-// Характеристика "Запрос логов"
-  ret =  aci_gatt_add_char(logServHandle, UUID_TYPE_128, logReqCharUuid, 1,
-													CHAR_PROP_WRITE,
-												  ATTR_PERMISSION_NONE,
-													GATT_NOTIFY_ATTRIBUTE_WRITE|GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP,
-													16, 0, &logReqCharHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-// Характеристика "Запрос логов"
-  ret =  aci_gatt_add_char( logServHandle, UUID_TYPE_128, logCharUuid, 15,
-													CHAR_PROP_READ,
  												  ATTR_PERMISSION_NONE,
  													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
  													16, 0, &logCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
-  // Флаг - Запрос очередной записи Лога температуры
-  blue.toLogReq = DISABLE;
-	// Флаг - Запрос очередной записи Лога температуры
-	blue.ddLogReq = DISABLE;
+// Дескриптор "Запрос логов" к Характеристике "Отправка логов"
+  uint8_t descVal = 0;
+  aci_gatt_add_char_desc( workServHandle, logCharHandle, UUID_TYPE_16, (uint8_t *)&logReqDescUuid,
+  												1, 1, &descVal,
+													ATTR_PERMISSION_NONE, ATTR_ACCESS_WRITE_WITHOUT_RESPONSE,
+ 													GATT_NOTIFY_ATTRIBUTE_WRITE|GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP,
+ 													16, 0, &logReqDescHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+// Флаг - Запрос очередной записи Лога температуры
+  blue.logStatus.toReq = DISABLE;
+  blue.logStatus.toTxe = DISABLE;
+// Флаг - Запрос очередной записи Лога температуры
+	blue.logStatus.ddReq = DISABLE;
+  blue.logStatus.ddTxe = DISABLE;
 
   return BLE_STATUS_SUCCESS;
 
 fail:
   return BLE_STATUS_ERROR ;
 }
-
 
 void Make_Connection(void)
 {
@@ -337,86 +309,22 @@ void Make_Connection(void)
                                  sizeof(local_name), local_name, 0, NULL, 0, 0);
 }
 
-tBleStatus receiveCmd( uint8_t * buffer ){
-  tBleStatus err = 0;
-  
-  switch (buffer[0]) {
-    case RELAY_ON_CMD:
-      switch (buffer[1]) {
-        case RELAY1:
-        case RELAY2:
-//          err = relayStart( (relayTypeDef)buffer[1] );
-          break;
-        default: 
-          err = REL_NUM_ERR;
-          break;
-      }
-      break;
-    case RELAY_STATUS_CMD:
-//      err = relayStatus( RELAY1 ) | ( relayStatus ( RELAY2 ) << 1);
-      err = (err > 3) ? RELAY_STATUS_ERR : err ;
-      break;
-    default:
-      err = RECEIVE_ERR;
-  }
-  return err;
-
-  
-}
-
-tBleStatus sendResp( uint8_t resp )
-{
-  return aci_gatt_update_char_value(serviceHandle, respCharHandle, 0, 1, &resp);
-}
-
 /* Вызывается, если у сервера есть изменение данных */
-void receiveDataModified(uint8_t* data_buffer, uint8_t Nb_bytes)
+static void writePermitReq(uint16_t handle, uint8_t* att_data, uint8_t dataLen)
 {
-  tBleStatus err = 0xFF;
-  uint32_t i =0 , k;
+	UNUSED(dataLen);
 
-  if (tokenPart <40 ){
-    k = (tokenPart+Nb_bytes) <= 40 ? Nb_bytes : 40;
-    for ( ; i < k; i++ ){
-      if ( shaHash[i+tokenPart] != data_buffer[i] ) {
-      // sha-хэш не совпадает - соединение обрываем
-        err = TOKEN_ERR;
-        myDelay( 500 );
-        aci_gap_terminate(connection_handle, SHA_TIMEOUT_REASON);
-//        aci_gap_set_non_connectable( ADV_NONCONN_IND );
-        GAP_DisconnectionComplete_CB();
-        return;
-      }
-    }
+  if(handle == timeCharHandle + 1){
+    // Текущее время
+  	uxTime = *att_data;
+  	setRtcTime( uxTime );
   }
-  if ((tokenPart+Nb_bytes) <= 40){
-    tokenPart = tokenPart+Nb_bytes;   // Первая половина токена совпала полностью
-    return;
-  } else {
-    disconnCount = 0;     // Остановка таймера разрыва связи
-    authorized = TRUE;
-    err = receiveCmd(&data_buffer[i]);
-    sendResp( err );
-    setTokenStr();
-    err = TOKEN_SUCCESS;
-    return;
+  else if(handle == logReqDescHandle) {
+  	if( att_data ) {
+  		blue.logStatus.ddReq = ENABLE;
+  		blue.logStatus.toReq = ENABLE;
+  	}
   }
-}
-
-/**
- * @brief  This function is used to send data related to the sample service
- *         (to be sent over the air to the remote board).
- * @param  data_buffer : pointer to data to be sent
- * @param  Nb_bytes : number of bytes to send
- * @retval None
- */
-tBleStatus sendData(uint8_t* data_buffer, uint8_t Nb_bytes)
-{
-#ifdef CLIENT_ROLE
-    return aci_gatt_write_without_response(connection_handle, rx_handle+1, Nb_bytes, data_buffer);
-#else /* SERVER_ROLE */
-    return aci_gatt_update_char_value(serviceHandle, strCharHandle, 0, Nb_bytes, data_buffer);
-#endif /* CLIENT_ROLE */
 }
 
 /**
@@ -426,30 +334,66 @@ tBleStatus sendData(uint8_t* data_buffer, uint8_t Nb_bytes)
  * @param  att_data : pointer to the modified attribute data
  * @retval None
  */
-void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data)
+
+void Attribute_Modified_CB(uint16_t handle, uint8_t dataLen, uint8_t *att_data)
 {
-  if(handle == cmdCharHandle + 1){
-    /*  */
-    /*  */
-    if (( resetCount > 0 ) && ( (data_length == 2) && (att_data[0] == 0xA5) && (att_data[1] == 0x5A) )) {
-         resetCount = 0;
-         return;
-      }
-    if ( (data_length == 2) && (att_data[0] == 0x5A) && (att_data[1] == 0xA5) ) {
-      resetCount = 5000;
-      return;
-    }
+	UNUSED(dataLen);
 
-    /* Есть принятые данные */
-    receiveDataModified(att_data, data_length);
-  } else if (handle == strCharHandle + 2) {
-    if((att_data[1] & 0x01) == 0x01) // Если установлен флаг в дескрипторе NOTIFY
-      notification_enabled = TRUE;
-#ifdef TERMINAL_ON  
-      printf("Notification enabled\n\r");
-#endif // TERMINAL_ON  
-
+	/* Здесь обрабатываются данные:
+	 * - Температура Макс	- toMinMaxCharHandle
+	 * - Температута Мин	- toCurCharHandle
+	 * - Запрос логов			- logReqDescHandle
+	 * -
+	 */
+  if (handle == toMinMaxCharHandle + 1) {
+  	// Минимум-Максимум температур
+  	for( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
+  		// Выставляем Минимум для всех датчиков одинаковую
+  		owToDev[i].tMin = *((uint16_t *)att_data) & 0xFFF;
+  		att_data += 2;
+  		// Выставляем Максимум для всех датчиков одинаковую
+  		owToDev[i].tMax = *((uint16_t *)att_data) & 0xFFF;
+  	}
   }
+  else if( handle == logReqDescHandle ) {
+  	if( *att_data & 0x01 ) {
+  		blue.logStatus.toReq = ENABLE;
+  	}
+  	if( *att_data & 0x02 ) {
+  		blue.logStatus.ddReq = ENABLE;
+  	}
+  }
+}
+
+/* Здесь обрабатывается:
+ * alrmNewCharHandle;			// Хэндл характеристики новых тревог
+ * alrmNoReadCharHandle;	// Хэндл характеристики непрочитанных тревог
+ * logCharHandle;
+ */
+static void readPermitRequest( uint16_t handle, uint8_t offset) {
+	UNUSED(offset);
+
+	handle--;
+
+	if ( handle == logCharHandle ) {
+		blue.logStatus.ddTxe = ENABLE;
+		blue.logStatus.toTxe = ENABLE;
+	}
+	else 	if ( (handle == alrmNewCharHandle) || (handle == alrmNoReadCharHandle) ) {
+		if ( (handle == alrmNewCharHandle) && blue.alrmSendId ) {
+			blue.alrmNoReadId &= ~blue.alrmSendId;
+			--blue.alrmNoReadCount;
+			blue.alrmSendId = 0;
+		}
+		else {
+			blue.alrmNoReadId = 0;
+			blue.alrmNoReadCount = 0;
+		}
+
+		aci_gatt_update_char_value( workServHandle, alrmNewCharHandle, 0, 1, &blue.alrmNoReadId );
+		aci_gatt_update_char_value( workServHandle, alrmNewCharHandle, 1, 1, &blue.alrmNoReadCount );
+	}
+	return;
 }
 
 /**
@@ -519,20 +463,60 @@ tBleStatus pairingComplete( uint8_t status ) {
 #endif /* PAIRING_ON */
 
 void alarmCharUpdate( void ) {
-	uint8_t charBuf[2];
 	uint8_t i;
-	aci_gatt_update_char_value( alrmServHandle, alrmIdCharHandle, 0, 1, &blue.alrmId );
+
+	aci_gatt_update_char_value( workServHandle, alrmIdCharHandle, 0, 1, &blue.alrmId );
 	for( i = 0; i < 8; i++ ){
-		if (blue.alrmNew[i] != 0){
+		if (blue.alrmNewId != 0){
 			// Есть новая тревога - пишем ее в Характеристику
-			aci_gatt_update_char_value( alrmServHandle, alrmNewCharHandle, 0, 1, &blue.alrmNew[i] );
-			aci_gatt_update_char_value( alrmServHandle, alrmNewCharHandle, 1, 1, &blue.alrmNewCount[i] );
+			aci_gatt_update_char_value( workServHandle, alrmNewCharHandle, 0, 1, &blue.alrmNewId );
+			aci_gatt_update_char_value( workServHandle, alrmNewCharHandle, 1, 1, &blue.alrmNewCount );
+			blue.alrmSendId = blue.alrmNewId;
+			blue.alrmNewId = 0;
 			break;
 		}
 	}
 }
 
+void toCurCharUpdate( void ) {
+	uint16_t data[TO_DEV_NUM];
+	uint8_t alrm = FALSE;
+
+	for ( uint8_t i = 0; i < TO_DEV_NUM; i++) {
+		data[i] = owToDev[i].temper;
+		if ( owToDev[i].temper > owToDev[i].tMax ) {
+			alrmUpdate( ALARM_TO_MAX );
+		}
+		else if ( owToDev[i].temper < owToDev[i].tMin ) {
+			alrmUpdate( ALARM_TO_MAX );
+		}
+	}
+	aci_gatt_update_char_value( workServHandle, toCurCharHandle, 0, 2*TO_DEV_NUM, (uint8_t *)data );
+	if ( alrm ) {
+		alarmCharUpdate();
+	}
+}
+
+void ddCurCharUpdate( void ){
+	uint8_t data;
+
+// Обновляем Характеристику "Действующее значение состояния дверей"
+	data = ddDev[0].ddData | (ddDev[1].ddData << 1);
+	aci_gatt_update_char_value( workServHandle, ddCurCharHandle, 0, 1, (uint8_t *)&data );
+// 	Изменилось ли состояние дверей - отправлять ли тревогу?
+	if ( (ddDev[0].ddData != ddDev[0].ddDataPrev) || (ddDev[1].ddData != ddDev[1].ddDataPrev) ) {
+		alrmUpdate( ALARM_DD_NEW_STATE );
+	}
+	ddDev[0].ddDataPrev = ddDev[0].ddData;
+	ddDev[1].ddDataPrev = ddDev[1].ddData;
+}
+
+void logCharUpdate( uint8_t *data, uint8_t len) {
+	aci_gatt_update_char_value( workServHandle, logCharHandle, 0, len, data );
+}
+
 /**
+}
  * @brief  This function is called whenever there is an ACI event to be processed.
  * @note   Inside this function each event must be identified and correctly
  *         parsed.
@@ -682,6 +666,11 @@ void HCI_Event_CB(void *pckt)
             
         case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
           {
+          	/* Здесь обрабатываются данные:
+          	 * - Температура Макс
+          	 * - Температута Мин
+          	 * - Запрос Логов
+          	 */
             evt_gatt_attr_modified *evt = (evt_gatt_attr_modified*)blue_evt->data;
             Attribute_Modified_CB(evt->attr_handle, evt->data_length, evt->att_data);
           }
@@ -689,11 +678,14 @@ void HCI_Event_CB(void *pckt)
 
         case EVT_BLUE_GATT_WRITE_PERMIT_REQ:
           {
+          	/* Здесь обрабатываются данные:
+          	 * - Текущее время
+          	 */
             evt_gatt_write_permit_req *evt = (evt_gatt_write_permit_req *)blue_evt->data;
             aci_gatt_write_response( connection_handle, evt->attr_handle, 
                                     BLE_STATUS_SUCCESS, RECEIVE_ERR, 
                                     evt->data_length, evt->data  );
-            receiveDataModified(evt->data+1, evt->data_length-1);
+            writePermitReq(evt->attr_handle, evt->data+1, evt->data_length-1);
           }
           break;
 
@@ -811,6 +803,7 @@ void HCI_Event_CB(void *pckt)
       case EVT_BLUE_GATT_READ_PERMIT_REQ:
           {
             evt_gatt_read_permit_req * grpr = (void *)blue_evt->data;
+            readPermitRequest( grpr->attr_handle, grpr->offset );
             temp = grpr;
           }
           break;

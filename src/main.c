@@ -60,10 +60,10 @@ int main(void)
 #else
 	toLogCount = 0;
 	toReadCount = 0;
-	toMesgCount = 0;
 #endif  // ONE_WIRE
   // Установки логирования
  logInit();
+ alrmInit();
 
 #if BLUENRG
   // Initialize the BlueNRG SPI driver
@@ -101,6 +101,9 @@ void User_Process(void)
     /* Establish connection with remote device */
     Make_Connection();
     blue.connectable = FALSE;
+  }
+  if ( blue.logStatus.ddReq || blue.logStatus.toReq ){
+  	logSend( blue.logStatus.toReq, blue.logStatus.ddReq );
   }
 }
 #endif

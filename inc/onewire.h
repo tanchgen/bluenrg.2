@@ -37,6 +37,14 @@
 #define OW_RX_PIN				GPIO_Pin_10
 #define OW_RX_PIN_NUM		10
 
+#define DD_1_PORT				GPIOB
+#define DD_1_PIN				GPIO_Pin_0
+#define DD_1_PIN_NUM		0
+
+#define DD_2_PORT				GPIOB
+#define DD_2_PIN				GPIO_Pin_1
+#define DD_2_PIN_NUM		1
+
 #define MAX_TO_DEV_NUM	4
 
 #define TO_DEV_NUM			2				// Количество термометров
@@ -44,8 +52,8 @@
 #error "Число датчиков температуры превышает максимальное для данной EEPROM (128кБ) для Логов"
 #endif
 
-#define DD_DEV_NUM			0				// Количество Датчиков Дверей (DD)
-#define OW_DEV_NUM			(TO_DEV_NUM + DD_DEV_NUM)
+#define DD_DEV_NUM			2				// Количество Датчиков Дверей (DD)
+#define OW_DEV_NUM			TO_DEV_NUM
 
 #endif
 
@@ -68,11 +76,9 @@ typedef struct {
 } tOwToDev;
 
 typedef struct {
-	uint64_t addr;						//  Адрес устройства
-	uint32_t readTout;
-	uint32_t ddData;					// Действующее значение датчика двери
-	eOwStatus devStatus;
-} tOwDdDev;
+	uint8_t ddData;					// Действующее значение датчика двери
+	uint8_t ddDataPrev;
+} tDdDev;
 
 #define DD_READ_TOUT				500					// Таймаут считывания датчиков двери
 
@@ -108,7 +114,7 @@ typedef struct {
 extern uint8_t owDevNum;
 extern eOwStatus owStatus;
 extern tOwToDev owToDev[]; 			// Массив структур устройств 1-Wire;
-extern tOwDdDev owDdDev[]; 			// Массив структур Датчиков Двери 1-Wire;
+extern tDdDev ddDev[]; 			// Массив структур Датчиков Двери 1-Wire;
 
 extern uint32_t tmpModerOut, tmpModerAf;			 // Значения регистра MODER для UART и для подтяжки UART_RX к Vdd
 

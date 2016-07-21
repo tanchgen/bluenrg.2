@@ -56,7 +56,7 @@ void i2cInit( void );
 void i2cMspInit( void );
 
 int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len);
-int8_t receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len);
+eEprStatus receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len);
 
 int8_t sendEepromAddr( uint32_t addr );
 int8_t eepromSendIT(  uint8_t * data, uint16_t len );
