@@ -16,10 +16,13 @@ Default_Handler(void);
 // to the Default_Handler, which is a 'forever' loop. When the application
 // defines a handler (with the same name), this will automatically take
 // precedence over these weak definitions
+
 void __attribute__ ((weak, alias ("Default_Handler")))
 WWDG_IRQHandler(void);
+/*
 void __attribute__ ((weak, alias ("Default_Handler")))
 PVD_IRQHandler(void);
+*/
 void __attribute__ ((weak, alias ("Default_Handler")))
 RTC_IRQHandler(void);
 void __attribute__ ((weak, alias ("Default_Handler")))
@@ -32,8 +35,10 @@ void __attribute__ ((weak, alias ("Default_Handler")))
 EXTI2_3_IRQHandler(void);
 void __attribute__ ((weak, alias ("Default_Handler")))
 EXTI4_15_IRQHandler(void);
+/*
 void __attribute__ ((weak, alias ("Default_Handler")))
 TS_IRQHandler(void);
+*/
 void __attribute__ ((weak, alias ("Default_Handler")))
 DMA1_Channel1_IRQHandler(void);
 void __attribute__ ((weak, alias ("Default_Handler")))
@@ -46,12 +51,16 @@ void __attribute__ ((weak, alias ("Default_Handler")))
 TIM1_BRK_UP_TRG_COM_IRQHandler(void);
 void __attribute__ ((weak, alias ("Default_Handler")))
 TIM1_CC_IRQHandler(void);
+/*
 void __attribute__ ((weak, alias ("Default_Handler")))
 TIM2_IRQHandler(void);
+*/
 void __attribute__ ((weak, alias ("Default_Handler")))
 TIM3_IRQHandler(void);
+/*
 void __attribute__ ((weak, alias ("Default_Handler")))
 TIM6_DAC_IRQHandler(void);
+*/
 void __attribute__ ((weak, alias ("Default_Handler")))
 TIM14_IRQHandler(void);
 void __attribute__ ((weak, alias ("Default_Handler")))
@@ -72,9 +81,9 @@ void __attribute__ ((weak, alias ("Default_Handler")))
 USART1_IRQHandler(void);
 void __attribute__ ((weak, alias ("Default_Handler")))
 USART2_IRQHandler(void);
+/*
 void __attribute__ ((weak, alias ("Default_Handler")))
 CEC_IRQHandler(void);
-
 void __attribute__ ((weak, alias ("Default_Handler")))
 ADC1_COMP_IRQHandler(void);
 void __attribute__ ((weak, alias ("Default_Handler")))
@@ -93,7 +102,7 @@ void __attribute__ ((weak, alias ("Default_Handler")))
 USB_IRQHandler(void);
 void __attribute__ ((weak, alias ("Default_Handler")))
 DMA1_Channel4_5_6_7_IRQHandler(void);
-
+*/
 // ----------------------------------------------------------------------------
 
 extern unsigned int _estack;

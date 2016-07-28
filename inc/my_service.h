@@ -60,6 +60,7 @@ struct _blue {
 		uint8_t ddTxe	:	1;			// Очередной лог прочитан - можно отправлять следующие
 		uint8_t ddRxne:	1;			// Есть неотправленные записи логов - есть что отправлять
 	} logStatus;
+	tBleStatus bleStatus;
 };
 /** 
 * @brief Handle of RX Characteristic on the Client. The handle should be
@@ -68,11 +69,9 @@ struct _blue {
 //#define RX_HANDLE   0x0014
 
 extern struct _blue blue;
-
 /** @addtogroup SAMPLE_SERVICE_Exported_Functions
  *  @{
  */
-static tBleStatus addService(void);
 
 void Make_Connection(void);
 void receiveData(uint8_t* data_buffer, uint8_t Nb_bytes);
@@ -83,7 +82,12 @@ void startReadRXCharHandle(void);
 void enableNotification(void);
 
 int8_t alrmUpdate( uint8_t alrmId );
+
+void alrmCharUpdate( void );
 void logCharUpdate( uint8_t *data, uint8_t len);
+void toCurCharUpdate( void );
+void ddCurCharUpdate( void );
+void rtcCharUpdate( void );
 
 void Attribute_Modified_CB(uint16_t handle, uint8_t data_length,
                            uint8_t *att_data);

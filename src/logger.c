@@ -8,6 +8,7 @@
 #include "eeprom.h"
 #include "my_time.h"
 #include "my_service.h"
+#include "my_main.h"
 #include "logger.h"
 
 tLogBuf toLogBuff;
@@ -114,10 +115,11 @@ int8_t ddLogWrite( void ) {
 	// Записываем штамп времени
 	ddLogUnit.xTime = getRtcTime();
 	// Записываем показания датчиков
+	ddLogUnit.ddData = 0;
 	for( i = 0; i < DD_DEV_NUM; i++ ){
 		// Сохраняем номер датчика в старшей тетраде и значение температуры в младших трех тетрадах:
 		//		xxxx yyyy yyyy yyyy : x - номер датчика, y - 12-битное значение температуры этого датчика
-		ddLogUnit.ddData = ddDev[i].ddData;
+		ddLogUnit.ddData |= ddDev[i].ddData << i;
 	}
 	if( i ) {
 		return logWriteBuff( &ddLogBuff, (uint8_t *)&ddLogUnit );
@@ -151,40 +153,50 @@ int8_t alrmUpdate( uint8_t alrmId ) {
 		blue.alrmNewCount++;
 		blue.alrmNoReadCount++;
 
-		alarmCharUpdate();
+		if ( blue.connected ) {
+			alrmCharUpdate();
+		}
 		return 0;
 	}
 	return -1;
 }
 
-int8_t logSend( uint8_t toLogReq, uint8_t ddLogReq ) {
-	uint8_t tmpBuf[15];
+int8_t logSend( uint8_t toLogSendEn, uint8_t ddLogSendEn) {
+	static uint8_t prevLogFill;
+	static uint8_t nowLogFill;
+	uint8_t tmpBuf[17];
 	int8_t ret;
 
-	if ( toLogReq ) {
+	nowLogFill = FALSE;
+	memset( tmpBuf, 0x00, sizeof(tmpBuf));
+
+	if ( toLogSendEn ) {
 		if ( blue.logStatus.toTxe ) {
 			ret = toLogRead( (tToLogUnit *)tmpBuf );
 			if ( ret < 0) {
 				alrmUpdate( ALARM_LOG_FAULT );
 			}
-		}
-	}
-	else {
-		memset( tmpBuf, 0x00, 12);
-	}
-	if ( ddLogReq ) {
-		if ( blue.logStatus.ddTxe ) {
-			ret = toLogRead( (tDdLogUnit *)&tmpBuf[12] );
-			if ( ret < 0) {
-				alrmUpdate( ALARM_LOG_FAULT );
+			else if( ret > 0){
+				nowLogFill = TRUE;
 			}
 		}
 	}
-	else {
-		memset( &tmpBuf[12], 0x00, 3);
+	if ( ddLogSendEn ) {
+		if ( blue.logStatus.ddTxe ) {
+			ret = ddLogRead( (tDdLogUnit *)&tmpBuf[12] );
+			if ( ret < 0) {
+				alrmUpdate( ALARM_LOG_FAULT );
+			}
+			else if( ret > 0){
+				nowLogFill = TRUE;
+			}
+		}
 	}
 
-	logCharUpdate( tmpBuf, 15);
+	if ( nowLogFill || prevLogFill ) {
+		logCharUpdate( tmpBuf, 17);
+		prevLogFill = nowLogFill;
+	}
 
 	return 0;
 }

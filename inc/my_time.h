@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include "stm32f0xx.h"
 
+#define ALARM_UPDATE_TOUT		100
+
 typedef RTC_TimeTypeDef			tTime;
 typedef RTC_DateTypeDef			tDate;
 
@@ -26,7 +28,7 @@ typedef RTC_DateTypeDef			tDate;
 	typedef	uint32                          tXtime;
 #endif
 
-extern tXtime uxTime;
+extern volatile tXtime uxTime;
 
 extern __IO uint32_t myTick;
 

@@ -23,6 +23,7 @@
 #define I2C_OWN_ADDR					0x00
 #define I2C_TOUT								100
 #define EEPROM_I2C_ADDR				(0x50)
+#define I2C_TIMEOUT						10
 
 #define I2C_TRANSMITTER_MODE		0
 #define I2C_RECEIVER_MODE				1
@@ -59,7 +60,7 @@ int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len);
 eEprStatus receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len);
 
 int8_t sendEepromAddr( uint32_t addr );
-int8_t eepromSendIT(  uint8_t * data, uint16_t len );
+int8_t eepromSend(  uint8_t * data, uint16_t len );
 int8_t eepromRead( uint8_t * data, uint16_t len );
 
 void eepromTxCpltCallback( void );

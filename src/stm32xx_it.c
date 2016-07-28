@@ -132,7 +132,7 @@ void BNRG_SPI_EXTI_IRQHandler(void)
 * @brief This function handles USART1 global interrupt.
 */
 
-void I2C_IRQHandler(void) {
+void I2C1_IRQHandler(void) {
 	epprom_IRQHandler();
 }
 
@@ -167,20 +167,6 @@ void PUSH_BUTTON_EXTI_IRQHandler(void)
 
   button_event = 1;
 }
-
-/* ====================== Здесь мои прерывания от таймеров ================== */
-void TIM3_IRQHandler(void)
-{
-}
-
-void TIM16_IRQHandler(void)
-{
-}
-
-void TIM17_IRQHandler(void)
-{
-}
-
 
 /******************************************************************************/
 /*                 STM32L0xx Peripherals Interrupt Handlers                   */

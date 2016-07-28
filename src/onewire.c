@@ -11,7 +11,7 @@
 uint8_t ow_buf[8];
 
 uint8_t owDevNum;
-eOwStatus owStatus;
+eErrStatus owStatus;
 tOwToDev owToDev[ TO_DEV_NUM ]; 			// Массив структур термометров 1-Wire;
 tDdDev ddDev[ DD_DEV_NUM ]; 			// Массив структур Датчиков Двери 1-Wire;
 
@@ -72,11 +72,6 @@ uint8_t OW_Init() {
 		OW_PORT->PUPDR |= 1 << (OW_RX_PIN_NUM*2);			// PULLUP
 		OW_PORT->OSPEEDR &= ~(3 << (OW_RX_PIN_NUM*2));			// Low Speed
 		OW_PORT->AFR[OW_RX_PIN_NUM >> 0x3] |= 1 << ((OW_RX_PIN_NUM & 0x7) * 4);		// AF1
-
-		// Значения регистра MODER для UART и для подтяжки UART_RX к Vdd
-  	tmpModerAf = OW_PORT->MODER;
-  	tmpModerOut = tmpModerAf & (~(3 << (OW_RX_PIN_NUM*2)));
-  	tmpModerOut |= 1 << (OW_RX_PIN_NUM*2);
 
 	USART_InitStructure.USART_BaudRate = 115200;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
@@ -298,7 +293,9 @@ static uint8_t OW_Reset() {
 	// Ждем, пока нe примем байт
 	while ( (OW_USART->ISR & USART_ISR_RXNE) == RESET){
 		if ( myTick > owtout ) {
-			Error_Handler();
+			for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
+				owToDev[i].devStatus = OW_DEV_ERR;
+			}
 		}
 	}
 	// Сохраняем принятое по RX
@@ -380,7 +377,7 @@ static int8_t OW_SendBits(uint8_t num_bits) {
 }
 
 void ddReadDoor( void ){
-		ddDev[0].ddData = DD_1_PORT->IDR & DD_1_PIN;
-		ddDev[1].ddData = DD_1_PORT->IDR & DD_1_PIN;
+		ddDev[0].ddData = (DD_1_PORT->IDR & DD_1_PIN) >> DD_1_PIN_NUM;
+		ddDev[1].ddData = (DD_2_PORT->IDR & DD_2_PIN) >> DD_2_PIN_NUM;
 }
 

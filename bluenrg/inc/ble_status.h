@@ -105,6 +105,7 @@ typedef uint8_t tBleStatus;
 #define BLE_STATUS_PROFILE_ALREADY_INITIALIZED (0xF0)
 #define BLE_STATUS_NULL_PARAM                  (0xF1) 
 
+extern volatile tBleStatus bleStatus;
 /**
  * @}
  */

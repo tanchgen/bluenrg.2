@@ -51,6 +51,7 @@ typedef struct {
 extern tLogBuf toLogBuff;
 extern tLogBuf ddLogBuff;
 
+int8_t logSend( uint8_t toLogReq, uint8_t ddLogReq );
 // Записывает байт в буфер
 int8_t logWriteBuff( tLogBuf * buf, uint8_t * data );
 // Считывает байт из буфера. Если буфер пуст - возвращает (-1)

@@ -2,19 +2,19 @@
 #include <stdio.h>
 #include <string.h>
 #include "stm32f0xx.h"
-#include "stm32f0xx_conf.h"
 #include "stm32_bluenrg_ble.h"
-#include "my_main.h"
-#include "hci.h"
+//#include "hci.h"
 #include "my_service.h"
 #include "my_time.h"
 #include "stm32xx_it.h"
 #include "onewire.h"
 #include "init.h"
+#include "logger.h"
+#include "my_main.h"
+
 //#include "bt01.h"
 //#include "my_bt01_def.h"
 
-//#include "logger.h"
 
 uint8_t crc;
 
@@ -53,17 +53,21 @@ uint16_t myWD;
  */
 int main(void)
 { 
+	myTick = 0;
   // Configure the system clock
   SetSysClock();
+  timeInit();
+  alrmInit();
+
 #if ONE_WIRE
-  owInit();
+  toInit();
 #else
 	toLogCount = 0;
 	toReadCount = 0;
 #endif  // ONE_WIRE
-  // Установки логирования
- logInit();
- alrmInit();
+	ddInit();
+	// Установки логирования
+	logInit();
 
 #if BLUENRG
   // Initialize the BlueNRG SPI driver
@@ -72,7 +76,9 @@ int main(void)
   // Initialize the BlueNRG HCI
   HCI_Init();
 
-  BlueNRG_Init();
+  if(BlueNRG_Init() == BLE_STATUS_TIMEOUT){
+ 		blue.bleStatus = BLE_STATUS_TIMEOUT;
+  }
 #endif  // BLUENRG
 
 #if WATCHDOG
@@ -81,10 +87,10 @@ int main(void)
 
   while(1)
   {
-  	timersProcess();
 
 #if BLUENRG
     HCI_Process();
+  	timersProcess();
     User_Process();
 #endif
 #if WATCHDOG
@@ -102,9 +108,15 @@ void User_Process(void)
     Make_Connection();
     blue.connectable = FALSE;
   }
-  if ( blue.logStatus.ddReq || blue.logStatus.toReq ){
-  	logSend( blue.logStatus.toReq, blue.logStatus.ddReq );
+
+  if ( blue.connected ) {
+  	uint8_t ddLogSendEn = blue.logStatus.ddReq && blue.logStatus.ddTxe;
+  	uint8_t toLogSendEn = blue.logStatus.toReq && blue.logStatus.toTxe;
+  	if ( toLogSendEn || ddLogSendEn ){
+  		logSend( toLogSendEn, ddLogSendEn );
+  	}
   }
+
 }
 #endif
 
@@ -191,20 +203,35 @@ static void SetSysClock(void)
          configuration. User can add here some code to deal with this error */
   	HardFault_Handler();
   }
+
   RCC_GetClocksFreq(&RCC_Clocks);
 
   SysTick_Config(RCC_Clocks.HCLK_Frequency/1000);
   NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
   NVIC_EnableIRQ(SysTick_IRQn);
-  NVIC_SetPriority(SysTick_IRQn, 0xF);
-//  NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
 #define SYSTICK_CLKSOURCE_HCLK         ((uint32_t)0x00000004)
   SysTick->CTRL |= SYSTICK_CLKSOURCE_HCLK;
 
 }
 
-void Error_Handler( void ) {
-	while(1);
+void Error_Handler( eErrStatus err ){
+
+	switch ( err ){
+		case OW_DEV_ERR:
+			alrmUpdate( ALARM_TO_FAULT );
+			break;
+		case OW_WIRE_ERR:
+			for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
+				owToDev[i].devStatus = OW_DEV_ERR;
+			}
+			alrmUpdate( ALARM_TO_FAULT );
+			break;
+		case 	LOG_ERR:
+			alrmUpdate( ALARM_LOG_FAULT );
+			break;
+		default:
+			while(1);
+	}
 }
 
 uint8_t crcDS(uint8_t inp, uint8_t crc) {

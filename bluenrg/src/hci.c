@@ -50,6 +50,7 @@ static volatile uint8_t readPacketListFull=FALSE;
 
 //static volatile uint8_t hci_timer_id;
 static volatile uint8_t hci_timeout;
+volatile tBleStatus bleStatus;
 
 void hci_timeout_callback(void)
 {
@@ -133,6 +134,7 @@ void HCI_Isr(void)
 {
   tHciDataPacket * hciReadPacket = NULL;
   uint8_t data_len;
+  uint32_t tout = myTick + DEFAULT_TIMEOUT*10;
   
   Clear_SPI_EXTI_Flag();
   while(BlueNRG_DataPresent()){        
@@ -153,7 +155,11 @@ void HCI_Isr(void)
         // Insert the packet back into the pool.
         list_insert_head(&hciReadPktPool, (tListNode *)hciReadPacket);
       }
-      
+      if (myTick > tout){
+//        BlueNRG_RST();
+        Clear_SPI_EXTI_Flag();
+        return;
+      }
     }
     else{
       // HCI Read Packet Pool is empty, wait for a free packet.
@@ -345,6 +351,7 @@ int hci_send_req(struct hci_request *r, uint8_t async)
 failed: 
   move_list(&hciReadPktRxQueue, &hciTempQueue);  
   Enable_SPI_IRQ();
+//  bleStatus = BLE_STATUS_TIMEOUT;
   return -1;
   
 done:

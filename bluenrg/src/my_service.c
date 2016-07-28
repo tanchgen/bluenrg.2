@@ -17,7 +17,6 @@ extern uint32_t Pin;
 volatile uint32_t resetCount; // Таймаут аутентификации по SHA1-хэш 120 сек.
 
 /* Private variables ---------------------------------------------------------*/
-volatile uint16_t connection_handle = 0;
 volatile uint8_t notification_enabled = FALSE; // Клиент готов получать данные
 volatile uint8_t start_read_tx_char_handle = FALSE;
 volatile uint8_t start_read_rx_char_handle = FALSE;
@@ -43,6 +42,8 @@ uint16_t tx_handle = 0x0011;
 uint16_t rx_handle = 0x0014;
 #endif
 */
+
+static tBleStatus addService(void);
 
 static uint16_t workServHandle;				// WORK Service Handle
 static uint16_t timeCharHandle;				// Time charact handle
@@ -129,14 +130,18 @@ tBleStatus BlueNRG_Init( void )
 //  ret = addAlrmService();
 //  ret = addLogService();
 
-  /* Set output power level */
-  ret = aci_hal_set_tx_power_level(1,4);
+  if ( !ret ){
+  	/* Set output power level */
+  	ret = aci_hal_set_tx_power_level(1,4);
+  }
   blue.connectable = TRUE;
   blue.connected = FALSE;
   blue.authorized = FALSE;
   blue.disconnCount = 0;
 
   myWD = MY_WD_TIME; // Запускаем програмный WatchDog
+
+  blue.bleStatus = ret;
   return ret;
 }
 
@@ -182,14 +187,14 @@ static tBleStatus addService(void)
   const uint16_t logReqDescUuid = 0x29ff;
 
 
-  ret = aci_gatt_add_serv(UUID_TYPE_128, workServUuid, PRIMARY_SERVICE, 24, &workServHandle); /* original is 9?? */
+  ret = aci_gatt_add_serv(UUID_TYPE_128, workServUuid, PRIMARY_SERVICE, 36, &workServHandle); /* original is 9?? */
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Текущее Время"
-  ret =  aci_gatt_add_char(workServHandle, UUID_TYPE_128, timeCharUuid, 4,
+  ret =  aci_gatt_add_char(workServHandle, UUID_TYPE_128, timeCharUuid, 10,
                            CHAR_PROP_READ|CHAR_PROP_WRITE_WITHOUT_RESP,
 													 ATTR_PERMISSION_NONE,
-													 GATT_NOTIFY_ATTRIBUTE_WRITE, 16, 0, &timeCharHandle);
+													 GATT_NOTIFY_ATTRIBUTE_WRITE, 16, 1, &timeCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Температура Минимум-Максимум"
@@ -223,7 +228,7 @@ static tBleStatus addService(void)
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Новая тревога"
-  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, alrmNewCharUuid, 4,
+  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, alrmNewCharUuid, 2,
  														CHAR_PROP_READ|CHAR_PROP_NOTIFY,
 														ATTR_PERMISSION_NONE,
 														GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, 16, 0, &alrmNewCharHandle);
@@ -236,22 +241,10 @@ static tBleStatus addService(void)
    													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, 16, 0, &alrmNoReadCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
-// Битовая маска Идентификаторов Тревог
- 	blue.alrmId = ALARM_GENERIC	| \
- 								ALARM_DD_NEW_STATE | \
- 								ALARM_TO_MAX | \
- 								ALARM_TO_MIN | \
- 								ALARM_DD_FAULT | \
- 								ALARM_TO_FAULT | \
-								ALARM_LOG_FAULT | \
-								ALARM_HW_FAULT;
-// Счетчики Новых Тревог (индекс соответствует номеру поля в alrmId )
- 	blue.alrmNewCount = 0;
 // Счетчики Непрочитанных Тревог (индекс соответствует номеру поля в alrmId)
- 	blue.alrmNoReadCount = 0;
 
 // Характеристика "Отправка логов"
-  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, logCharUuid, 15,
+  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, logCharUuid, 17,
 													CHAR_PROP_READ|CHAR_PROP_NOTIFY,
  												  ATTR_PERMISSION_NONE,
  													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
@@ -262,17 +255,12 @@ static tBleStatus addService(void)
   uint8_t descVal = 0;
   aci_gatt_add_char_desc( workServHandle, logCharHandle, UUID_TYPE_16, (uint8_t *)&logReqDescUuid,
   												1, 1, &descVal,
-													ATTR_PERMISSION_NONE, ATTR_ACCESS_WRITE_WITHOUT_RESPONSE,
- 													GATT_NOTIFY_ATTRIBUTE_WRITE|GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP,
+													ATTR_PERMISSION_NONE,
+													ATTR_ACCESS_READ_WRITE,
+//													ATTR_ACCESS_WRITE_WITHOUT_RESPONSE|ATTR_ACCESS_READ_ONLY,
+ 													GATT_NOTIFY_ATTRIBUTE_WRITE,
  													16, 0, &logReqDescHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-// Флаг - Запрос очередной записи Лога температуры
-  blue.logStatus.toReq = DISABLE;
-  blue.logStatus.toTxe = DISABLE;
-// Флаг - Запрос очередной записи Лога температуры
-	blue.logStatus.ddReq = DISABLE;
-  blue.logStatus.ddTxe = DISABLE;
 
   return BLE_STATUS_SUCCESS;
 
@@ -313,16 +301,23 @@ void Make_Connection(void)
 static void writePermitReq(uint16_t handle, uint8_t* att_data, uint8_t dataLen)
 {
 	UNUSED(dataLen);
+  if (handle == toMinMaxCharHandle + 1) {
+  	int16_t min;
+  	int16_t max;
+		if( (min = *((uint16_t *)att_data) & 0xFFF) & 0x800 ) {
+			min |= 0xF000;
+		}
+		att_data += 2;
+		if( (max = *((uint16_t *)att_data) & 0xFFF) & 0x800 ) {
+			max |= 0xF000;
+		}
 
-  if(handle == timeCharHandle + 1){
-    // Текущее время
-  	uxTime = *att_data;
-  	setRtcTime( uxTime );
-  }
-  else if(handle == logReqDescHandle) {
-  	if( att_data ) {
-  		blue.logStatus.ddReq = ENABLE;
-  		blue.logStatus.toReq = ENABLE;
+  	// Минимум-Максимум температур
+  	for( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
+  		// Выставляем Минимум для всех датчиков одинаковую
+  		owToDev[i].tMin = min;
+  		// Выставляем Максимум для всех датчиков одинаковую
+  		owToDev[i].tMax = max;
   	}
   }
 }
@@ -345,15 +340,10 @@ void Attribute_Modified_CB(uint16_t handle, uint8_t dataLen, uint8_t *att_data)
 	 * - Запрос логов			- logReqDescHandle
 	 * -
 	 */
-  if (handle == toMinMaxCharHandle + 1) {
-  	// Минимум-Максимум температур
-  	for( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
-  		// Выставляем Минимум для всех датчиков одинаковую
-  		owToDev[i].tMin = *((uint16_t *)att_data) & 0xFFF;
-  		att_data += 2;
-  		// Выставляем Максимум для всех датчиков одинаковую
-  		owToDev[i].tMax = *((uint16_t *)att_data) & 0xFFF;
-  	}
+  if(handle == timeCharHandle + 1){
+    // Текущее время
+  	uxTime = (int32_t)*att_data | ((int32_t)*(att_data+1)<<8) | ((int32_t)*(att_data+2)<<16) | ((int32_t)*(att_data+3)<<24);
+  	setRtcTime( uxTime );
   }
   else if( handle == logReqDescHandle ) {
   	if( *att_data & 0x01 ) {
@@ -363,6 +353,26 @@ void Attribute_Modified_CB(uint16_t handle, uint8_t dataLen, uint8_t *att_data)
   		blue.logStatus.ddReq = ENABLE;
   	}
   }
+  else if (handle == toMinMaxCharHandle + 1) {
+  	int16_t min;
+  	int16_t max;
+		if( (min = *((uint16_t *)att_data) & 0xFFF) & 0x800 ) {
+			min |= 0xF000;
+		}
+		att_data += 2;
+		if( (max = *((uint16_t *)att_data) & 0xFFF) & 0x800 ) {
+			max |= 0xF000;
+		}
+
+  	// Минимум-Максимум температур
+  	for( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
+  		// Выставляем Минимум для всех датчиков одинаковую
+  		owToDev[i].tMin = min;
+  		// Выставляем Максимум для всех датчиков одинаковую
+  		owToDev[i].tMax = max;
+  	}
+  }
+
 }
 
 /* Здесь обрабатывается:
@@ -384,14 +394,15 @@ static void readPermitRequest( uint16_t handle, uint8_t offset) {
 			blue.alrmNoReadId &= ~blue.alrmSendId;
 			--blue.alrmNoReadCount;
 			blue.alrmSendId = 0;
+			aci_gatt_update_char_value( workServHandle, alrmNewCharHandle, 0, 1, &blue.alrmNewId );
+			aci_gatt_update_char_value( workServHandle, alrmNewCharHandle, 1, 1, &blue.alrmNewCount );
 		}
-		else {
+		else 		if ( !blue.alrmSendId ) {
 			blue.alrmNoReadId = 0;
 			blue.alrmNoReadCount = 0;
 		}
-
-		aci_gatt_update_char_value( workServHandle, alrmNewCharHandle, 0, 1, &blue.alrmNoReadId );
-		aci_gatt_update_char_value( workServHandle, alrmNewCharHandle, 1, 1, &blue.alrmNoReadCount );
+		aci_gatt_update_char_value( workServHandle, alrmNoReadCharHandle, 0, 1, &blue.alrmNoReadId );
+		aci_gatt_update_char_value( workServHandle, alrmNoReadCharHandle, 1, 1, &blue.alrmNoReadCount );
 	}
 	return;
 }
@@ -417,7 +428,7 @@ void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle)
 #endif  // TERMINAL_ON  
 
 #endif /* PPAIRING_ON */
-
+	alrmCharUpdate();
 }
 
 /**
@@ -462,7 +473,7 @@ tBleStatus pairingComplete( uint8_t status ) {
 }
 #endif /* PAIRING_ON */
 
-void alarmCharUpdate( void ) {
+void alrmCharUpdate( void ) {
 	uint8_t i;
 
 	aci_gatt_update_char_value( workServHandle, alrmIdCharHandle, 0, 1, &blue.alrmId );
@@ -473,28 +484,26 @@ void alarmCharUpdate( void ) {
 			aci_gatt_update_char_value( workServHandle, alrmNewCharHandle, 1, 1, &blue.alrmNewCount );
 			blue.alrmSendId = blue.alrmNewId;
 			blue.alrmNewId = 0;
+			aci_gatt_update_char_value( workServHandle, alrmNoReadCharHandle, 0, 1, &blue.alrmNoReadId );
+			aci_gatt_update_char_value( workServHandle, alrmNoReadCharHandle, 1, 1, &blue.alrmNoReadCount );
 			break;
 		}
 	}
 }
 
 void toCurCharUpdate( void ) {
-	uint16_t data[TO_DEV_NUM];
-	uint8_t alrm = FALSE;
+	int16_t data[TO_DEV_NUM];
 
 	for ( uint8_t i = 0; i < TO_DEV_NUM; i++) {
 		data[i] = owToDev[i].temper;
-		if ( owToDev[i].temper > owToDev[i].tMax ) {
+		if ( data[i] > owToDev[i].tMax ) {
 			alrmUpdate( ALARM_TO_MAX );
 		}
-		else if ( owToDev[i].temper < owToDev[i].tMin ) {
+		else if ( data[i] < owToDev[i].tMin ) {
 			alrmUpdate( ALARM_TO_MAX );
 		}
 	}
 	aci_gatt_update_char_value( workServHandle, toCurCharHandle, 0, 2*TO_DEV_NUM, (uint8_t *)data );
-	if ( alrm ) {
-		alarmCharUpdate();
-	}
 }
 
 void ddCurCharUpdate( void ){
@@ -506,13 +515,26 @@ void ddCurCharUpdate( void ){
 // 	Изменилось ли состояние дверей - отправлять ли тревогу?
 	if ( (ddDev[0].ddData != ddDev[0].ddDataPrev) || (ddDev[1].ddData != ddDev[1].ddDataPrev) ) {
 		alrmUpdate( ALARM_DD_NEW_STATE );
+		ddLogWrite();
+		ddDev[0].ddDataPrev = ddDev[0].ddData;
+		ddDev[1].ddDataPrev = ddDev[1].ddData;
 	}
-	ddDev[0].ddDataPrev = ddDev[0].ddData;
-	ddDev[1].ddDataPrev = ddDev[1].ddData;
 }
 
 void logCharUpdate( uint8_t *data, uint8_t len) {
 	aci_gatt_update_char_value( workServHandle, logCharHandle, 0, len, data );
+}
+
+void rtcCharUpdate( void ){
+	uint32_t xTime = getRtcTime();
+	aci_gatt_update_char_value( workServHandle, timeCharHandle, 0, sizeof(xTime), (uint8_t *)&xTime );
+}
+
+void minMaxCharUpdate( void ){
+	uint16_t min = owToDev[0].tMin & 0xFFF;
+	uint16_t max = owToDev[0].tMax & 0xFFF;
+	aci_gatt_update_char_value( workServHandle, toMinMaxCharHandle, 0, sizeof(uint16_t), (uint8_t *)&min );
+	aci_gatt_update_char_value( workServHandle, toMinMaxCharHandle, 2, sizeof(uint16_t), (uint8_t *)&max );
 }
 
 /**
@@ -620,7 +642,6 @@ void HCI_Event_CB(void *pckt)
           }
 */
           GAP_ConnectionComplete_CB(cc->peer_bdaddr, cc->handle);
-          alarmCharUpdate();
         }
         break;
       case EVT_LE_ADVERTISING_REPORT:
@@ -682,8 +703,8 @@ void HCI_Event_CB(void *pckt)
           	 * - Текущее время
           	 */
             evt_gatt_write_permit_req *evt = (evt_gatt_write_permit_req *)blue_evt->data;
-            aci_gatt_write_response( connection_handle, evt->attr_handle, 
-                                    BLE_STATUS_SUCCESS, RECEIVE_ERR, 
+            aci_gatt_write_response( blue.connHandle, evt->attr_handle,
+                                    BLE_STATUS_SUCCESS, ERR_OK,
                                     evt->data_length, evt->data  );
             writePermitReq(evt->attr_handle, evt->data+1, evt->data_length-1);
           }
@@ -803,6 +824,7 @@ void HCI_Event_CB(void *pckt)
       case EVT_BLUE_GATT_READ_PERMIT_REQ:
           {
             evt_gatt_read_permit_req * grpr = (void *)blue_evt->data;
+            aci_gatt_allow_read( blue.connHandle );
             readPermitRequest( grpr->attr_handle, grpr->offset );
             temp = grpr;
           }

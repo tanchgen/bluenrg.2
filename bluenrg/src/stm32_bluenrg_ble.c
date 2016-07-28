@@ -45,6 +45,7 @@
 #include "my_main.h"
 
 extern __IO uint32_t myTick;
+eError bnrgErr;
 
 /** @addtogroup BSP
  *  @{
@@ -139,7 +140,7 @@ void SpiMspInit(SPI_TypeDef* hspi)
     EXTI_Init( &EXTI_InitStruct );
 
     /* Configure the NVIC for SPI */  
-    NVIC_SetPriority(BNRG_SPI_EXTI_IRQn, 3);
+    NVIC_SetPriority(BNRG_SPI_EXTI_IRQn, 2);
     NVIC_EnableIRQ(BNRG_SPI_EXTI_IRQn);
   }
 }
@@ -240,6 +241,7 @@ int32_t BlueNRG_SPI_Read_All(SPI_TypeDef *hspi, uint8_t *buffer,
   uint8_t len = 0;
   uint8_t char_ff = 0xff;
   volatile uint8_t read_char;
+
 
   uint8_t header_master[HEADER_SIZE] = {0x0b, 0x00, 0x00, 0x00, 0x00};
   uint8_t header_slave[HEADER_SIZE];

@@ -63,21 +63,21 @@
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="STM32F030"/>
 									<listOptionValue builtIn="false" value="HSE_VALUE=16000000"/>
-									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F030x6"/>
 									<listOptionValue builtIn="false" value="BLUENRG=1"/>
 									<listOptionValue builtIn="false" value="WATCHDOG=0"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
+									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.1271471894" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1132819807" name="Cross ARM C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.1618539033" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../inc"/>
-									<listOptionValue builtIn="false" value="../system/inc"/>
-									<listOptionValue builtIn="false" value="../system/inc/cmsis"/>
-									<listOptionValue builtIn="false" value="../system/inc/stm32f0-stdperiph"/>
-									<listOptionValue builtIn="false" value="../bluenrg/inc"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/system/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/system/inc/cmsis&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/system/inc/stm32f0-stdperiph&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/bluenrg/inc&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.39388925" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -88,6 +88,7 @@
 									<listOptionValue builtIn="false" value="BLUENRG=1"/>
 									<listOptionValue builtIn="false" value="WATCHDOG=0"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
+									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.104434050" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
@@ -108,6 +109,7 @@
 									<listOptionValue builtIn="false" value="BLUENRG=1"/>
 									<listOptionValue builtIn="false" value="WATCHDOG=0"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
+									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1785065104" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>
@@ -244,6 +246,7 @@
 									<listOptionValue builtIn="false" value="STM32F030X6"/>
 									<listOptionValue builtIn="false" value="STM32F030x6"/>
 									<listOptionValue builtIn="false" value="BLUENRG"/>
+									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.1488786043" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
 							</tool>
@@ -265,6 +268,7 @@
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F030X6"/>
 									<listOptionValue builtIn="false" value="STM32F030x6"/>
+									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.434642261" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
@@ -289,6 +293,7 @@
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F030X6"/>
 									<listOptionValue builtIn="false" value="STM32F030x6"/>
+									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.674380364" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>
@@ -406,6 +411,7 @@
 									<listOptionValue builtIn="false" value="STM32F030x6"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
 									<listOptionValue builtIn="false" value="BLUENRG"/>
+									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.529657249" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
 							</tool>
@@ -427,6 +433,7 @@
 									<listOptionValue builtIn="false" value="WATCHDOG=0"/>
 									<listOptionValue builtIn="false" value="ONEWIRE=1"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
+									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.438116973" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
@@ -448,6 +455,7 @@
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F030x6"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
+									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1485622951" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>
@@ -575,10 +583,10 @@
 		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.789694001;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.789694001.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.770161307;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.674380364">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354.1114930094;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354.1114930094.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.565591069;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1485622951">
+		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.789694001;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.789694001.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.199379287;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.434642261">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.789694001;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.789694001.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.199379287;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.434642261">
+		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354.1114930094;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354.1114930094.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.565591069;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1485622951">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.1090550073;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1785065104">

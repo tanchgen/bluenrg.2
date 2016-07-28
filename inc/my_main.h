@@ -13,13 +13,25 @@
  *  @{
  */
 /* Exported defines --------------------------------------------------------*/
+
+typedef enum {
+	OW_OK,
+	OW_DEV_OK,
+	OW_WIRE_ERR,
+	OW_DEV_ERR,
+	OW_DEV_NUM_ERR,
+	OW_ERR,
+	LOG_ERR,
+	HW_ERR
+} eErrStatus;
+
 /** 
  * @brief User can use this section to tailor USARTx/UARTx instance used and 
  *        associated resources.
  */
 #define UNUSED(x)						(void)(x)
 
-#define  TICK_INT_PRIORITY            ((uint32_t)0)    /*!< tick interrupt priority (lowest by default)  */
+#define  TICK_INT_PRIORITY            ((uint32_t)3)    /*!< tick interrupt priority (lowest by default)  */
 
 /* Definition for USARTx clock resources */
 #define USARTx                           USART2
@@ -89,7 +101,7 @@ extern volatile uint32_t myTick;
 void getTokenStr( uint8_t ch[] );
 void getShaHash( uint8_t *ch, uint8_t shaHash[] );
 
-void Error_Handler( void );
+void Error_Handler( eErrStatus err );
 
 #endif /* __MAIN_H */
 

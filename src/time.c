@@ -18,19 +18,52 @@
 #include "init.h"
 #include "logger.h"
 #include "thermo.h"
+#include "my_service.h"
 
-tXtime uxTime;
+volatile tXtime uxTime;
 
 // *********** Инициализация структуры ВРЕМЯ (сейчас - системное ) ************
 void timeInit( void ) {
+	uint32_t tempReg;
 	RTC_InitTypeDef rtcInitStruct;
   RTC_DateTypeDef  sdatestructure;
   RTC_TimeTypeDef  stimestructure;
 
+// **************** RTC Clock configuration ***********************
+  RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+  PWR->CR |= PWR_CR_DBP;
+
+  /* Wait for Backup domain Write protection disable */
+
+  for( myTick = 0; !( PWR->CR & PWR_CR_DBP); myTick++) {
+  	if ( myTick == HSE_STARTUP_TIMEOUT) {
+  		Error_Handler( HW_ERR );
+  	}
+  }
+
+  RCC->CSR |= ((uint32_t)RCC_CSR_LSION);
+  for( myTick = 0; !(RCC->CSR & RCC_CSR_LSIRDY); myTick++) {
+  	if ( myTick == HSE_STARTUP_TIMEOUT) {
+  		Error_Handler( HW_ERR );
+  	}
+  }
+
+  /* Store the content of BDCR register before the reset of Backup Domain */
+  tempReg = (RCC->BDCR & ~(RCC_BDCR_RTCSEL));
+  /* RTC Clock selection can be changed only if the Backup Domain is reset */
+  RCC->BDCR |= RCC_BDCR_BDRST;
+  RCC->BDCR &= ~RCC_BDCR_BDRST;
+  /* Restore the Content of BDCR register */
+  RCC->BDCR = tempReg | RCC_BDCR_RTCSEL_LSI;
+
+  RCC->BDCR |= RCC_BDCR_RTCEN;
+
+// ******************** RTC System configuration *************************
+
   RTC_StructInit( &rtcInitStruct );
   RTC_Init( &rtcInitStruct );
   /*##-1- Configure the Date #################################################*/
-  /* Set Date: Tuesday February 18th 2014 */
+  /* Set Date: Wednesday June 1st 2016 */
   sdatestructure.RTC_Year = 16;
   sdatestructure.RTC_Month = RTC_Month_June;
   sdatestructure.RTC_Date = 1;
@@ -39,17 +72,18 @@ void timeInit( void ) {
   if(RTC_SetDate( RTC_Format_BIN ,&sdatestructure ) != SUCCESS)
   {
     /* Initialization Error */
-    Error_Handler();
+    Error_Handler( HW_ERR );
   }
 
   stimestructure.RTC_Hours = 0;
   stimestructure.RTC_Minutes = 0;
   stimestructure.RTC_Seconds = 0;
+  stimestructure.RTC_H12 = 0;
 
   if(RTC_SetTime( rtcInitStruct.RTC_HourFormat ,&stimestructure ) != SUCCESS)
   {
     /* Initialization Error */
-    Error_Handler();
+    Error_Handler( HW_ERR );
   }
 
 }
@@ -80,7 +114,8 @@ int32_t		mon, year;
 
 	/* Calculate number of days. */
 	mon = mdate->RTC_Month - 1;
-	year = mdate->RTC_Year - _TBIAS_YEAR;
+	// Годы считаем от 1900г.
+	year = (mdate->RTC_Year + 100) - _TBIAS_YEAR;
 	days  = Daysto32(year, mon) - 1;
 	days += 365 * year;
 	days += mdate->RTC_Date;
@@ -127,12 +162,13 @@ void xUtime2Tm( tDate * mdate, tTime *mtime, tXtime secsarg){
 	mtime->RTC_Minutes = secs / 60;
 	mtime->RTC_Seconds = secs % 60;
 
-	mdate->RTC_WeekDay = (days + 4) % 7;
+	mdate->RTC_WeekDay = (days + 1) % 7;
 
 	/* determine year */
 	for (year = days / 365; days < (i = Daysto32(year, 0) + 365*year); ) { --year; }
 	days -= i;
-	mdate->RTC_Year = year + _TBIAS_YEAR;
+	// Годы выставляем от эпохи 2000г., а не 1900г., как в UNIX Time
+	mdate->RTC_Year = (year - 100) + _TBIAS_YEAR;
 
 		/* determine month */
 	pm = MONTAB(year);
@@ -179,10 +215,13 @@ void timersHandler( void ) {
 }
 
 void timersProcess( void ) {
+
 	// Таймаут для логгирования температуры
 	if ( toLogCount == 1 ) {
-		toLogCount = toLogTout+1;
+		toLogCount += toLogTout;
 		toLogWrite();
+		rtcCharUpdate();
+		minMaxCharUpdate();
 	}
 	// Таймаут для считывания температуры
 	if ( toReadCount == 1 ) {
@@ -190,7 +229,6 @@ void timersProcess( void ) {
 		toReadTemperature();
 		toCurCharUpdate();
 	}
-
 	// Таймаут для считывания датчиков двери
 	if ( ddReadCount == 1) {
 		ddReadCount += ddReadTout;

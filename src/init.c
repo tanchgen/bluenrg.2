@@ -14,19 +14,18 @@
 #include "eeprom.h"
 #include "my_service.h"
 #include "init.h"
+#include "my_main.h"
 
 uint32_t toLogTout;										// Таймаут для логгирования температуры
 uint32_t toLogCount;
 uint32_t toReadTout;									// Таймаут для считывания температуры
 uint32_t toReadCount;
-uint32_t toMesgTout;									// Таймаут для предачи температуры
-
 uint32_t ddReadTout;										// Таймаут для считывания температуры
 uint32_t ddReadCount;
 
-void Error_Handler( void );
+void Error_Handler( eErrStatus err );
 
-eOwStatus owInit( void ) {
+eErrStatus toInit( void ) {
 
 	uint8_t termNum = 0;
 
@@ -36,6 +35,7 @@ eOwStatus owInit( void ) {
 
   // Находим ow-устройства
 	uint8_t tmpAddr[OW_DEV_NUM*8];
+	memset(tmpAddr, 0x00, OW_DEV_NUM*8);
   owDevNum = OW_Scan( tmpAddr, OW_DEV_NUM );
   // Проверка на наличие необходимых устройств
   for ( uint8_t i =0; i < owDevNum; i++) {
@@ -44,14 +44,16 @@ eOwStatus owInit( void ) {
 			owToDev[termNum++].addr = tmp;
 		}
   }
-	if ( (termNum < TO_DEV_NUM) ) {
+	if ( (!termNum) ) {
 		// Не хватает термометров или не хватает датчиков двери -
 		// предполагаем, что проблема с проводом
+		Error_Handler(OW_WIRE_ERR);
 		return OW_WIRE_ERR;
 	}
-	else if( (termNum > TO_DEV_NUM) ) {
+	else if( (termNum != TO_DEV_NUM) ) {
  		// Количество термометров или всех устройств не соответствует указанным
  		// в "onewire.h"
+
  		return OW_DEV_ERR;
  	}
 
@@ -59,25 +61,22 @@ eOwStatus owInit( void ) {
   for (uint8_t i = 0; i < TO_DEV_NUM; i ++ ){
   	owToDevInit( i );
   }
-// Устанавливаем таймаут сбора информации
-	toLogTout = TO_LOG_TOUT;
-	toLogCount = TO_LOG_TOUT;
 
+  // Устанавливаем таймаут сбора информации
 	toReadTout = TO_READ_TOUT;
 	toReadCount = TO_READ_TOUT;
-
-// Установки для датчиков дверей
-// Устанавливаем таймаут сбора информации
- 	ddReadTout = DD_READ_TOUT;
- 	ddReadCount = DD_READ_TOUT;
 
   return OW_OK;
 }
 
-eOwStatus owToDevInit( uint8_t toDev ) {
-	eOwStatus err = OW_OK;
+eErrStatus owToDevInit( uint8_t toDev ) {
+	eErrStatus err = OW_OK;
 	uint8_t sendBuf[9];
 
+	if ( !owToDev[toDev].addr ) {
+		Error_Handler(OW_WIRE_ERR);
+		return ( owToDev[toDev].devStatus = OW_DEV_ERR );
+	}
 // Выбираем датчик
 // Формируем массив с командой и адресом
 	sendBuf[0] =MATCH_ROM;
@@ -88,9 +87,19 @@ eOwStatus owToDevInit( uint8_t toDev ) {
 		owToDev[toDev].devStatus = OW_DEV_ERR;
 	}
 	else {
+		owToDev[toDev].devStatus = OW_DEV_OK;
 
 // Устанавливаем точность измерения
 		owToDev[toDev].mesurAcc = MESUR_ACC;
+// Выставляем допустимый Минимум температуры
+		if( (owToDev[toDev].tMin = TEMPER_MIN) & 0x800 ) {
+			owToDev[toDev].tMin |= 0xF000;
+		}
+		// Выставляем допустимый Максимум температуры
+		if( (owToDev[toDev].tMax = TEMPER_MAX) & 0x800 ) {
+			owToDev[toDev].tMax |= 0xF000;
+		}
+
 		toSetConfig( &owToDev[toDev] );
 // Сохраняем в ПЗУ
 		toWriteEeprom( &owToDev[toDev] );
@@ -99,7 +108,7 @@ eOwStatus owToDevInit( uint8_t toDev ) {
 	return err;
 }
 
-void ddInit(){
+void ddInit( void ){
 
 	if ( DD_1_PORT == GPIOA ) {
 		// Clock GPIOA enable
@@ -110,7 +119,7 @@ void ddInit(){
 		RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 	}
 	else {
-		Error_Handler();
+		Error_Handler( HW_ERR );
 	}
 
 	if ( DD_2_PORT == GPIOA ) {
@@ -122,26 +131,32 @@ void ddInit(){
 		RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 	}
 	else {
-		Error_Handler();
+		Error_Handler( HW_ERR );
 	}
 
 	// Датчик двери №1
 	DD_1_PORT->MODER &= ~(3 << (DD_1_PIN_NUM*2));			// Выставляем в INPUT
 	DD_1_PORT->OTYPER &= ~(DD_1_PIN);									// PullUp-PullDown
 	DD_1_PORT->PUPDR &= ~(3 << (DD_1_PIN_NUM*2));			// NoPULL
+	DD_1_PORT->PUPDR |= 1 << (DD_1_PIN_NUM*2);				// PULLUP
 	DD_1_PORT->OSPEEDR &= ~(3 << (DD_1_PIN_NUM*2));		// Low Speed
 
 	// Датчик двери №2
 	DD_2_PORT->MODER &= ~(3 << (DD_2_PIN_NUM*2));			// Выставляем в INPUT
 	DD_2_PORT->OTYPER &= ~(DD_2_PIN);									// PullUp-PullDown
 	DD_2_PORT->PUPDR &= ~(3 << (DD_2_PIN_NUM*2));			// NoPULL
+	DD_2_PORT->PUPDR |= 1 << (DD_2_PIN_NUM*2);				// PULLUP
 	DD_2_PORT->OSPEEDR &= ~(3 << (DD_2_PIN_NUM*2));		// Low Speed
 
+	// Установки для датчиков дверей
 	ddDev[0].ddData = 1;
 	ddDev[0].ddDataPrev = 1;
 	ddDev[1].ddData = 1;
 	ddDev[1].ddDataPrev = 1;
 
+	// Устанавливаем таймаут сбора информации
+	 	ddReadTout = DD_READ_TOUT;
+	 	ddReadCount = DD_READ_TOUT;
 }
 
 int8_t logInit( void ){
@@ -180,20 +195,37 @@ int8_t logInit( void ){
 			ddLogBuff.bufAddr = DD_LOG_START_ADDR + sizeof(tLogBuf);
 		}
 	}
+
+	blue.logStatus.toTxe = TRUE;
+	blue.logStatus.ddTxe = TRUE;
+	// Флаг - Запрос очередной записи Лога температуры
+  blue.logStatus.toReq = DISABLE;
+	// Флаг - Запрос очередной записи Лога двери
+	blue.logStatus.ddReq = DISABLE;
+
+	// Таймер для записи логов температуры
+	toLogTout = TO_LOG_TOUT;
+	toLogCount = TO_LOG_TOUT;
+
 	return err;
 }
 
 int8_t alrmInit( void ){
-	blue.alrmId = ALARM_GENERIC | \
-								ALARM_DD_NEW_STATE | \
-								ALARM_TO_MAX | \
-								ALARM_TO_MIN | \
-								ALARM_DD_FAULT | \
-								ALARM_TO_FAULT;
+
+	// Битовая маска Идентификаторов Тревог
+ 	blue.alrmId = ALARM_GENERIC	| \
+	 								ALARM_DD_NEW_STATE | \
+	 								ALARM_TO_MAX | \
+	 								ALARM_TO_MIN | \
+	 								ALARM_DD_FAULT | \
+	 								ALARM_TO_FAULT | \
+									ALARM_LOG_FAULT | \
+									ALARM_HW_FAULT;
 	blue.alrmNewId = 0;
 	blue.alrmNewCount = 0;
 	blue.alrmNoReadId = 0;
 	blue.alrmNoReadCount = 0;
 	blue.alrmSendId = 0;
+
 	return 0;
 }

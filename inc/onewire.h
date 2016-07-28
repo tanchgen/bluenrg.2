@@ -10,7 +10,7 @@
 // для разных процессоров потребуется проверить функцию OW_Init
 // на предмет расположения ножек USART
 #include "stm32f0xx.h"
-
+#include "my_main.h"
 // ****************** Установки для UART *****************************
 // выбираем, на каком USART находится 1-wire
 #define OW_USART1
@@ -32,10 +32,10 @@
 #define OW_TRANS_TOUT		500
 
 #define OW_PORT					GPIOA
-#define OW_TX_PIN				GPIO_Pin_9
-#define OW_TX_PIN_NUM		9
-#define OW_RX_PIN				GPIO_Pin_10
-#define OW_RX_PIN_NUM		10
+#define OW_TX_PIN				GPIO_Pin_2
+#define OW_TX_PIN_NUM		2
+#define OW_RX_PIN				GPIO_Pin_3
+#define OW_RX_PIN_NUM		3
 
 #define DD_1_PORT				GPIOB
 #define DD_1_PIN				GPIO_Pin_0
@@ -47,7 +47,7 @@
 
 #define MAX_TO_DEV_NUM	4
 
-#define TO_DEV_NUM			2				// Количество термометров
+#define TO_DEV_NUM			3				// Количество термометров
 #if (MAX_TO_DEV_NUM < TO_DEV_NUM)
 #error "Число датчиков температуры превышает максимальное для данной EEPROM (128кБ) для Логов"
 #endif
@@ -58,20 +58,12 @@
 #endif
 
 
-typedef enum {
-	OW_OK,
-	OW_WIRE_ERR,
-	OW_DEV_ERR,
-	OW_DEV_NUM_ERR,
-	OW_ERR
-} eOwStatus;
-
 typedef struct {
 	uint64_t addr;						//  Адрес устройства
 	uint8_t  mesurAcc;				//  Точность измерения ( 9-10-11-12 бит )
-	uint16_t tMin;						//  Допустимый максимум температуры
-	uint16_t tMax;						//  Допустимый минимум температуры
-	eOwStatus devStatus;
+	int16_t tMin;						//  Допустимый максимум температуры
+	int16_t tMax;						//  Допустимый минимум температуры
+	eErrStatus devStatus;
 	int16_t	temper;						// Действующее значение температуры
 } tOwToDev;
 
@@ -81,14 +73,6 @@ typedef struct {
 } tDdDev;
 
 #define DD_READ_TOUT				500					// Таймаут считывания датчиков двери
-
-#define TO_LOG_TOUT					60000				// Таймаут логирования датчиков температуры
-#define TO_READ_TOUT				1000				// Таймаут считывания датчиков температуры
-#define TO_MESG_TOUT				1000				// Таймаут передачи показаний датчиков температуры
-#define MESURE_ACCUR				10					// Кол-во разрядов преобразования (10 бит - 0.25C, 12бит - 0.0625)
-
-#define TERM_MAX						0x7D				// Максимальная температура
-#define TERM_MIN						0xC9				// Минимальная температура
 
 // Команды 1-Wire
 #define SEARCH_ROM			0xF0
@@ -112,7 +96,7 @@ typedef struct {
 #define OW_READ_SLOT		0xff
 
 extern uint8_t owDevNum;
-extern eOwStatus owStatus;
+extern eErrStatus owStatus;
 extern tOwToDev owToDev[]; 			// Массив структур устройств 1-Wire;
 extern tDdDev ddDev[]; 			// Массив структур Датчиков Двери 1-Wire;
 
