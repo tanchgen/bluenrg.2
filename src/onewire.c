@@ -283,11 +283,11 @@ static uint8_t OW_Reset() {
 
 
 	// отправляем 0xf0 на скорости 9600
-	USART1->TDR = 0xf0;
+	OW_USART->TDR = 0xf0;
 	while ((OW_USART->ISR & USART_FLAG_TC) == RESET)
 	{}
 
-	USART1->ICR |= USART_ICR_TCCF; /* Clear transfer complete flag */
+	OW_USART->ICR |= USART_ICR_TCCF; /* Clear transfer complete flag */
 
 	owtout = myTick + OW_TRANS_TOUT;
 	// Ждем, пока нe примем байт

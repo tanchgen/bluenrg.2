@@ -1,27 +1,27 @@
 Archive member included because of file (symbol)
 
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
                               ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o (__aeabi_uidiv)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
                               ./src/time.o (__aeabi_idiv)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
-                              /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o) (__aeabi_idiv0)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+                              /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o) (__aeabi_idiv0)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
                               ./system/src/newlib/_sbrk.o (__errno)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
-                              /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o) (_impure_ptr)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
+                              /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o) (_impure_ptr)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
                               ./bluenrg/src/my_service.o (itoa)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
                               ./bluenrg/src/my_service.o (memcpy)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
                               ./src/init.o (memset)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
                               ./bluenrg/src/my_service.o (strcat)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
-                              /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o) (strcpy)
-/home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
-                              /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o) (__utoa)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
+                              /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o) (strcpy)
+/home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
+                              /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o) (__utoa)
 
 Allocating common symbols
 Common symbol       size              file
@@ -2837,51 +2837,51 @@ Discarded input sections
  .debug_macro   0x00000000      0x19c ./bluenrg/src/stm32_bluenrg_ble.o
  .debug_macro   0x00000000       0x6a ./bluenrg/src/stm32_bluenrg_ble.o
  COMMON         0x00000000        0x1 ./bluenrg/src/stm32_bluenrg_ble.o
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
- .text          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
- .text.__errno  0x00000000        0xc /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
- .debug_frame   0x00000000       0x20 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+ .text          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
+ .text.__errno  0x00000000        0xc /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
+ .debug_frame   0x00000000       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
  .ARM.attributes
-                0x00000000       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
- .text          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
+                0x00000000       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-errno.o)
+ .text          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
  .data.impure_data
-                0x00000000      0x428 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
+                0x00000000      0x428 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
  .data._impure_ptr
-                0x00000000        0x4 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
+                0x00000000        0x4 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
  .rodata.str1.4
-                0x00000000        0x2 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
+                0x00000000        0x2 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
  .rodata._global_impure_ptr
-                0x00000000        0x4 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
+                0x00000000        0x4 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
  .ARM.attributes
-                0x00000000       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
- .text          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
- .text          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
- .text          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
- .text          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
- .text          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
- .text          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
- .data          0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
- .bss           0x00000000        0x0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
- .text.utoa     0x00000000        0x8 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
+                0x00000000       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-impure.o)
+ .text          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
+ .text          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+ .text          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
+ .text          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
+ .text          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
+ .text          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
+ .data          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
+ .bss           0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
+ .text.utoa     0x00000000        0x8 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
 
 Memory Configuration
 
@@ -2941,12 +2941,12 @@ LOAD ./bluenrg/src/list.o
 LOAD ./bluenrg/src/my_service.o
 LOAD ./bluenrg/src/osal.o
 LOAD ./bluenrg/src/stm32_bluenrg_ble.o
-LOAD /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libstdc++.a
-LOAD /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libm.a
+LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libstdc++.a
+LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libm.a
 START GROUP
-LOAD /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a
-LOAD /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a
-LOAD /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libc.a
+LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a
+LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a
+LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libc.a
 END GROUP
                 0x20001000                __stack = (ORIGIN (RAM) + 0x1000)
                 0x20001000                _estack = __stack
@@ -3469,30 +3469,30 @@ END GROUP
  .text.BlueNRG_SPI_Write
                 0x08003cfc       0xb0 ./bluenrg/src/stm32_bluenrg_ble.o
                 0x08003cfc                BlueNRG_SPI_Write
- .text          0x08003dac      0x120 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+ .text          0x08003dac      0x120 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
                 0x08003dac                __udivsi3
                 0x08003dac                __aeabi_uidiv
                 0x08003eb8                __aeabi_uidivmod
- .text          0x08003ecc      0x1e0 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
+ .text          0x08003ecc      0x1e0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
                 0x08003ecc                __aeabi_idiv
                 0x08003ecc                __divsi3
                 0x08004098                __aeabi_idivmod
- .text          0x080040ac        0x4 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+ .text          0x080040ac        0x4 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
                 0x080040ac                __aeabi_ldiv0
                 0x080040ac                __aeabi_idiv0
- .text.__itoa   0x080040b0       0x30 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
+ .text.__itoa   0x080040b0       0x30 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
                 0x080040b0                __itoa
- .text.itoa     0x080040e0        0x8 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
+ .text.itoa     0x080040e0        0x8 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
                 0x080040e0                itoa
- .text.memcpy   0x080040e8       0x7c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+ .text.memcpy   0x080040e8       0x7c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
                 0x080040e8                memcpy
- .text.memset   0x08004164       0x8c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
+ .text.memset   0x08004164       0x8c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
                 0x08004164                memset
- .text.strcat   0x080041f0       0x50 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
+ .text.strcat   0x080041f0       0x50 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
                 0x080041f0                strcat
- .text.strcpy   0x08004240       0x10 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
+ .text.strcpy   0x08004240       0x10 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
                 0x08004240                strcpy
- .text.__utoa   0x08004250       0x8c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
+ .text.__utoa   0x08004250       0x8c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
                 0x08004250                __utoa
  *(.rodata .rodata.* .constdata .constdata.*)
  .rodata.str1.4
@@ -3505,7 +3505,7 @@ END GROUP
  .rodata        0x08004310       0x96 ./bluenrg/src/my_service.o
  *fill*         0x080043a6        0x2 
  .rodata.str1.4
-                0x080043a8       0x28 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
+                0x080043a8       0x28 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
                                  0x25 (size before relaxing)
  *(vtable)
  *(.eh_frame*)
@@ -3838,23 +3838,23 @@ END GROUP
  .ARM.attributes
                 0x00000620       0x31 ./bluenrg/src/stm32_bluenrg_ble.o
  .ARM.attributes
-                0x00000651       0x1e /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+                0x00000651       0x1e /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
  .ARM.attributes
-                0x0000066f       0x1e /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
+                0x0000066f       0x1e /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
  .ARM.attributes
-                0x0000068d       0x1e /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+                0x0000068d       0x1e /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
  .ARM.attributes
-                0x000006ab       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
+                0x000006ab       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
  .ARM.attributes
-                0x000006d7       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+                0x000006d7       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
  .ARM.attributes
-                0x00000703       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
+                0x00000703       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
  .ARM.attributes
-                0x0000072f       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
+                0x0000072f       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
  .ARM.attributes
-                0x0000075b       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
+                0x0000075b       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
  .ARM.attributes
-                0x00000787       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
+                0x00000787       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
 
 .debug
  *(.debug)
@@ -4012,7 +4012,7 @@ END GROUP
  .debug_abbrev  0x000037f6       0xcf ./bluenrg/src/osal.o
  .debug_abbrev  0x000038c5      0x366 ./bluenrg/src/stm32_bluenrg_ble.o
 
-.debug_line     0x00000000     0xa4d9
+.debug_line     0x00000000     0xa4c6
  *(.debug_line)
  .debug_line    0x00000000      0x37a ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_line    0x0000037a      0x32d ./system/src/stm32f0-stdperiph/stm32f0xx_exti.o
@@ -4034,19 +4034,19 @@ END GROUP
  .debug_line    0x00004c4b      0x6f2 ./src/logger.o
  .debug_line    0x0000533d      0x724 ./src/main.o
  .debug_line    0x00005a61      0x700 ./src/my_function.o
- .debug_line    0x00006161      0x459 ./src/onewire.o
- .debug_line    0x000065ba      0x464 ./src/stm32xx_it.o
- .debug_line    0x00006a1e      0x4b6 ./src/thermo.o
- .debug_line    0x00006ed4      0x742 ./src/time.o
- .debug_line    0x00007616      0x672 ./bluenrg/src/bluenrg_gap_aci.o
- .debug_line    0x00007c88      0x7b1 ./bluenrg/src/bluenrg_gatt_aci.o
- .debug_line    0x00008439      0x279 ./bluenrg/src/bluenrg_hal_aci.o
- .debug_line    0x000086b2      0x32d ./bluenrg/src/gp_timer.o
- .debug_line    0x000089df      0x8b0 ./bluenrg/src/hci.o
- .debug_line    0x0000928f      0x219 ./bluenrg/src/list.o
- .debug_line    0x000094a8      0x867 ./bluenrg/src/my_service.o
- .debug_line    0x00009d0f      0x27d ./bluenrg/src/osal.o
- .debug_line    0x00009f8c      0x54d ./bluenrg/src/stm32_bluenrg_ble.o
+ .debug_line    0x00006161      0x446 ./src/onewire.o
+ .debug_line    0x000065a7      0x464 ./src/stm32xx_it.o
+ .debug_line    0x00006a0b      0x4b6 ./src/thermo.o
+ .debug_line    0x00006ec1      0x742 ./src/time.o
+ .debug_line    0x00007603      0x672 ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_line    0x00007c75      0x7b1 ./bluenrg/src/bluenrg_gatt_aci.o
+ .debug_line    0x00008426      0x279 ./bluenrg/src/bluenrg_hal_aci.o
+ .debug_line    0x0000869f      0x32d ./bluenrg/src/gp_timer.o
+ .debug_line    0x000089cc      0x8b0 ./bluenrg/src/hci.o
+ .debug_line    0x0000927c      0x219 ./bluenrg/src/list.o
+ .debug_line    0x00009495      0x867 ./bluenrg/src/my_service.o
+ .debug_line    0x00009cfc      0x27d ./bluenrg/src/osal.o
+ .debug_line    0x00009f79      0x54d ./bluenrg/src/stm32_bluenrg_ble.o
 
 .debug_frame    0x00000000     0x2f7c
  *(.debug_frame)
@@ -4083,14 +4083,14 @@ END GROUP
  .debug_frame   0x00002aa4      0x1a8 ./bluenrg/src/my_service.o
  .debug_frame   0x00002c4c       0x40 ./bluenrg/src/osal.o
  .debug_frame   0x00002c8c      0x178 ./bluenrg/src/stm32_bluenrg_ble.o
- .debug_frame   0x00002e04       0x20 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
- .debug_frame   0x00002e24       0x20 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
- .debug_frame   0x00002e44       0x40 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
- .debug_frame   0x00002e84       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
- .debug_frame   0x00002eb0       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
- .debug_frame   0x00002edc       0x2c /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
- .debug_frame   0x00002f08       0x20 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
- .debug_frame   0x00002f28       0x54 /home/jet/work/gcc-arm-none-eabi-4_9-2015q3/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
+ .debug_frame   0x00002e04       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+ .debug_frame   0x00002e24       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
+ .debug_frame   0x00002e44       0x40 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-itoa.o)
+ .debug_frame   0x00002e84       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memcpy.o)
+ .debug_frame   0x00002eb0       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-memset.o)
+ .debug_frame   0x00002edc       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcat.o)
+ .debug_frame   0x00002f08       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-strcpy.o)
+ .debug_frame   0x00002f28       0x54 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg.a(lib_a-utoa.o)
 
 .debug_str      0x00000000    0x47eba
  *(.debug_str)
