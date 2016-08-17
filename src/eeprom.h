@@ -19,10 +19,10 @@
 
 #define EEPROM_I2C						I2C1
 #define I2C_FAST_SPEED				400000
-#define I2C_TIMING						0x00B01A4B
+#define I2C_TIMING						0x00E0D3FF   // 0x00B01A4B
 #define I2C_OWN_ADDR					0x00
 #define I2C_TOUT								100
-#define EEPROM_I2C_ADDR				(0x50)
+#define EEPROM_I2C_ADDR				(0x50<<1)
 #define I2C_TIMEOUT						10
 
 #define I2C_TRANSMITTER_MODE		0

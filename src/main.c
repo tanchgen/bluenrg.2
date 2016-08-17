@@ -55,7 +55,8 @@ int main(void)
 { 
 	myTick = 0;
   // Configure the system clock
-  SetSysClock();
+//  SetSysClock();
+  myDelay(5000);
   timeInit();
   alrmInit();
 
@@ -171,7 +172,7 @@ static void SetSysClock(void)
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE_DIV1;
 
     /* PLL configuration */
-    RCC->CFGR2 |= RCC_CFGR2_PREDIV1_DIV4;
+    RCC->CFGR2 |= RCC_CFGR2_PREDIV1_DIV1;
 
     /* Enable PLL */
     RCC->CR &= ~RCC_CR_PLLON;
@@ -209,8 +210,8 @@ static void SetSysClock(void)
   SysTick_Config(RCC_Clocks.HCLK_Frequency/1000);
   NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
   NVIC_EnableIRQ(SysTick_IRQn);
-#define SYSTICK_CLKSOURCE_HCLK         ((uint32_t)0x00000004)
-  SysTick->CTRL |= SYSTICK_CLKSOURCE_HCLK;
+//#define SYSTICK_CLKSOURCE_HCLK         ((uint32_t)0x00000004)
+//  SysTick->CTRL |= SYSTICK_CLKSOURCE_HCLK;
 
 }
 

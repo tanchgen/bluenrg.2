@@ -122,11 +122,11 @@ int8_t sendEepromAddr( uint32_t addr ) {
 	// Стираем Slave-адрес, Перезагрузку, Автостоп, Чтение-НеЗапись, Старт, Стоп
 	EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | I2C_CR2_RD_WRN | I2C_CR2_START | I2C_CR2_STOP );
 	// Младший бит адреса I2C - старший бит адреса памяти
-	EEPROM_I2C->CR2 |= EEPROM_I2C_ADDR | ((addr >> 16) & 0x1);
+	EEPROM_I2C->CR2 |= EEPROM_I2C_ADDR | ((addr >> 15) & 0x2);
 	// Количество передаваемых байт
 	EEPROM_I2C->CR2 &= ~I2C_CR2_NBYTES;
-	EEPROM_I2C->CR2 |= 2<<16;
-
+	EEPROM_I2C->CR2 |= 3<<16;
+	EEPROM_I2C->CR2 |= I2C_CR2_AUTOEND;
 	// Стартуем
 	EEPROM_I2C->CR2 |= I2C_CR2_START;
 
@@ -316,14 +316,16 @@ void i2cMspInit( void ){
 	EEPROM_PORT->MODER |= 2 << (EEPROM_SCL_PIN_NUM*2);					// Выставляем в Alternate Function
 	EEPROM_PORT->OTYPER &= ~(3 << (EEPROM_SCL_PIN_NUM*2));			// PullUp-PullDown
 	EEPROM_PORT->PUPDR &= ~(3 << (EEPROM_SCL_PIN_NUM*2));			// NoPULL
-	EEPROM_PORT->OSPEEDR &= ~(3 << (EEPROM_SCL_PIN_NUM*2));			// Low Speed
+	EEPROM_PORT->PUPDR |= (1 << (EEPROM_SCL_PIN_NUM*2));			// NoPULL
+	EEPROM_PORT->OSPEEDR |= (3 << (EEPROM_SCL_PIN_NUM*2));			// Low Speed
 	EEPROM_PORT->AFR[EEPROM_SCL_PIN_NUM >> 0x3] |= 4 << ((EEPROM_SCL_PIN_NUM & 0x7) * 4);		// AF4
 
 	// USART RX
 	EEPROM_PORT->MODER |= 2 << (EEPROM_SDA_PIN_NUM*2);					// Выставляем в Alternate Function
 	EEPROM_PORT->OTYPER &= ~(3 << (EEPROM_SDA_PIN_NUM*2));			// PullUp-PullDown
 	EEPROM_PORT->PUPDR &= ~(3 << (EEPROM_SDA_PIN_NUM*2));			// NoPULL
-	EEPROM_PORT->OSPEEDR &= ~(3 << (EEPROM_SDA_PIN_NUM*2));			// Low Speed
+	EEPROM_PORT->PUPDR |= (1 << (EEPROM_SDA_PIN_NUM*2));			// NoPULL
+	EEPROM_PORT->OSPEEDR |= (3 << (EEPROM_SDA_PIN_NUM*2));			// Low Speed
 	EEPROM_PORT->AFR[EEPROM_SDA_PIN_NUM >> 0x3] |= 4 << ((EEPROM_SDA_PIN_NUM & 0x7) * 4);		// AF4
 
 }
