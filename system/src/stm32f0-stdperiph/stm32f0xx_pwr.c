@@ -184,19 +184,21 @@ void PWR_PVDLevelConfig(uint32_t PWR_PVDLevel)
   */
 void PWR_PVDCmd(FunctionalState NewState)
 {
-  /* Check the parameters */
+/*
+  // Check the parameters
   assert_param(IS_FUNCTIONAL_STATE(NewState));
   
   if (NewState != DISABLE)
   {
-    /* Enable the PVD */
+    // Enable the PVD 
     PWR->CR |= PWR_CR_PVDE;
   }
   else
   {
-    /* Disable the PVD */
+    // Disable the PVD 
     PWR->CR &= (uint32_t)~((uint32_t)PWR_CR_PVDE);
   } 
+*/  
 }
 
 /**

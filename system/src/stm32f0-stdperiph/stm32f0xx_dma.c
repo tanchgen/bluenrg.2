@@ -171,19 +171,6 @@ void DMA_DeInit(DMA_Channel_TypeDef* DMAy_Channelx)
     /* Reset interrupt pending bits for DMA1 Channel5 */
     DMA1->IFCR |= DMA1_CHANNEL5_IT_MASK;
   }
-  else if (DMAy_Channelx == DMA1_Channel6)
-  {
-    /* Reset interrupt pending bits for DMA1 Channel6 */
-    DMA1->IFCR |= DMA1_CHANNEL6_IT_MASK;
-  }
-  else
-  {
-    if (DMAy_Channelx == DMA1_Channel7) 
-    {
-      /* Reset interrupt pending bits for DMA1 Channel7 */
-      DMA1->IFCR |= DMA1_CHANNEL7_IT_MASK;
-    }
-  }
 }
 
 /**

@@ -492,7 +492,7 @@ void RCC_PLLConfig(uint32_t RCC_PLLSource, uint32_t RCC_PLLMul)
   assert_param(IS_RCC_PLL_MUL(RCC_PLLMul));
 
   /* Clear PLL Source [16] and Multiplier [21:18] bits */
-  RCC->CFGR &= ~(RCC_CFGR_PLLMULL | RCC_CFGR_PLLSRC);
+  RCC->CFGR &= ~(RCC_CFGR_PLLMUL | RCC_CFGR_PLLSRC);
 
   /* Set the PLL Source and Multiplier */
   RCC->CFGR |= (uint32_t)(RCC_PLLSource | RCC_PLLMul);
@@ -525,32 +525,6 @@ void RCC_PLLCmd(FunctionalState NewState)
 }
 
 /**
-  * @brief  Enables or disables the Internal High Speed oscillator for USB (HSI48).
-  *         This function is only applicable for STM32F072 devices.  
-  * @note   After enabling the HSI48, the application software should wait on 
-  *         HSI48RDY flag to be set indicating that HSI48 clock is stable and can
-  *         be used to clock the USB.
-  * @note   The HSI48 is stopped by hardware when entering STOP and STANDBY modes.
-  * @param  NewState: new state of the HSI48.
-  *          This parameter can be: ENABLE or DISABLE.
-  * @retval None
-  */
-void RCC_HSI48Cmd(FunctionalState NewState)
-{
-  /* Check the parameters */
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-  
-  if (NewState != DISABLE)
-  {
-    RCC->CR2 |= RCC_CR2_HSI48ON;
-  }
-  else
-  {
-    RCC->CR2 &= ~RCC_CR2_HSI48ON;
-  }
-}
-
-/**
   * @brief  Configures the PREDIV1 division factor.
   * @note   This function must be used only when the PLL is disabled.
   * @param  RCC_PREDIV1_Div: specifies the PREDIV1 clock division factor.
@@ -566,7 +540,7 @@ void RCC_PREDIV1Config(uint32_t RCC_PREDIV1_Div)
 
   tmpreg = RCC->CFGR2;
   /* Clear PREDIV1[3:0] bits */
-  tmpreg &= ~(RCC_CFGR2_PREDIV1);
+  tmpreg &= ~(RCC_CFGR2_PREDIV_DIV1);
   /* Set the PREDIV1 division factor */
   tmpreg |= RCC_PREDIV1_Div;
   /* Store the new value */
@@ -664,7 +638,7 @@ void RCC_MCOConfig(uint8_t RCC_MCOSource, uint32_t RCC_MCOPrescaler)
   /* Get CFGR value */  
   tmpreg = RCC->CFGR;
   /* Clear MCOPRE[2:0] bits */
-  tmpreg &= ~(RCC_CFGR_MCO_PRE | RCC_CFGR_MCO | RCC_CFGR_PLLNODIV);
+  tmpreg &= ~(RCC_CFGR_MCOPRE | RCC_CFGR_MCO | RCC_CFGR_PLLNODIV);
   /* Set the RCC_MCOSource and RCC_MCOPrescaler */
   tmpreg |= (RCC_MCOPrescaler | ((uint32_t)RCC_MCOSource<<24));
   /* Store the new value */
@@ -891,10 +865,6 @@ void RCC_ADCCLKConfig(uint32_t RCC_ADCCLK)
   /* Set ADCPRE bits according to RCC_PCLK value */
   RCC->CFGR |= RCC_ADCCLK & 0xFFFF;
 
-  /* Clear ADCSW bit */
-  RCC->CFGR3 &= ~RCC_CFGR3_ADCSW; 
-  /* Set ADCSW bits according to RCC_ADCCLK value */
-  RCC->CFGR3 |= RCC_ADCCLK >> 16;  
 }
 
 /**
@@ -911,8 +881,6 @@ void RCC_CECCLKConfig(uint32_t RCC_CECCLK)
   /* Check the parameters */
   assert_param(IS_RCC_CECCLK(RCC_CECCLK));
 
-  /* Clear CECSW bit */
-  RCC->CFGR3 &= ~RCC_CFGR3_CECSW;
   /* Set CECSW bits according to RCC_CECCLK value */
   RCC->CFGR3 |= RCC_CECCLK;
 }
@@ -968,11 +936,6 @@ void RCC_USARTCLKConfig(uint32_t RCC_USARTCLK)
     /* Clear USART1SW[1:0] bit */  
     RCC->CFGR3 &= ~RCC_CFGR3_USART1SW;
   }
-  else
-  {
-    /* Clear USART2SW[1:0] bit */
-    RCC->CFGR3 &= ~RCC_CFGR3_USART2SW;
-  }
 
   /* Set USARTxSW bits according to RCC_USARTCLK value */
   RCC->CFGR3 |= RCC_USARTCLK;
@@ -993,8 +956,6 @@ void RCC_USBCLKConfig(uint32_t RCC_USBCLK)
   /* Check the parameters */
   assert_param(IS_RCC_USBCLK(RCC_USBCLK));
 
-  /* Clear USBSW bit */
-  RCC->CFGR3 &= ~RCC_CFGR3_USBSW;
   /* Set USBSW bits according to RCC_USBCLK value */
   RCC->CFGR3 |= RCC_USBCLK;
 }
@@ -1058,7 +1019,7 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
       break;
     case 0x08:  /* PLL used as system clock */
       /* Get PLL clock source and multiplication factor ----------------------*/
-      pllmull = RCC->CFGR & RCC_CFGR_PLLMULL;
+      pllmull = RCC->CFGR & RCC_CFGR_PLLMUL;
       pllsource = RCC->CFGR & RCC_CFGR_PLLSRC;
       pllmull = ( pllmull >> 18) + 2;
       
@@ -1069,7 +1030,7 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
       }
       else
       {
-        prediv1factor = (RCC->CFGR2 & RCC_CFGR2_PREDIV1) + 1;
+        prediv1factor = (RCC->CFGR2 & RCC_CFGR2_PREDIV_DIV1) + 1;
         /* HSE oscillator clock selected as PREDIV1 clock entry */
         pllclk = (HSE_VALUE / prediv1factor) * pllmull; 
       }
@@ -1097,15 +1058,7 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
   /* PCLK clock frequency */
   RCC_Clocks->PCLK_Frequency = RCC_Clocks->HCLK_Frequency >> presc;
 
-  /* ADCCLK clock frequency */
-  if((RCC->CFGR3 & RCC_CFGR3_ADCSW) != RCC_CFGR3_ADCSW)
-  {
-    /* ADC Clock is HSI14 Osc. */
-    RCC_Clocks->ADCCLK_Frequency = HSI14_VALUE;
-  }
-  else
-  {
-    if((RCC->CFGR & RCC_CFGR_ADCPRE) != RCC_CFGR_ADCPRE)
+  if((RCC->CFGR & RCC_CFGR_ADCPRE) != RCC_CFGR_ADCPRE)
     {
       /* ADC Clock is derived from PCLK/2 */
       RCC_Clocks->ADCCLK_Frequency = RCC_Clocks->PCLK_Frequency >> 1;
@@ -1115,20 +1068,6 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
       /* ADC Clock is derived from PCLK/4 */
       RCC_Clocks->ADCCLK_Frequency = RCC_Clocks->PCLK_Frequency >> 2;
     }
-    
-  }
-
-  /* CECCLK clock frequency */
-  if((RCC->CFGR3 & RCC_CFGR3_CECSW) != RCC_CFGR3_CECSW)
-  {
-    /* CEC Clock is HSI/244 */
-    RCC_Clocks->CECCLK_Frequency = HSI_VALUE / 244;
-  }
-  else
-  {
-    /* CECC Clock is LSE Osc. */
-    RCC_Clocks->CECCLK_Frequency = LSE_VALUE;
-  }
 
   /* I2C1CLK clock frequency */
   if((RCC->CFGR3 & RCC_CFGR3_I2C1SW) != RCC_CFGR3_I2C1SW)
@@ -1142,13 +1081,7 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
     RCC_Clocks->I2C1CLK_Frequency = RCC_Clocks->SYSCLK_Frequency;
   }
 
-  /* USART1CLK clock frequency */
-  if((RCC->CFGR3 & RCC_CFGR3_USART1SW) == 0x0)
-  {
-    /* USART1 Clock is PCLK */
-    RCC_Clocks->USART1CLK_Frequency = RCC_Clocks->PCLK_Frequency;
-  }
-  else if((RCC->CFGR3 & RCC_CFGR3_USART1SW) == RCC_CFGR3_USART1SW_0)
+  if((RCC->CFGR3 & RCC_CFGR3_USART1SW) == RCC_CFGR3_USART1SW_0)
   {
     /* USART1 Clock is System Clock */
     RCC_Clocks->USART1CLK_Frequency = RCC_Clocks->SYSCLK_Frequency;
@@ -1163,42 +1096,12 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
     /* USART1 Clock is HSI Osc. */
     RCC_Clocks->USART1CLK_Frequency = HSI_VALUE;
   }
-  
-  /* USART2CLK clock frequency */
-  if((RCC->CFGR3 & RCC_CFGR3_USART2SW) == 0x0)
-  {
-    /* USART Clock is PCLK */
-    RCC_Clocks->USART2CLK_Frequency = RCC_Clocks->PCLK_Frequency;
+  else {
+    /* USART1 Clock is PCLK */
+    RCC_Clocks->USART1CLK_Frequency = RCC_Clocks->PCLK_Frequency;
   }
-  else if((RCC->CFGR3 & RCC_CFGR3_USART2SW) == RCC_CFGR3_USART2SW_0)
-  {
-    /* USART Clock is System Clock */
-    RCC_Clocks->USART2CLK_Frequency = RCC_Clocks->SYSCLK_Frequency;
-  }
-  else if((RCC->CFGR3 & RCC_CFGR3_USART2SW) == RCC_CFGR3_USART2SW_1)
-  {
-    /* USART Clock is LSE Osc. */
-    RCC_Clocks->USART2CLK_Frequency = LSE_VALUE;
-  }
-  else if((RCC->CFGR3 & RCC_CFGR3_USART2SW) == RCC_CFGR3_USART2SW)
-  {
-    /* USART Clock is HSI Osc. */
-    RCC_Clocks->USART2CLK_Frequency = HSI_VALUE;
-  }
-  
-  /* USBCLK clock frequency */
-  if((RCC->CFGR3 & RCC_CFGR3_USBSW) != RCC_CFGR3_USBSW)
-  {
-    /* USB Clock is HSI48 */
-    RCC_Clocks->USBCLK_Frequency = HSI48_VALUE;
-  }
-  else
-  {
-    /* USB Clock is PLL clock */
-    RCC_Clocks->USBCLK_Frequency = pllclk;
-  }   
-}
 
+}
 /**
   * @}
   */

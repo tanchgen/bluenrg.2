@@ -50,13 +50,14 @@ eErrStatus toInit( void ) {
 		Error_Handler(OW_WIRE_ERR);
 		return OW_WIRE_ERR;
 	}
+/*
 	else if( (termNum != TO_DEV_NUM) ) {
  		// Количество термометров или всех устройств не соответствует указанным
  		// в "onewire.h"
 
  		return OW_DEV_ERR;
  	}
-
+*/
 	// Установки для термометров
   for (uint8_t i = 0; i < TO_DEV_NUM; i ++ ){
   	owToDevInit( i );
@@ -74,7 +75,8 @@ eErrStatus owToDevInit( uint8_t toDev ) {
 	uint8_t sendBuf[9];
 
 	if ( !owToDev[toDev].addr ) {
-		Error_Handler(OW_WIRE_ERR);
+		owToDev[toDev].newErr = TRUE;
+		Error_Handler(OW_DEV_ERR);
 		return ( owToDev[toDev].devStatus = OW_DEV_ERR );
 	}
 // Выбираем датчик
@@ -83,10 +85,12 @@ eErrStatus owToDevInit( uint8_t toDev ) {
 	*((uint64_t *)&sendBuf[1]) = owToDev[toDev].addr;
 // Отправляем в шину
 	if ((err = OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_DEV_ERR ) {
+		owToDev[toDev].newErr = TRUE;
 		owToDev[toDev].addr = 0;
 		owToDev[toDev].devStatus = OW_DEV_ERR;
 	}
 	else {
+		owToDev[toDev].newErr = FALSE;
 		owToDev[toDev].devStatus = OW_DEV_OK;
 
 // Устанавливаем точность измерения

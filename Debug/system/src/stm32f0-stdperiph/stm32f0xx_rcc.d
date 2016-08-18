@@ -2,9 +2,9 @@ system/src/stm32f0-stdperiph/stm32f0xx_rcc.o: \
  ../system/src/stm32f0-stdperiph/stm32f0xx_rcc.c \
  /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_rcc.h \
  /home/jet/work/workspace/expedition/system/inc/cmsis/stm32f0xx.h \
+ /home/jet/work/workspace/expedition/system/inc/cmsis/stm32f030x6.h \
  /home/jet/work/workspace/expedition/system/inc/cmsis/core_cm0.h \
  /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmInstr.h \
- /home/jet/work/workspace/expedition/system/inc/cmsis/cmsis_gcc.h \
  /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmFunc.h \
  /home/jet/work/workspace/expedition/system/inc/cmsis/system_stm32f0xx.h \
  /home/jet/work/workspace/expedition/inc/stm32f0xx_conf.h \
@@ -21,11 +21,11 @@ system/src/stm32f0-stdperiph/stm32f0xx_rcc.o: \
 
 /home/jet/work/workspace/expedition/system/inc/cmsis/stm32f0xx.h:
 
+/home/jet/work/workspace/expedition/system/inc/cmsis/stm32f030x6.h:
+
 /home/jet/work/workspace/expedition/system/inc/cmsis/core_cm0.h:
 
 /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmInstr.h:
-
-/home/jet/work/workspace/expedition/system/inc/cmsis/cmsis_gcc.h:
 
 /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmFunc.h:
 

@@ -620,19 +620,21 @@ void ADC_VrefintCmd(FunctionalState NewState)
   */
 void ADC_VbatCmd(FunctionalState NewState)
 {
-  /* Check the parameters */
+/*
+  // Check the parameters 
   assert_param(IS_FUNCTIONAL_STATE(NewState));
 
   if (NewState != DISABLE)
   {
-    /* Enable the Vbat channel*/
+    // Enable the Vbat channel
     ADC->CCR |= (uint32_t)ADC_CCR_VBATEN;
   }
   else
   {
-    /* Disable the Vbat channel*/
+    // Disable the Vbat channel
     ADC->CCR &= (uint32_t)(~ADC_CCR_VBATEN);
   }
+*/
 }
 
 /**

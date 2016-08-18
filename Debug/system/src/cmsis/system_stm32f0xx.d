@@ -1,9 +1,9 @@
 system/src/cmsis/system_stm32f0xx.o: \
  ../system/src/cmsis/system_stm32f0xx.c \
  /home/jet/work/workspace/expedition/system/inc/cmsis/stm32f0xx.h \
+ /home/jet/work/workspace/expedition/system/inc/cmsis/stm32f030x6.h \
  /home/jet/work/workspace/expedition/system/inc/cmsis/core_cm0.h \
  /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmInstr.h \
- /home/jet/work/workspace/expedition/system/inc/cmsis/cmsis_gcc.h \
  /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmFunc.h \
  /home/jet/work/workspace/expedition/system/inc/cmsis/system_stm32f0xx.h \
  /home/jet/work/workspace/expedition/inc/stm32f0xx_conf.h \
@@ -19,11 +19,11 @@ system/src/cmsis/system_stm32f0xx.o: \
 
 /home/jet/work/workspace/expedition/system/inc/cmsis/stm32f0xx.h:
 
+/home/jet/work/workspace/expedition/system/inc/cmsis/stm32f030x6.h:
+
 /home/jet/work/workspace/expedition/system/inc/cmsis/core_cm0.h:
 
 /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmInstr.h:
-
-/home/jet/work/workspace/expedition/system/inc/cmsis/cmsis_gcc.h:
 
 /home/jet/work/workspace/expedition/system/inc/cmsis/core_cmFunc.h:
 

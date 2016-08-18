@@ -48,15 +48,15 @@ void i2cInit( void ) {
 	i2cMspInit();
 
 	// Set values
-	I2C_InitStruct.I2C_Timing = I2C_TIMING;
+	I2C_InitStruct.I2C_Timing = 0x00B01A4B; // I2C_TIMING;
 	I2C_InitStruct.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
 	I2C_InitStruct.I2C_Mode = I2C_Mode_I2C;
 	I2C_InitStruct.I2C_OwnAddress1 = I2C_OWN_ADDR;
-	I2C_InitStruct.I2C_Ack = I2C_Ack_Disable;
-
+	I2C_InitStruct.I2C_Ack = I2C_Ack_Enable;
+  I2C_InitStruct.I2C_AnalogFilter = I2C_AnalogFilter_Enable;
+  I2C_InitStruct.I2C_DigitalFilter = 4;
 	// Disable I2C first
 	EEPROM_I2C->CR1 &= ~I2C_CR1_PE;
-
 	// Initialize I2C
 	I2C_Init(EEPROM_I2C, &I2C_InitStruct);
 
@@ -75,17 +75,21 @@ int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	 */
 
 	if(eeprom.status != EPR_READY) {
-		return -1;
+		return eeprom.status;
 	}
 
-	if ( (eeprom.status = sendEepromAddr(addr)) != EPR_READY ) {
-		return -1;
+	if ( (sendEepromAddr(addr)) != EPR_OK) {
+			return eeprom.status;
 	}
-  return eepromSend( data, len);
+	if ( (eeprom.status = eepromSend( data, len)) == EPR_OK ){
+	  eeprom.status = EPR_READY;
+		return EPR_OK;
+	}
+	return eeprom.status;
 }
 
 eEprStatus receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
-	/* TODO: Чтение данных из EPROM
+	/* Чтение данных из EPROM
 	 * addr - стартовый адрес в Eprom
 	 * data - Указатель на буфер, куда будут складываться данные
 	 * len - длина записываемых данных в байта
@@ -96,17 +100,20 @@ eEprStatus receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 		return eeprom.status;
 	}
 
-	if ( (eeprom.status = sendEepromAddr(addr)) != EPR_READY ) {
+	if ( (sendEepromAddr(addr)) != EPR_OK) {
 			return eeprom.status;
 	}
 	if ( (eeprom.status = eepromRead( data, len)) == EPR_OK ){
 	  eeprom.status = EPR_READY;
+		return EPR_OK;
 	}
-	return EPR_OK;
+	return eeprom.status;
 }
 
 int8_t sendEepromAddr( uint32_t addr ) {
 	uint32_t tout;
+
+	eeprom.status = EPR_BUSY;
 
 	while( (EEPROM_I2C->ISR & I2C_ISR_ARLO) ){
 		goto eprFault;
@@ -125,7 +132,7 @@ int8_t sendEepromAddr( uint32_t addr ) {
 	EEPROM_I2C->CR2 |= EEPROM_I2C_ADDR | ((addr >> 15) & 0x2);
 	// Количество передаваемых байт
 	EEPROM_I2C->CR2 &= ~I2C_CR2_NBYTES;
-	EEPROM_I2C->CR2 |= 3<<16;
+	EEPROM_I2C->CR2 |= 2<<16;
 	EEPROM_I2C->CR2 |= I2C_CR2_AUTOEND;
 	// Стартуем
 	EEPROM_I2C->CR2 |= I2C_CR2_START;
@@ -143,12 +150,14 @@ int8_t sendEepromAddr( uint32_t addr ) {
 		}
 	}
 	EEPROM_I2C->TXDR = addr & 0xFF;
-	while ( !(EEPROM_I2C->ISR & I2C_ISR_TC) ){
+	while ( !(EEPROM_I2C->ISR & I2C_ISR_STOPF) ){
 		if ( myTick > tout ){
 			goto eprFault;
 		}
 	}
-	return EPR_READY;
+  /* Clear STOP Flag */
+  EEPROM_I2C->ICR |= I2C_ICR_STOPCF;
+	return EPR_OK;
 
 	eprFault:
 		I2C_Cmd( EEPROM_I2C, DISABLE );
@@ -160,12 +169,8 @@ int8_t sendEepromAddr( uint32_t addr ) {
 
 int8_t eepromSend(  uint8_t * data, uint16_t len ){
 	uint32_t tout;
-	if(eeprom.status != EPR_READY) {
-		return eeprom.status;
-	}
-	eeprom.status = EPR_BUSY;
 
-	EEPROM_I2C->CR1 &= ~(I2C_IT_ERRI | I2C_IT_TCI| I2C_IT_STOPI| I2C_IT_NACKI | I2C_IT_TXI);
+	EEPROM_I2C->CR1 &= ~(I2C_IT_ERRI);
 
 	// Количество передаваемых байт
 	EEPROM_I2C->CR2 &= ~I2C_CR2_NBYTES;
@@ -189,33 +194,36 @@ int8_t eepromSend(  uint8_t * data, uint16_t len ){
 		EEPROM_I2C->TXDR = *(data++);
 	}
 	tout = myTick + I2C_TOUT;
-	while ( !(EEPROM_I2C->ISR & I2C_ISR_TC) ){
+	while ( !(EEPROM_I2C->ISR & I2C_ISR_STOPF) ) {
 		if ( myTick > tout ){
-			goto eprFault;
+			return EPR_TIMEOUT;
 		}
 	}
-	return EPR_READY;
+  /* Clear STOP Flag */
+  EEPROM_I2C->ICR |= I2C_ICR_STOPCF;
+  /* Disable ERR, TC, STOP, NACK, TXI interrupt */
+  EEPROM_I2C->CR1 &= ~(I2C_IT_ERRI);
+
+  /* Clear Configuration Register 2 */
+  EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_HEAD10R | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND );
+
+	return EPR_OK;
 
 	eprFault:
 		I2C_Cmd( EEPROM_I2C, DISABLE );
 		NVIC_DisableIRQ( I2C1_IRQn );
 		Error_Handler( LOG_ERR );
 		return (eeprom.status = EPR_ERR);
-
-
-	return EPR_OK;
 }
 
 int8_t eepromRead( uint8_t * data, uint16_t len ){
-	if(eeprom.status != EPR_READY) {
-		return eeprom.status;
-	}
-	eeprom.status = EPR_BUSY;
+
 	eeprom.rxSize = len;
 	eeprom.count = len;
 	eeprom.rxPtr = data;
 
-	EEPROM_I2C->CR1 |= I2C_IT_ERRI | I2C_IT_TCI| I2C_IT_STOPI| I2C_IT_NACKI | I2C_IT_TXI;
+//	EEPROM_I2C->CR1 |= I2C_IT_ERRI | I2C_IT_TCI| I2C_IT_STOPI| I2C_IT_NACKI | I2C_IT_TXI;
+        EEPROM_I2C->CR1 |= I2C_IT_ERRI;
 
 	// Количество передаваемых байт
 	EEPROM_I2C->CR2 &= ~I2C_CR2_NBYTES;
@@ -241,19 +249,19 @@ int8_t eepromRead( uint8_t * data, uint16_t len ){
 		eeprom.count--;
 		eeprom.rxSize++;
 	}
-	while ( EEPROM_I2C->ISR & I2C_ISR_STOPF) {
+	while ( !(EEPROM_I2C->ISR & I2C_ISR_STOPF) ) {
 		if ( myTick > tout ){
 			return EPR_TIMEOUT;
 		}
 	}
-  /* Disable ERR, TC, STOP, NACK, TXI interrupt */
-  EEPROM_I2C->CR1 &= ~(I2C_IT_ERRI | I2C_IT_TCI| I2C_IT_STOPI| I2C_IT_NACKI | I2C_IT_TXI);
-
   /* Clear STOP Flag */
   EEPROM_I2C->ICR |= I2C_ICR_STOPCF;
 
+  /* Disable ERR, TC, STOP, NACK, TXI interrupt */
+  EEPROM_I2C->CR1 &= ~(I2C_IT_ERRI);
+
   /* Clear Configuration Register 2 */
-  EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_HEAD10R | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_RD_WRN);
+  EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_HEAD10R | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND );
 
 	return EPR_OK;
 }
@@ -315,6 +323,7 @@ void i2cMspInit( void ){
 	// EEPROM I2C CLK
 	EEPROM_PORT->MODER |= 2 << (EEPROM_SCL_PIN_NUM*2);					// Выставляем в Alternate Function
 	EEPROM_PORT->OTYPER &= ~(3 << (EEPROM_SCL_PIN_NUM*2));			// PullUp-PullDown
+	EEPROM_PORT->OTYPER |= EEPROM_SCL_PIN;      			// PullUp-PullDown
 	EEPROM_PORT->PUPDR &= ~(3 << (EEPROM_SCL_PIN_NUM*2));			// NoPULL
 	EEPROM_PORT->PUPDR |= (1 << (EEPROM_SCL_PIN_NUM*2));			// NoPULL
 	EEPROM_PORT->OSPEEDR |= (3 << (EEPROM_SCL_PIN_NUM*2));			// Low Speed
@@ -323,6 +332,7 @@ void i2cMspInit( void ){
 	// USART RX
 	EEPROM_PORT->MODER |= 2 << (EEPROM_SDA_PIN_NUM*2);					// Выставляем в Alternate Function
 	EEPROM_PORT->OTYPER &= ~(3 << (EEPROM_SDA_PIN_NUM*2));			// PullUp-PullDown
+	EEPROM_PORT->OTYPER |= EEPROM_SDA_PIN;    	        		// PullUp-PullDown
 	EEPROM_PORT->PUPDR &= ~(3 << (EEPROM_SDA_PIN_NUM*2));			// NoPULL
 	EEPROM_PORT->PUPDR |= (1 << (EEPROM_SDA_PIN_NUM*2));			// NoPULL
 	EEPROM_PORT->OSPEEDR |= (3 << (EEPROM_SDA_PIN_NUM*2));			// Low Speed

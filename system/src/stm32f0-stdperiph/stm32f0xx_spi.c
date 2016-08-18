@@ -178,16 +178,6 @@ void SPI_I2S_DeInit(SPI_TypeDef* SPIx)
     /* Release SPI1 from reset state */
     RCC_APB2PeriphResetCmd(RCC_APB2Periph_SPI1, DISABLE);
   }
-  else
-  {
-    if (SPIx == SPI2)
-    {
-      /* Enable SPI2 reset state */
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_SPI2, ENABLE);
-      /* Release SPI2 from reset state */
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_SPI2, DISABLE);
-    }
-  }
 }
 
 /**

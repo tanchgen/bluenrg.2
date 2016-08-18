@@ -60,8 +60,9 @@ uint8_t OW_Init() {
 		// USART TX
 		OW_PORT->MODER |= 2 << (OW_TX_PIN_NUM*2);					// Выставляем в Alternate Function
 		OW_PORT->OTYPER &= ~(OW_TX_PIN);			// PullUp-PullDown
+		OW_PORT->OTYPER |= OW_TX_PIN;			        // Open-Drain
 		OW_PORT->PUPDR &= ~(3 << (OW_TX_PIN_NUM*2));			// NoPULL
-		OW_PORT->PUPDR |= 1 << (OW_TX_PIN_NUM*2);			// PULLUP
+//		OW_PORT->PUPDR |= 1 << (OW_TX_PIN_NUM*2);			// PULLUP
 		OW_PORT->OSPEEDR &= ~(3 << (OW_TX_PIN_NUM*2));			// Low Speed
 		OW_PORT->AFR[OW_TX_PIN_NUM >> 0x3] |= 1 << ((OW_TX_PIN_NUM & 0x7) * 4);		// AF1
 
@@ -192,7 +193,7 @@ uint8_t OW_Scan(uint8_t *buf, uint8_t num) {
 // readStart - с какого символа передачи начинать чтение (нумеруются с 0)
 //		можно указать OW_NO_READ, тогда можно не задавать data и dLen
 //-----------------------------------------------------------------------------
-uint8_t OW_Send(uint8_t sendReset, uint8_t *command, uint8_t cLen,
+eErrStatus OW_Send(uint8_t sendReset, uint8_t *command, uint8_t cLen,
 		uint8_t *data, uint8_t dLen, uint8_t readStart) {
 
 	// если требуется сброс - сбрасываем и проверяем на наличие устройств
@@ -209,7 +210,7 @@ uint8_t OW_Send(uint8_t sendReset, uint8_t *command, uint8_t cLen,
 		cLen--;
 
 		if (OW_SendBits(8) < 0) {
-			return -1;
+			return OW_DEV_ERR;
 		}
 
 		// если прочитанные данные кому-то нужны - выкинем их в буфер
@@ -294,7 +295,10 @@ static uint8_t OW_Reset() {
 	while ( (OW_USART->ISR & USART_ISR_RXNE) == RESET){
 		if ( myTick > owtout ) {
 			for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
-				owToDev[i].devStatus = OW_DEV_ERR;
+				if( !owToDev[i].devStatus == OW_DEV_OK ){
+					owToDev[i].devStatus = OW_DEV_ERR;
+					owToDev[i].newErr = TRUE;
+				}
 			}
 		}
 	}

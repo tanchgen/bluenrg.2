@@ -22,7 +22,7 @@ int8_t logWriteBuff( tLogBuf * buf, uint8_t * data ) {
 		buf->begin = 0;
 	}
 //	*(buf->bufAddr + buf->end) = data;
-	if( sendEeprom( (buf->bufAddr + buf->end * buf->size), data, buf->size ) < 0 ){
+	if( sendEeprom( (buf->bufAddr + buf->end * buf->size), data, buf->size )){
 		return -1;
 	}
 
@@ -34,7 +34,7 @@ int8_t logWriteBuff( tLogBuf * buf, uint8_t * data ) {
 		buf->full = 1;
 	}
 	// Сохраняем состояние данных буфера логгера
-	if( sendEeprom( (buf->bufAddr - sizeof(tLogBuf)), (uint8_t *)buf, sizeof(tLogBuf) ) < 0) {
+	if( sendEeprom( (buf->bufAddr - sizeof(tLogBuf)), (uint8_t *)buf, sizeof(tLogBuf) ) ) {
 		return -1;
 	}
 

@@ -334,7 +334,6 @@ ErrorStatus RTC_DeInit(void)
   {
     /* Reset TR, DR and CR registers */
     RTC->TR        = (uint32_t)0x00000000;
-    RTC->WUTR      = (uint32_t)0x0000FFFF;
     RTC->DR        = (uint32_t)0x00002101;
     RTC->CR        &= (uint32_t)0x00000000;
     RTC->PRER      = (uint32_t)0x007F00FF;
@@ -1384,148 +1383,6 @@ uint32_t RTC_GetAlarmSubSecond(uint32_t RTC_Alarm)
   * @}
   */
 
-/** @defgroup RTC_Group4 WakeUp Timer configuration functions
- *  @brief   WakeUp Timer configuration functions 
- *
-@verbatim   
- ===============================================================================
-            ##### WakeUp Timer configuration functions #####
- ===============================================================================  
-
-    [..] This section provide functions allowing to program and read the RTC WakeUp.
-
-@endverbatim
-  * @{
-  */
-
-/**
-  * @brief  Configures the RTC Wakeup clock source.
-  *         This function is available for STM32F072 devices.  
-  * @note   The WakeUp Clock source can only be changed when the RTC WakeUp
-  *         is disabled (Use the RTC_WakeUpCmd(DISABLE)).
-  * @param  RTC_WakeUpClock: Wakeup Clock source.
-  *          This parameter can be one of the following values:
-  *            @arg RTC_WakeUpClock_RTCCLK_Div16
-  *            @arg RTC_WakeUpClock_RTCCLK_Div8
-  *            @arg RTC_WakeUpClock_RTCCLK_Div4
-  *            @arg RTC_WakeUpClock_RTCCLK_Div2
-  *            @arg RTC_WakeUpClock_CK_SPRE_16bits
-  *            @arg RTC_WakeUpClock_CK_SPRE_17bits
-  * @retval None
-  */
-void RTC_WakeUpClockConfig(uint32_t RTC_WakeUpClock)
-{
-  /* Check the parameters */
-  assert_param(IS_RTC_WAKEUP_CLOCK(RTC_WakeUpClock));
-
-  /* Disable the write protection for RTC registers */
-  RTC->WPR = 0xCA;
-  RTC->WPR = 0x53;
-
-  /* Clear the Wakeup Timer clock source bits in CR register */
-  RTC->CR &= (uint32_t)~RTC_CR_WUCKSEL;
-
-  /* Configure the clock source */
-  RTC->CR |= (uint32_t)RTC_WakeUpClock;
-  
-  /* Enable the write protection for RTC registers */
-  RTC->WPR = 0xFF;
-}
-
-/**
-  * @brief  Configures the RTC Wakeup counter.
-  *         This function is available for STM32F072 devices.  
-  * @note   The RTC WakeUp counter can only be written when the RTC WakeUp
-  *         is disabled (Use the RTC_WakeUpCmd(DISABLE)).
-  * @param  RTC_WakeUpCounter: specifies the WakeUp counter.
-  *          This parameter can be a value from 0x0000 to 0xFFFF. 
-  * @retval None
-  */
-void RTC_SetWakeUpCounter(uint32_t RTC_WakeUpCounter)
-{
-  /* Check the parameters */
-  assert_param(IS_RTC_WAKEUP_COUNTER(RTC_WakeUpCounter));
-  
-  /* Disable the write protection for RTC registers */
-  RTC->WPR = 0xCA;
-  RTC->WPR = 0x53;
-  
-  /* Configure the Wakeup Timer counter */
-  RTC->WUTR = (uint32_t)RTC_WakeUpCounter;
-  
-  /* Enable the write protection for RTC registers */
-  RTC->WPR = 0xFF;
-}
-
-/**
-  * @brief  Returns the RTC WakeUp timer counter value.
-  *         This function is available for STM32F072 devices.  
-  * @param  None
-  * @retval The RTC WakeUp Counter value.
-  */
-uint32_t RTC_GetWakeUpCounter(void)
-{
-  /* Get the counter value */
-  return ((uint32_t)(RTC->WUTR & RTC_WUTR_WUT));
-}
-
-/**
-  * @brief  Enables or Disables the RTC WakeUp timer.
-  *         This function is available for STM32F072 devices.  
-  * @param  NewState: new state of the WakeUp timer.
-  *          This parameter can be: ENABLE or DISABLE.
-  * @retval None
-  */
-ErrorStatus RTC_WakeUpCmd(FunctionalState NewState)
-{
-  __IO uint32_t wutcounter = 0x00;
-  uint32_t wutwfstatus = 0x00;
-  ErrorStatus status = ERROR;
-  
-  /* Check the parameters */
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-
-  /* Disable the write protection for RTC registers */
-  RTC->WPR = 0xCA;
-  RTC->WPR = 0x53;
-
-  if (NewState != DISABLE)
-  {
-    /* Enable the Wakeup Timer */
-    RTC->CR |= (uint32_t)RTC_CR_WUTE;
-    status = SUCCESS;    
-  }
-  else
-  {
-    /* Disable the Wakeup Timer */
-    RTC->CR &= (uint32_t)~RTC_CR_WUTE;
-    /* Wait till RTC WUTWF flag is set and if Time out is reached exit */
-    do
-    {
-      wutwfstatus = RTC->ISR & RTC_ISR_WUTWF;
-      wutcounter++;  
-    } while((wutcounter != INITMODE_TIMEOUT) && (wutwfstatus == 0x00));
-    
-    if ((RTC->ISR & RTC_ISR_WUTWF) == RESET)
-    {
-      status = ERROR;
-    }
-    else
-    {
-      status = SUCCESS;
-    }    
-  }
-
-  /* Enable the write protection for RTC registers */
-  RTC->WPR = 0xFF;
-  
-  return status;
-}
-
-/**
-  * @}
-  */
-
 /** @defgroup RTC_Group5 Daylight Saving configuration functions
  *  @brief   Daylight Saving configuration functions 
  *
@@ -1702,7 +1559,7 @@ void RTC_CalibOutputConfig(uint32_t RTC_CalibOutput)
   RTC->WPR = 0x53;
   
   /*clear flags before config*/
-  RTC->CR &= (uint32_t)~(RTC_CR_CALSEL);
+  RTC->CR &= (uint32_t)~(RTC_CR_COSEL);
 
   /* Configure the RTC_CR register */
   RTC->CR |= (uint32_t)RTC_CalibOutput;

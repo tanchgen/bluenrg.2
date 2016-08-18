@@ -181,24 +181,6 @@ void USART_DeInit(USART_TypeDef* USARTx)
     RCC_APB2PeriphResetCmd(RCC_APB2Periph_USART1, ENABLE);
     RCC_APB2PeriphResetCmd(RCC_APB2Periph_USART1, DISABLE);
   }
-  else if (USARTx == USART2)
-  {
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART2, ENABLE);
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART2, DISABLE);
-  }
-  else if (USARTx == USART3)
-  {
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART3, ENABLE);
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART3, DISABLE);
-  }
-  else 
-  {
-    if  (USARTx == USART4)
-    {
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART4, ENABLE);
-      RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART4, DISABLE);
-    }
-  }
 }
 
 /**
@@ -274,10 +256,6 @@ void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct)
   if (USARTx == USART1)
   {
     apbclock = RCC_ClocksStatus.USART1CLK_Frequency;
-  }
-  else if (USARTx == USART2)
-  {
-    apbclock = RCC_ClocksStatus.USART2CLK_Frequency;
   }
   else
   {

@@ -154,13 +154,6 @@ void I2C_DeInit(I2C_TypeDef* I2Cx)
     /* Release I2C1 from reset state */
     RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, DISABLE);
   }
-  else
-  {
-    /* Enable I2C2 reset state */
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C2, ENABLE);
-    /* Release I2C2 from reset state */
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C2, DISABLE);
-  }
 }
 
 /**
@@ -195,7 +188,7 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
   /* Configure I2Cx: analog and digital filter */
   /* Set ANFOFF bit according to I2C_AnalogFilter value */
   /* Set DFN bits according to I2C_DigitalFilter value */
-  tmpreg |= (uint32_t)I2C_InitStruct->I2C_AnalogFilter |(I2C_InitStruct->I2C_DigitalFilter << 8);
+  tmpreg |= (uint32_t)I2C_InitStruct->I2C_AnalogFilter ;//|(I2C_InitStruct->I2C_DigitalFilter << 8);
 
   /* Write to I2Cx CR1 */
   I2Cx->CR1 = tmpreg;

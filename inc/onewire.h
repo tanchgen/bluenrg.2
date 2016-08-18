@@ -64,6 +64,7 @@ typedef struct {
 	int16_t tMin;						//  Допустимый максимум температуры
 	int16_t tMax;						//  Допустимый минимум температуры
 	eErrStatus devStatus;
+	uint8_t newErr;					//	Признак новой ошибки
 	int16_t	temper;						// Действующее значение температуры
 } tOwToDev;
 

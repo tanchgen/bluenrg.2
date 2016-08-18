@@ -201,36 +201,16 @@ void TIM_DeInit(TIM_TypeDef* TIMx)
     RCC_APB2PeriphResetCmd(RCC_APB2Periph_TIM1, ENABLE);
     RCC_APB2PeriphResetCmd(RCC_APB2Periph_TIM1, DISABLE);  
   }     
-  else if (TIMx == TIM2)
-  {
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM2, ENABLE);
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM2, DISABLE);
-  }
   else if (TIMx == TIM3)
   {
     RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM3, ENABLE);
     RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM3, DISABLE);
-  }
-  else if (TIMx == TIM6)
-  {
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM6, ENABLE);
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM6, DISABLE);
-  } 
-  else if (TIMx == TIM7)
-  {
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM7, ENABLE);
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM7, DISABLE);
   }
   else if (TIMx == TIM14) 
   {       
     RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM14, ENABLE);
     RCC_APB1PeriphResetCmd(RCC_APB1Periph_TIM14, DISABLE);  
   }        
-  else if (TIMx == TIM15)
-  {
-    RCC_APB2PeriphResetCmd(RCC_APB2Periph_TIM15, ENABLE);
-    RCC_APB2PeriphResetCmd(RCC_APB2Periph_TIM15, DISABLE);
-  } 
   else if (TIMx == TIM16)
   {
     RCC_APB2PeriphResetCmd(RCC_APB2Periph_TIM16, ENABLE);
@@ -271,19 +251,13 @@ void TIM_TimeBaseInit(TIM_TypeDef* TIMx, TIM_TimeBaseInitTypeDef* TIM_TimeBaseIn
 
   tmpcr1 = TIMx->CR1;  
 
-  if((TIMx == TIM1) || (TIMx == TIM2) || (TIMx == TIM3))
+  if((TIMx == TIM1) || (TIMx == TIM3))
   {
     /* Select the Counter Mode */
     tmpcr1 &= (uint16_t)(~((uint16_t)(TIM_CR1_DIR | TIM_CR1_CMS)));
     tmpcr1 |= (uint32_t)TIM_TimeBaseInitStruct->TIM_CounterMode;
   }
  
-  if(TIMx != TIM6)
-  {
-    /* Set the clock division */
-    tmpcr1 &= (uint16_t)(~((uint16_t)TIM_CR1_CKD));
-    tmpcr1 |= (uint32_t)TIM_TimeBaseInitStruct->TIM_ClockDivision;
-  }
 
   TIMx->CR1 = tmpcr1;
 
@@ -293,7 +267,7 @@ void TIM_TimeBaseInit(TIM_TypeDef* TIMx, TIM_TimeBaseInitTypeDef* TIM_TimeBaseIn
   /* Set the Prescaler value */
   TIMx->PSC = TIM_TimeBaseInitStruct->TIM_Prescaler;
     
-  if ((TIMx == TIM1) || (TIMx == TIM15)|| (TIMx == TIM16) || (TIMx == TIM17))  
+  if (TIMx == TIM1 )  
   {
     /* Set the Repetition Counter value */
     TIMx->RCR = TIM_TimeBaseInitStruct->TIM_RepetitionCounter;
@@ -806,7 +780,7 @@ void TIM_OC1Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   /* Set the Output State */
   tmpccer |= TIM_OCInitStruct->TIM_OutputState;
     
-  if((TIMx == TIM1) || (TIMx == TIM15) || (TIMx == TIM16) || (TIMx == TIM17))
+  if((TIMx == TIM1) || (TIMx == TIM16) || (TIMx == TIM17))
   {
     assert_param(IS_TIM_OUTPUTN_STATE(TIM_OCInitStruct->TIM_OutputNState));
     assert_param(IS_TIM_OCN_POLARITY(TIM_OCInitStruct->TIM_OCNPolarity));
@@ -890,7 +864,7 @@ void TIM_OC2Init(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct)
   /* Set the Output State */
   tmpccer |= (uint16_t)(TIM_OCInitStruct->TIM_OutputState << 4);
     
-  if((TIMx == TIM1) || (TIMx == TIM15))
+  if(TIMx == TIM1)
   {
     /* Check the parameters */
     assert_param(IS_TIM_OCIDLE_STATE(TIM_OCInitStruct->TIM_OCIdleState));

@@ -88,6 +88,7 @@ void logCharUpdate( uint8_t *data, uint8_t len);
 void toCurCharUpdate( void );
 void ddCurCharUpdate( void );
 void rtcCharUpdate( void );
+void minMaxCharUpdate( void );
 
 void Attribute_Modified_CB(uint16_t handle, uint8_t data_length,
                            uint8_t *att_data);

@@ -37,6 +37,85 @@ volatile uint8_t button_event = 0;
 /******************************************************************************/
 /*            Cortex-M0+ Processor Exceptions Handlers                         */
 /******************************************************************************/
+void WWDG_IRQHandler( void)
+{
+  while(1);
+}
+
+void RTC_IRQHandler( void)
+{
+  while(1);
+}
+
+void FLASH_IRQHandler( void)
+{
+  while(1);
+}
+
+void RCC_IRQHandler( void)
+{
+  while(1);
+}
+
+void EXTI2_3_IRQHandler( void)
+{
+  while(1);
+}
+
+void DMA1_Channel1_IRQHandler( void)
+{
+  while(1);
+}
+
+void DMA1_Channel2_3_IRQHandler( void)
+{
+  while(1);
+}
+
+void DMA1_Channel4_5_IRQHandler( void)
+{
+  while(1);
+}
+
+void ADC1_IRQHandler( void)
+{
+  while(1);
+}
+
+void TIM1_BRK_UP_TRG_COM_IRQHandler( void)
+{
+  while(1);
+}
+
+void TIM1_CC_IRQHandler( void)
+{
+  while(1);
+}
+
+void TIM3_IRQHandler( void)
+{
+  while(1);
+}
+
+void TIM14_IRQHandler( void)
+{
+  while(1);
+}
+
+void TIM16_IRQHandler( void)
+{
+  while(1);
+}
+
+void TIM17_IRQHandler( void)
+{
+  while(1);
+}
+
+void SPI1_IRQHandler( void)
+{
+  while(1);
+}
 
 /**
   * @brief  NMI_Handler This function handles NMI exception.
@@ -96,7 +175,6 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
 //  HAL_IncTick();
-
   myTick++;
   timersHandler();
   // Если disconnCount > 0, значит таймер ожидания SHA-хэша включен.

@@ -215,11 +215,24 @@ void timersHandler( void ) {
 }
 
 void timersProcess( void ) {
+	uint8_t tmpBuf[17];
+	int8_t ret;
 
 	// Таймаут для логгирования температуры
 	if ( toLogCount == 1 ) {
 		toLogCount += toLogTout;
+		for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
+			if( owToDev[i].newErr ){
+				alrmUpdate( ALARM_TO_FAULT );
+				break;
+			}
+		}
 		toLogWrite();
+		ret = toLogRead( (tToLogUnit *)tmpBuf );
+		if( ret > 100 ){
+			ret -= 50;
+		}
+
 		rtcCharUpdate();
 		minMaxCharUpdate();
 	}

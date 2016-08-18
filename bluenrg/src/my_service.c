@@ -30,6 +30,7 @@ uint8_t tknStr[TOKEN_LEN+1];    // строка для вычесления то
 uint8_t shaHash[41];            // Длина SHA-hash - 40 байт
 uint8_t tokenPart;
 
+int itoa(int n, char s[]);
 
 /*
 #ifdef BLUENRG_MS
@@ -275,7 +276,7 @@ void Make_Connection(void)
   														VER_MAJOR,VER_MINOR,'.'};
 
 	char nameSuff[5] = { 0, 0, 0, 0, 0 };
-	itoa( BDADDR, nameSuff, 10 );
+	itoa( BDADDR, nameSuff );
 	while ( nameSuff[2] == '\0') {
 			nameSuff[2] = nameSuff[1];
 			nameSuff[1] = nameSuff[0];

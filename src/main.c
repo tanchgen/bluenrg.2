@@ -55,20 +55,19 @@ int main(void)
 { 
 	myTick = 0;
   // Configure the system clock
-//  SetSysClock();
-  myDelay(5000);
+  SetSysClock();
   timeInit();
   alrmInit();
 
 #if ONE_WIRE
   toInit();
 #else
-	toLogCount = 0;
-	toReadCount = 0;
+  toLogCount = 0;
+  toReadCount = 0;
 #endif  // ONE_WIRE
-	ddInit();
-	// Установки логирования
-	logInit();
+  ddInit();
+  // Установки логирования
+  logInit();
 
 #if BLUENRG
   // Initialize the BlueNRG SPI driver
@@ -170,9 +169,12 @@ static void SetSysClock(void)
 
     /* PCLK = HCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE_DIV1;
+    
+    // Select SYSCLK -> I2C clock source
+    RCC->CFGR3 &= ~RCC_CFGR3_I2C1SW;
 
     /* PLL configuration */
-    RCC->CFGR2 |= RCC_CFGR2_PREDIV1_DIV1;
+    RCC->CFGR2 |= RCC_CFGR2_PREDIV_DIV1;
 
     /* Enable PLL */
     RCC->CR &= ~RCC_CR_PLLON;
@@ -181,8 +183,10 @@ static void SetSysClock(void)
     while((RCC->CR & RCC_CR_PLLRDY) == 1)
     {
     }
-    RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
-    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE_PREDIV | RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLMULL3);
+    RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLMUL));
+    RCC->CFGR |= (uint32_t)RCC_CFGR_PLLSRC_HSE_PREDIV;
+//    RCC->CFGR |= RCC_CFGR_PLLXTPRE_HSE_PREDIV_DIV1;
+    RCC->CFGR |= RCC_CFGR_PLLMUL3;
 
     /* Enable PLL */
     RCC->CR |= RCC_CR_PLLON;
@@ -210,7 +214,8 @@ static void SetSysClock(void)
   SysTick_Config(RCC_Clocks.HCLK_Frequency/1000);
   NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
   NVIC_EnableIRQ(SysTick_IRQn);
-//#define SYSTICK_CLKSOURCE_HCLK         ((uint32_t)0x00000004)
+  
+#define SYSTICK_CLKSOURCE_HCLK         ((uint32_t)0x00000004)
 //  SysTick->CTRL |= SYSTICK_CLKSOURCE_HCLK;
 
 }
@@ -223,7 +228,10 @@ void Error_Handler( eErrStatus err ){
 			break;
 		case OW_WIRE_ERR:
 			for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
-				owToDev[i].devStatus = OW_DEV_ERR;
+				if( owToDev[i].devStatus == OW_DEV_OK ){
+					owToDev[i].devStatus = OW_DEV_ERR;
+					owToDev[i].newErr = TRUE;
+				}
 			}
 			alrmUpdate( ALARM_TO_FAULT );
 			break;

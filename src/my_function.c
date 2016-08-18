@@ -12,6 +12,25 @@
 
 //void HardFault_Handler( void ); // Прерывание ошибки железа
 //static void WakeupBlueNRG(void);
+
+/*
+char * itoa(int n, char * s) {
+  char * dest = s;
+
+  if(n / 10 != 0) {
+    dest = itoa(n/10, dest);
+  }
+  else if(n < 0) {
+    *dest++ = '-';
+    n = -n;
+  }
+
+  *dest++ = (n % 10) + '0';
+  *dest = '\0';
+
+  return dest;
+}
+*/
 /*
  *  Define the circular shift macro
  */
@@ -33,8 +52,8 @@ volatile uint32_t disconnCount; // Таймаут аутентификации �
 extern volatile uint16_t myWD;
 
 uint16_t service_handle, dev_name_char_handle, appearance_char_handle;
-
-/* Получение случайной строки для Токена */
+/*
+// Получение случайной строки для Токена
 void getTokenStr(uint8_t str[])
 {
   uint32_t rand0;
@@ -56,7 +75,7 @@ void getTokenStr(uint8_t str[])
   str[i]='\0';
 }
 
-/* Получение SHA-хэш для токена. Строка выровнена побайтно */
+// Поолучение SHA-хэш для токена. Строка выровнена побайтно 
 void getShaHash(uint8_t * str, uint8_t token[] )
 {
    uint8_t hash[320];           //Буфер хэша - 80x32 бита
@@ -87,19 +106,17 @@ void getShaHash(uint8_t * str, uint8_t token[] )
    hash[i] = (uint8_t)( f & 0xFF);
 
    //w = (uint32_t *)hash; // Оперируем 32-битными словами
-   /* разбиваем этот кусок на 16 частей, слов по 32-бита w[i], 0 <= i <= 15
-      16 слов по 32-бита дополняются до 80 32-битовых слов: */
+   // разбиваем этот кусок на 16 частей, слов по 32-бита w[i], 0 <= i <= 15
+   //   16 слов по 32-бита дополняются до 80 32-битовых слов: 
 
-    /*
-     *  Initialize the first 16 words in the array W
-     */
-    for(i = 0; i < 16; i++)
-    {
-        w[i] = (hash[i * 4]) << 24;
-        w[i] |= (hash[i * 4 + 1]) << 16;
-        w[i] |= (hash[i * 4 + 2]) << 8;
-        w[i] |= (hash[i * 4 + 3]);
-    }
+    //  Initialize the first 16 words in the array W
+     
+  for(i = 0; i < 16; i++) {
+    w[i] = (hash[i * 4]) << 24;
+    w[i] |= (hash[i * 4 + 1]) << 16;
+    w[i] |= (hash[i * 4 + 2]) << 8;
+    w[i] |= (hash[i * 4 + 3]);
+  }
 
 
    //for i from 16 to 79
@@ -110,28 +127,6 @@ void getShaHash(uint8_t * str, uint8_t token[] )
    {
       w[i] = RoL(1, w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16]);
    }
-   /*   Основной цикл:
-    for i from 0 to 79
-        if 0 ? i ? 19 then
-            f = (b and c) or ((not b) and d)
-            k = 0x5A827999
-        else if 20 ? i ? 39 then
-            f = b xor c xor d
-            k = 0x6ED9EBA1
-        else if 40 ? i ? 59 then
-            f = (b and c) or (b and d) or (c and d)
-            k = 0x8F1BBCDC
-        else if 60 ? i ? 79 then
-            f = b xor c xor d
-            k = 0xCA62C1D6
-
-        temp = (a leftrotate 5) + f + e + k + w[i]
-        e = d
-        d = c
-        c = b leftrotate 30
-        b = a
-        a = temp
-   */
 
    for ( i=0; i<80; i++ )
    {
@@ -161,32 +156,26 @@ void getShaHash(uint8_t * str, uint8_t token[] )
       a = f;
    }
 
-   /*    Добавляем хеш-значение этой части к результату:
-         h0 = h0 + a
-         h1 = h1 + b
-         h2 = h2 + c
-         h3 = h3 + d
-         h4 = h4 + e
-     */
-      h[0] += a;
-      h[1] += b;
-      h[2] += c;
-      h[3] += d;
-      h[4] += e;
-      /* Итоговое хеш-значение:
-         digest = hash = h0 append h1 append h2 append h3 append h4
-      */
-      for (i=0;i<5;i++){
-        uint8_t j,k;
-        for ( k=0; k<8; k++) {
-          j=(uint8_t)((h[i] >> (28-k*4)) & 0xF);
-          token[i*8+k] = j<0xA ? (j+'0') : ( j+0x57 );
-        }
-      }
+   h[0] += a;
+   h[1] += b;
+   h[2] += c;
+   h[3] += d;
+   h[4] += e;
+  // Итоговое хеш-значение:
+  //       digest = hash = h0 append h1 append h2 append h3 append h4
+
+  for (i=0;i<5;i++){
+    uint8_t j,k;
+    for ( k=0; k<8; k++) {
+      j=(uint8_t)((h[i] >> (28-k*4)) & 0xF);
+      token[i*8+k] = j<0xA ? (j+'0') : ( j+0x57 );
+    }
+  }
 
    return;
 }
-
+*/
+  
 void myTimeOut( void ){
   // Таймаут 2 мин для токена
   if ( disconnCount ) { 
@@ -250,3 +239,19 @@ static void WakeupBlueNRG(void)
 }
 */
 
+int itoa(int n, char s[])
+{
+  int i =  0;
+
+  if(n / 10 != 0){
+    i = itoa(n/10, s);
+  }
+  else if(n < 0){
+    s[i++] = '-';
+    n = -n;
+  }
+  s[i++] = n % 10 + '0';
+  s[i] = '\0';
+
+  return i;
+}
