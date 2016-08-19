@@ -9,6 +9,7 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include system/src/stm32f0-stdperiph/subdir.mk
+-include system/src/stm32f0-hal/subdir.mk
 -include system/src/cmsis/subdir.mk
 -include src/subdir.mk
 -include bluenrg/src/subdir.mk

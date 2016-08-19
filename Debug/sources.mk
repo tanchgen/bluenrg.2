@@ -28,6 +28,7 @@ S_UPPER_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 system/src/stm32f0-stdperiph \
+system/src/stm32f0-hal \
 system/src/cmsis \
 src \
 bluenrg/src \

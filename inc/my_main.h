@@ -29,7 +29,9 @@ typedef enum {
  * @brief User can use this section to tailor USARTx/UARTx instance used and 
  *        associated resources.
  */
+#ifndef UNUSED
 #define UNUSED(x)						(void)(x)
+#endif
 
 #define  TICK_INT_PRIORITY            ((uint32_t)3)    /*!< tick interrupt priority (lowest by default)  */
 

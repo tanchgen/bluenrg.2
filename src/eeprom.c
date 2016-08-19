@@ -7,20 +7,40 @@
 
 #include <string.h>
 #include "stm32f0xx.h"
-#include 	"stm32f0xx_i2c.h"
 #include "stm32xx_it.h"
 #include "my_main.h"
 #include "logger.h"
 #include	"eeprom.h"
+#include "stm32f0xx_hal_i2c.h"
+
+#ifndef TIMING_CLEAR_MASK
+#define TIMING_CLEAR_MASK       ((uint32_t)0xF0FFFFFF)  /*<! I2C TIMING clear register Mask */
+#endif
 
 tEeprom eeprom;
+I2C_HandleTypeDef hepr;
 
 int8_t eepromInit( void ){
 
-  I2C_DeInit(EEPROM_I2C);
+  /* Enable I2C1 reset state */
+  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, ENABLE);
+  /* Release I2C1 from reset state */
+  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, DISABLE);
   /* I2C1 configuration ------------------------------------------------------*/
 
-  i2cInit();
+  hepr.Instance             = EEPROM_I2C;
+
+  hepr.Init.AddressingMode  = I2C_ADDRESSINGMODE_7BIT;
+  hepr.Init.Timing          = I2C_TIMING;
+  hepr.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hepr.Init.OwnAddress1     = 0;
+  hepr.Init.OwnAddress2     = 0;
+  hepr.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hepr.Init.NoStretchMode   = I2C_NOSTRETCH_DISABLE;
+
+
+  HAL_I2C_Init( &hepr );
+//  i2cInit();
 
   /* Enable I2C1 Error interrupts */
   EEPROM_I2C->CR1 |= I2C_CR1_ERRIE;
@@ -29,10 +49,10 @@ int8_t eepromInit( void ){
 
   NVIC_EnableIRQ(I2C1_IRQn);
 
-  eeprom.status = EPR_READY;
   return 0;
 }
 
+/*
 void i2cInit( void ) {
 	I2C_InitTypeDef I2C_InitStruct;
 
@@ -64,6 +84,8 @@ void i2cInit( void ) {
 	EEPROM_I2C->CR1 |= I2C_CR1_PE;
 
 }
+*/
+
 
 int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	/* TODO: Запись в EPROM данных
@@ -73,22 +95,13 @@ int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	 *
 	 * Организовать проверку на превышение границы памяти
 	 */
+	uint8_t eprAddr = EEPROM_I2C_ADDR | ((addr >> 16) & 0x2);
+	addr = addr & 0xFFFF;
 
-	if(eeprom.status != EPR_READY) {
-		return eeprom.status;
-	}
-
-	if ( (sendEepromAddr(addr)) != EPR_OK) {
-			return eeprom.status;
-	}
-	if ( (eeprom.status = eepromSend( data, len)) == EPR_OK ){
-	  eeprom.status = EPR_READY;
-		return EPR_OK;
-	}
-	return eeprom.status;
+	return HAL_I2C_Mem_Write( &hepr, eprAddr, addr, I2C_MEMADD_SIZE_16BIT, data, len, EEPROM_TOUT);
 }
 
-eEprStatus receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
+int8_t receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	/* Чтение данных из EPROM
 	 * addr - стартовый адрес в Eprom
 	 * data - Указатель на буфер, куда будут складываться данные
@@ -96,176 +109,11 @@ eEprStatus receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	 *
 	 * Организовать проверку на превышение границы памяти
 	 */
-	if(eeprom.status != EPR_READY) {
-		return eeprom.status;
-	}
+	uint8_t eprAddr = EEPROM_I2C_ADDR | ((addr >> 16) & 0x2);
+	addr = addr & 0xFFFF;
 
-	if ( (sendEepromAddr(addr)) != EPR_OK) {
-			return eeprom.status;
-	}
-	if ( (eeprom.status = eepromRead( data, len)) == EPR_OK ){
-	  eeprom.status = EPR_READY;
-		return EPR_OK;
-	}
-	return eeprom.status;
+	return HAL_I2C_Mem_Read( & hepr, eprAddr, addr, I2C_MEMADD_SIZE_16BIT, data, len, EEPROM_TOUT );
 }
-
-int8_t sendEepromAddr( uint32_t addr ) {
-	uint32_t tout;
-
-	eeprom.status = EPR_BUSY;
-
-	while( (EEPROM_I2C->ISR & I2C_ISR_ARLO) ){
-		goto eprFault;
-	}
-
-	tout = myTick + I2C_TOUT;
-	while( (EEPROM_I2C->ISR & I2C_ISR_BUSY) ){
-		if ( myTick > tout){
-			goto eprFault;
-		}
-	}
-
-	// Стираем Slave-адрес, Перезагрузку, Автостоп, Чтение-НеЗапись, Старт, Стоп
-	EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | I2C_CR2_RD_WRN | I2C_CR2_START | I2C_CR2_STOP );
-	// Младший бит адреса I2C - старший бит адреса памяти
-	EEPROM_I2C->CR2 |= EEPROM_I2C_ADDR | ((addr >> 15) & 0x2);
-	// Количество передаваемых байт
-	EEPROM_I2C->CR2 &= ~I2C_CR2_NBYTES;
-	EEPROM_I2C->CR2 |= 2<<16;
-	EEPROM_I2C->CR2 |= I2C_CR2_AUTOEND;
-	// Стартуем
-	EEPROM_I2C->CR2 |= I2C_CR2_START;
-
-	tout = myTick + I2C_TOUT;
-	while ( !(EEPROM_I2C->ISR & I2C_ISR_TXIS) ){
-		if ( myTick > tout ){
-			goto eprFault;
-		}
-	}
-	EEPROM_I2C->TXDR = (addr >> 8) & 0xFF;
-	while ( !(EEPROM_I2C->ISR & I2C_ISR_TXIS) ){
-		if ( myTick > tout ){
-			goto eprFault;
-		}
-	}
-	EEPROM_I2C->TXDR = addr & 0xFF;
-	while ( !(EEPROM_I2C->ISR & I2C_ISR_STOPF) ){
-		if ( myTick > tout ){
-			goto eprFault;
-		}
-	}
-  /* Clear STOP Flag */
-  EEPROM_I2C->ICR |= I2C_ICR_STOPCF;
-	return EPR_OK;
-
-	eprFault:
-		I2C_Cmd( EEPROM_I2C, DISABLE );
-		NVIC_DisableIRQ( I2C1_IRQn );
-		Error_Handler( LOG_ERR );
-		return (eeprom.status = EPR_ERR);
-
-}
-
-int8_t eepromSend(  uint8_t * data, uint16_t len ){
-	uint32_t tout;
-
-	EEPROM_I2C->CR1 &= ~(I2C_IT_ERRI);
-
-	// Количество передаваемых байт
-	EEPROM_I2C->CR2 &= ~I2C_CR2_NBYTES;
-	EEPROM_I2C->CR2 |= (len & 0xFF) << 16;
-	// Без перезагрузки
-	EEPROM_I2C->CR2 &= ~I2C_CR2_RELOAD;
-	// С Автостопом
-	EEPROM_I2C->CR2 |= I2C_CR2_AUTOEND;
-	// Запись
-	EEPROM_I2C->CR2 &= ~I2C_CR2_RD_WRN;
-	// Стартуем
-	EEPROM_I2C->CR2 |= I2C_CR2_START;
-
-	tout = myTick + I2C_TOUT;
-	for( uint16_t i = 0; i < len; i++){
-		while ( !(EEPROM_I2C->ISR & I2C_ISR_TXIS) ){
-			if ( myTick > tout ){
-				goto eprFault;
-			}
-		}
-		EEPROM_I2C->TXDR = *(data++);
-	}
-	tout = myTick + I2C_TOUT;
-	while ( !(EEPROM_I2C->ISR & I2C_ISR_STOPF) ) {
-		if ( myTick > tout ){
-			return EPR_TIMEOUT;
-		}
-	}
-  /* Clear STOP Flag */
-  EEPROM_I2C->ICR |= I2C_ICR_STOPCF;
-  /* Disable ERR, TC, STOP, NACK, TXI interrupt */
-  EEPROM_I2C->CR1 &= ~(I2C_IT_ERRI);
-
-  /* Clear Configuration Register 2 */
-  EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_HEAD10R | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND );
-
-	return EPR_OK;
-
-	eprFault:
-		I2C_Cmd( EEPROM_I2C, DISABLE );
-		NVIC_DisableIRQ( I2C1_IRQn );
-		Error_Handler( LOG_ERR );
-		return (eeprom.status = EPR_ERR);
-}
-
-int8_t eepromRead( uint8_t * data, uint16_t len ){
-
-	eeprom.rxSize = len;
-	eeprom.count = len;
-	eeprom.rxPtr = data;
-
-//	EEPROM_I2C->CR1 |= I2C_IT_ERRI | I2C_IT_TCI| I2C_IT_STOPI| I2C_IT_NACKI | I2C_IT_TXI;
-        EEPROM_I2C->CR1 |= I2C_IT_ERRI;
-
-	// Количество передаваемых байт
-	EEPROM_I2C->CR2 &= ~I2C_CR2_NBYTES;
-	EEPROM_I2C->CR2 |= (len & 0xFF) << 16;
-	// Без перезагрузки
-	EEPROM_I2C->CR2 &= ~I2C_CR2_RELOAD;
-	// С Автостопом
-	EEPROM_I2C->CR2 |= I2C_CR2_AUTOEND;
-	// Запись
-	EEPROM_I2C->CR2 |= I2C_CR2_RD_WRN;
-	// Стартуем
-	EEPROM_I2C->CR2 |= I2C_CR2_START;
-
-
-	uint32_t tout = myTick + I2C_TOUT;
-	while ( eeprom.count ) {
-		while ( !(EEPROM_I2C->ISR & I2C_ISR_RXNE) ){
-			if ( myTick > tout ){
-				return EPR_TIMEOUT;
-			}
-		}
-		*eeprom.rxPtr++ = EEPROM_I2C->RXDR;
-		eeprom.count--;
-		eeprom.rxSize++;
-	}
-	while ( !(EEPROM_I2C->ISR & I2C_ISR_STOPF) ) {
-		if ( myTick > tout ){
-			return EPR_TIMEOUT;
-		}
-	}
-  /* Clear STOP Flag */
-  EEPROM_I2C->ICR |= I2C_ICR_STOPCF;
-
-  /* Disable ERR, TC, STOP, NACK, TXI interrupt */
-  EEPROM_I2C->CR1 &= ~(I2C_IT_ERRI);
-
-  /* Clear Configuration Register 2 */
-  EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_HEAD10R | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND );
-
-	return EPR_OK;
-}
-
 
 void epprom_IRQHandler( void ) {
   if( EEPROM_I2C->ISR & I2C_FLAG_TXIS )
@@ -284,7 +132,7 @@ void epprom_IRQHandler( void ) {
     else
     {
       /* Wrong size Status regarding TCR flag event */
-      eeprom.status = EPR_ERR;
+    	hepr.State = HAL_I2C_STATE_ERROR;
       eepromErrorCallBack();
     }
   }
@@ -299,7 +147,7 @@ void epprom_IRQHandler( void ) {
     /* Clear Configuration Register 2 */
     EEPROM_I2C->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_HEAD10R | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_RD_WRN);
 
-    eeprom.status = EPR_READY;
+    hepr.State = HAL_I2C_STATE_READY;
 
     eepromTxCpltCallback();
 
@@ -308,7 +156,7 @@ void epprom_IRQHandler( void ) {
   {
     EEPROM_I2C->ICR |= I2C_ICR_NACKCF;
 
-    eeprom.status = EPR_ERR;
+    hepr.State = HAL_I2C_STATE_READY;
   }
   eepromErrorCallBack();
 }
@@ -355,5 +203,89 @@ void eepromErrorCallBack( void ){
 
 void eepromTxCpltCallback( void ){
 
+}
+
+/**
+  * @brief  Initializes the I2C according to the specified parameters
+  *         in the I2C_InitTypeDef and initialize the associated handle.
+  * @param  hi2c : Pointer to a I2C_HandleTypeDef structure that contains
+  *                the configuration information for the specified I2C.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_I2C_Init(I2C_HandleTypeDef *hi2c)
+{
+  /* Check the I2C handle allocation */
+  if(hi2c == NULL)
+  {
+    return HAL_ERROR;
+  }
+
+  /* Check the parameters */
+  assert_param(IS_I2C_ALL_INSTANCE(hi2c->Instance));
+  assert_param(IS_I2C_OWN_ADDRESS1(hi2c->Init.OwnAddress1));
+  assert_param(IS_I2C_ADDRESSING_MODE(hi2c->Init.AddressingMode));
+  assert_param(IS_I2C_DUAL_ADDRESS(hi2c->Init.DualAddressMode));
+  assert_param(IS_I2C_OWN_ADDRESS2(hi2c->Init.OwnAddress2));
+  assert_param(IS_I2C_OWN_ADDRESS2_MASK(hi2c->Init.OwnAddress2Masks));
+  assert_param(IS_I2C_GENERAL_CALL(hi2c->Init.GeneralCallMode));
+  assert_param(IS_I2C_NO_STRETCH(hi2c->Init.NoStretchMode));
+
+  if(hi2c->State == HAL_I2C_STATE_RESET)
+  {
+    /* Allocate lock resource and initialize it */
+    hi2c->Lock = HAL_UNLOCKED;
+
+    /* Init the low level hardware : GPIO, CLOCK, CORTEX...etc */
+  	i2cMspInit();
+  }
+
+  hi2c->State = HAL_I2C_STATE_BUSY;
+
+  /* Disable the selected I2C peripheral */
+  __HAL_I2C_DISABLE(hi2c);
+
+  /*---------------------------- I2Cx TIMINGR Configuration ------------------*/
+  /* Configure I2Cx: Frequency range */
+  hi2c->Instance->TIMINGR = hi2c->Init.Timing & TIMING_CLEAR_MASK;
+
+  /*---------------------------- I2Cx OAR1 Configuration ---------------------*/
+  /* Configure I2Cx: Own Address1 and ack own address1 mode */
+  hi2c->Instance->OAR1 &= ~I2C_OAR1_OA1EN;
+  if(hi2c->Init.OwnAddress1 != 0)
+  {
+    if(hi2c->Init.AddressingMode == I2C_ADDRESSINGMODE_7BIT)
+    {
+      hi2c->Instance->OAR1 = (I2C_OAR1_OA1EN | hi2c->Init.OwnAddress1);
+    }
+    else /* I2C_ADDRESSINGMODE_10BIT */
+    {
+      hi2c->Instance->OAR1 = (I2C_OAR1_OA1EN | I2C_OAR1_OA1MODE | hi2c->Init.OwnAddress1);
+    }
+  }
+
+  /*---------------------------- I2Cx CR2 Configuration ----------------------*/
+  /* Configure I2Cx: Addressing Master mode */
+  if(hi2c->Init.AddressingMode == I2C_ADDRESSINGMODE_10BIT)
+  {
+    hi2c->Instance->CR2 = (I2C_CR2_ADD10);
+  }
+  /* Enable the AUTOEND by default, and enable NACK (should be disable only during Slave process */
+  hi2c->Instance->CR2 |= (I2C_CR2_AUTOEND | I2C_CR2_NACK);
+
+  /*---------------------------- I2Cx OAR2 Configuration ---------------------*/
+  /* Configure I2Cx: Dual mode and Own Address2 */
+  hi2c->Instance->OAR2 = (hi2c->Init.DualAddressMode | hi2c->Init.OwnAddress2 | (hi2c->Init.OwnAddress2Masks << 8));
+
+  /*---------------------------- I2Cx CR1 Configuration ----------------------*/
+  /* Configure I2Cx: Generalcall and NoStretch mode */
+  hi2c->Instance->CR1 = (hi2c->Init.GeneralCallMode | hi2c->Init.NoStretchMode);
+
+  /* Enable the selected I2C peripheral */
+  __HAL_I2C_ENABLE(hi2c);
+
+  hi2c->ErrorCode = HAL_I2C_ERROR_NONE;
+  hi2c->State = HAL_I2C_STATE_READY;
+
+  return HAL_OK;
 }
 

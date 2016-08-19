@@ -5,6 +5,7 @@
  *      Author: Gennady Tanchin <g.tanchin@yandex.ru>
  */
 #include <string.h>
+#include "stm32f0xx_hal_def.h"
 #include "eeprom.h"
 #include "my_time.h"
 #include "my_service.h"
@@ -34,7 +35,7 @@ int8_t logWriteBuff( tLogBuf * buf, uint8_t * data ) {
 		buf->full = 1;
 	}
 	// Сохраняем состояние данных буфера логгера
-	if( sendEeprom( (buf->bufAddr - sizeof(tLogBuf)), (uint8_t *)buf, sizeof(tLogBuf) ) ) {
+	if( sendEeprom( (buf->bufAddr - sizeof(tLogBuf)), (uint8_t *)buf, sizeof(tLogBuf) ) != HAL_OK ) {
 		return -1;
 	}
 
@@ -48,7 +49,7 @@ int16_t logReadBuff( tLogBuf * buf, uint8_t * data ) {
 	buf->full = 0;
 
 //	ch =*(buf->bufAddr + buf->begin);
-	if ( receiveEeprom( (buf->bufAddr + buf->begin * buf->size), data, buf->size ) != EPR_OK){
+	if ( receiveEeprom( (buf->bufAddr + buf->begin * buf->size), data, buf->size ) != HAL_OK){
 		return -1;
 	}
 	buf->begin++;
@@ -85,7 +86,8 @@ int8_t toLogRead( tToLogUnit * toLog ){
 #error "Данная функция написана для количества датчиков не превышающих 4"
 #endif
 	uint8_t toBuf[sizeof(tXtime)+sizeof(uint64_t)];
-	uint64_t *toPtr = (uint64_t *)(toLog+sizeof(tXtime));
+	uint64_t *toDataSrc;// = (uint64_t *)(toLog+sizeof(tXtime));
+	uint16_t *toDataDst;
 	int8_t rd;
 
 	switch( rd = logReadBuff( &toLogBuff, (uint8_t *)toBuf ) )  {
@@ -99,10 +101,11 @@ int8_t toLogRead( tToLogUnit * toLog ){
 			break;
 		default:
 			toLog->xTime = ((tToLogUnit *)toBuf)->xTime;
-			toPtr = (uint64_t *)((tToLogUnit *)toBuf)->toData;
+			toDataSrc = (uint64_t *)((tToLogUnit *)toBuf)->toData;
+			toDataDst = (uint16_t *)toLog->toData;
 			for( uint8_t i=0; i < 4; i++ ){
-				toLog->toData[i] = (*toPtr) & 0xFFF;
-				*toPtr >>=12;
+				*toDataDst++ = (*toDataSrc) & 0xFFF;
+				*toDataSrc >>=12;
 			}
 	}
 	return rd;
@@ -178,6 +181,7 @@ int8_t logSend( uint8_t toLogSendEn, uint8_t ddLogSendEn) {
 			}
 			else if( ret > 0){
 				nowLogFill = TRUE;
+				blue.logStatus.toTxe = DISABLE;
 			}
 		}
 	}
@@ -189,6 +193,7 @@ int8_t logSend( uint8_t toLogSendEn, uint8_t ddLogSendEn) {
 			}
 			else if( ret > 0){
 				nowLogFill = TRUE;
+				blue.logStatus.ddTxe = DISABLE;
 			}
 		}
 	}

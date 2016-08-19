@@ -17,6 +17,11 @@
 #define EEPROM_SDA_PIN			GPIO_Pin_10
 #define EEPROM_SDA_PIN_NUM	10
 
+#define EEPROM_TOUT					3000
+
+#define EEPROM_WRITE_OP			TRUE
+#define EEPROM_READ_OP			FALSE
+
 #define EEPROM_I2C						I2C1
 #define I2C_FAST_SPEED				400000
 #define I2C_TIMING						0x00E0D3FF   // 0x00B01A4B
@@ -31,14 +36,6 @@
 #define I2C_ACK_DISABLE        	0
 #define I2C_NO_RELOAD						0
 
-typedef enum {
-	EPR_OK,
-	EPR_READY,
-	EPR_BUSY,
-	EPR_TIMEOUT,
-	EPR_ERR
-} eEprStatus;
-
 typedef struct {
 	uint8_t txData[255];
 	uint8_t *txPtr;
@@ -47,7 +44,6 @@ typedef struct {
 	uint8_t txSize;
 	uint8_t rxSize;
 	uint8_t count;
-	eEprStatus status;
 } tEeprom;
 
 extern tEeprom eeprom;
@@ -57,9 +53,9 @@ void i2cInit( void );
 void i2cMspInit( void );
 
 int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len);
-eEprStatus receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len);
+int8_t receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len);
 
-int8_t sendEepromAddr( uint32_t addr );
+int8_t sendEepromAddr( uint32_t addr, uint8_t writeOp );
 int8_t eepromSend(  uint8_t * data, uint16_t len );
 int8_t eepromRead( uint8_t * data, uint16_t len );
 

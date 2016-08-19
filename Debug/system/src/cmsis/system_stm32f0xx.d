@@ -10,7 +10,6 @@ system/src/cmsis/system_stm32f0xx.o: \
  /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_dma.h \
  /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_exti.h \
  /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_gpio.h \
- /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_i2c.h \
  /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_rcc.h \
  /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_rtc.h \
  /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_spi.h \
@@ -36,8 +35,6 @@ system/src/cmsis/system_stm32f0xx.o: \
 /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_exti.h:
 
 /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_gpio.h:
-
-/home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_i2c.h:
 
 /home/jet/work/workspace/expedition/system/inc/stm32f0-stdperiph/stm32f0xx_rcc.h:
 
