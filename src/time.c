@@ -19,8 +19,15 @@
 #include "logger.h"
 #include "thermo.h"
 #include "my_service.h"
+#include "stm32_bluenrg_ble.h"
+
+#define HSE_CORRECT					0.99236217192
+#define LSI_CORRECT					1.0
 
 volatile tXtime uxTime;
+uint8_t secondFlag = RESET;
+
+extern volatile uint32_t resetCount; // Таймаут отсутствия активности на bluetoth.
 
 // *********** Инициализация структуры ВРЕМЯ (сейчас - системное ) ************
 void timeInit( void ) {
@@ -28,6 +35,9 @@ void timeInit( void ) {
 	RTC_InitTypeDef rtcInitStruct;
   RTC_DateTypeDef  sdatestructure;
   RTC_TimeTypeDef  stimestructure;
+  uint32_t source;
+
+	resetCount = NON_ACTIVE_TOUT*12;
 
 // **************** RTC Clock configuration ***********************
   RCC->APB1ENR |= RCC_APB1ENR_PWREN;
@@ -41,11 +51,21 @@ void timeInit( void ) {
   	}
   }
 
-  RCC->CSR |= ((uint32_t)RCC_CSR_LSION);
-  for( myTick = 0; !(RCC->CSR & RCC_CSR_LSIRDY); myTick++) {
-  	if ( myTick == HSE_STARTUP_TIMEOUT) {
-  		Error_Handler( HW_ERR );
+	if( (RCC->CR & RCC_CR_HSERDY) == RCC_CR_HSERDY ){
+		source = RCC_BDCR_RTCSEL_HSE;
+		// Для HSE/32 (0x7F - PREDIV_A)
+  	rtcInitStruct.RTC_SynchPrediv = (uint32_t)(HSE_VALUE/32/0x7F * HSE_CORRECT);
+	}
+	else {
+  	RCC->CSR |= ((uint32_t)RCC_CSR_LSION);
+  	for( myTick = 0; !(RCC->CSR & RCC_CSR_LSIRDY); myTick++) {
+  		if ( myTick == HSE_STARTUP_TIMEOUT) {
+  			Error_Handler( HW_ERR );
+  		}
   	}
+		// Для LSI = 40MHz
+  	source = RCC_BDCR_RTCSEL_LSI;
+  	rtcInitStruct.RTC_SynchPrediv = (uint32_t)((LSI_VALUE+0x3F)/0x7F  * LSI_CORRECT);
   }
 
   /* Store the content of BDCR register before the reset of Backup Domain */
@@ -54,14 +74,17 @@ void timeInit( void ) {
   RCC->BDCR |= RCC_BDCR_BDRST;
   RCC->BDCR &= ~RCC_BDCR_BDRST;
   /* Restore the Content of BDCR register */
-  RCC->BDCR = tempReg | RCC_BDCR_RTCSEL_LSI;
+  RCC->BDCR = tempReg | source;
 
   RCC->BDCR |= RCC_BDCR_RTCEN;
 
 // ******************** RTC System configuration *************************
 
-  RTC_StructInit( &rtcInitStruct );
+  rtcInitStruct.RTC_HourFormat = RTC_HourFormat_24;
+  rtcInitStruct.RTC_AsynchPrediv = (uint32_t)0x7F;
+
   RTC_Init( &rtcInitStruct );
+
   /*##-1- Configure the Date #################################################*/
   /* Set Date: Wednesday June 1st 2016 */
   sdatestructure.RTC_Year = 16;
@@ -211,7 +234,9 @@ void timersHandler( void ) {
 	if ( ddReadCount > 1) {
 		ddReadCount--;
 	}
-
+	if ( !(myTick % 1000) ){
+		secondFlag = SET;
+	}
 }
 
 void timersProcess( void ) {
@@ -219,28 +244,74 @@ void timersProcess( void ) {
 	// Таймаут для логгирования температуры
 	if ( toLogCount == 1 ) {
 		toLogCount += toLogTout;
+		// Проверяем флаги ошибки TO
 		for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
 			if( owToDev[i].newErr ){
 				alrmUpdate( ALARM_TO_FAULT );
 				break;
 			}
 		}
+#if OW_DD
+		// Проверяем флаги ошибки DD
+		for ( uint8_t i = 0; i < OW_DD_DEV_NUM; i++ ) {
+			if( owDdDev[i].newErr ){
+				alrmUpdate( ALARM_DD_FAULT );
+				break;
+			}
+		}
+#endif
 		toLogWrite();
-		toCurCharUpdate();
-		rtcCharUpdate();
-		minMaxCharUpdate();
-	}
-	// Таймаут для считывания температуры
-	if ( toReadCount == 1 ) {
-		toReadCount += toReadTout;
-		toReadTemperature();
-		toCurCharUpdate();
+		while( toCurCharUpdate() != BLE_STATUS_SUCCESS ){
+			bnrgFullRst();
+			if( blue.bleStatus == BLE_STATUS_TIMEOUT ){
+				break;
+			}
+		}
+		while( minMaxCharUpdate() != BLE_STATUS_SUCCESS ){
+			bnrgFullRst();
+			if( blue.bleStatus == BLE_STATUS_TIMEOUT ){
+				break;
+			}
+		}
 	}
 	// Таймаут для считывания датчиков двери
 	if ( ddReadCount == 1) {
 		ddReadCount += ddReadTout;
 		ddReadDoor();
-		ddCurCharUpdate();
+		while( ddCurCharUpdate() != BLE_STATUS_SUCCESS ){
+			bnrgFullRst();
+			if( blue.bleStatus == BLE_STATUS_TIMEOUT ){
+				break;
+			}
+		}
+	}
+	// Таймаут для считывания температуры
+	if ( toReadCount == 1 ) {
+		toReadCount += TO_READ_TOUT;
+		toReadTemperature();
+	  while ( toCurCharUpdate() != BLE_STATUS_SUCCESS ){
+			bnrgFullRst();
+			if( blue.bleStatus == BLE_STATUS_TIMEOUT ){
+				break;
+			}
+		}
+	}
+	if (secondFlag) {
+		secondFlag = RESET;
+		uxTime = getRtcTime();
+		while( rtcCharUpdate( uxTime ) != BLE_STATUS_SUCCESS ){
+			bnrgFullRst();
+			if( blue.bleStatus == BLE_STATUS_TIMEOUT ){
+				break;
+			}
+		}
+
+		if( resetCount ) {
+			resetCount--;
+		}
+		else {
+			bnrgFullRst();
+		}
 	}
 }
 

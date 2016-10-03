@@ -3,8 +3,10 @@
  *
  *  Version 1.0.3
  */
+#include <stddef.h>
 #include "stm32xx_it.h"
 #include "my_main.h"
+#include "my_time.h"
 #include "onewire.h"
 
 // Буфер для приема/передачи по 1-wire
@@ -13,8 +15,11 @@ uint8_t ow_buf[8];
 uint8_t owDevNum;
 eErrStatus owStatus;
 tOwToDev owToDev[ TO_DEV_NUM ]; 			// Массив структур термометров 1-Wire;
+#if OW_DD
+tOwDdDev owDdDev[ OW_DD_DEV_NUM ]; 			// Массив структур Датчиков Двери 1-Wire;
+#else
 tDdDev ddDev[ DD_DEV_NUM ]; 			// Массив структур Датчиков Двери 1-Wire;
-
+#endif
 uint8_t rxCount;
 uint8_t txCount;
 
@@ -74,7 +79,7 @@ uint8_t OW_Init() {
 		OW_PORT->OSPEEDR &= ~(3 << (OW_RX_PIN_NUM*2));			// Low Speed
 		OW_PORT->AFR[OW_RX_PIN_NUM >> 0x3] |= 1 << ((OW_RX_PIN_NUM & 0x7) * 4);		// AF1
 
-	USART_InitStructure.USART_BaudRate = 115200;
+	USART_InitStructure.USART_BaudRate = OW_BAUDRATE;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -113,7 +118,6 @@ uint8_t OW_Scan(uint8_t *buf, uint8_t num) {
 			if (OW_SendBits(2) < 0) {
 				return -1;
 			}
-
 			if (ow_buf[0] == OW_R_1) {
 				if (ow_buf[1] == OW_R_1) {
 					// две единицы, где-то провтыкали и заканчиваем поиск
@@ -198,8 +202,8 @@ eErrStatus OW_Send(uint8_t sendReset, uint8_t *command, uint8_t cLen,
 
 	// если требуется сброс - сбрасываем и проверяем на наличие устройств
 	if (sendReset == OW_SEND_RESET) {
-		if (OW_Reset() == OW_DEV_ERR) {
-			return OW_DEV_ERR;
+		if (OW_Reset() == OW_ERR) {
+			return OW_ERR;
 		}
 	}
 
@@ -210,7 +214,7 @@ eErrStatus OW_Send(uint8_t sendReset, uint8_t *command, uint8_t cLen,
 		cLen--;
 
 		if (OW_SendBits(8) < 0) {
-			return OW_DEV_ERR;
+			return OW_ERR;
 		}
 
 		// если прочитанные данные кому-то нужны - выкинем их в буфер
@@ -296,10 +300,19 @@ static uint8_t OW_Reset() {
 		if ( myTick > owtout ) {
 			for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
 				if( !owToDev[i].devStatus == OW_DEV_OK ){
-					owToDev[i].devStatus = OW_DEV_ERR;
+					owToDev[i].devStatus = OW_TO_DEV_ERR;
 					owToDev[i].newErr = TRUE;
 				}
 			}
+#if OW_DD
+			for ( uint8_t i = 0; i < DD_DEV_NUM; i++ ) {
+				if( !owDdDev[i].devStatus == OW_DEV_OK ){
+					owDdDev[i].devStatus = OW_DD_DEV_ERR;
+					owDdDev[i].newErr = TRUE;
+				}
+			}
+#endif
+			return OW_ERR;
 		}
 	}
 	// Сохраняем принятое по RX
@@ -307,7 +320,8 @@ static uint8_t OW_Reset() {
 	while ( (OW_USART->ISR & USART_ISR_RXNE) == USART_ISR_RXNE)
 	{}
 
-	USART_InitStructure.USART_BaudRate = 115200;
+//	USART_InitStructure.USART_BaudRate = 115200;
+	USART_InitStructure.USART_BaudRate = OW_BAUDRATE;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -320,7 +334,7 @@ static uint8_t OW_Reset() {
 		return OW_OK;
 	}
 
-	return OW_DEV_ERR;
+	return OW_ERR;
 }
 
 // внутренняя процедура. Записывает указанное число бит
@@ -366,7 +380,7 @@ static int8_t OW_SendBits(uint8_t num_bits) {
 	USART_DMACmd(OW_USART, USART_DMAReq_Tx | USART_DMAReq_Rx, ENABLE);
 
 	owTout = myTick + OW_TRANS_TOUT;
-	// Ждем, пока не примем 8 байт
+	// Ждем, пока не примем "num_bits" байт
 	while (DMA_GetFlagStatus(OW_DMA_RX_FLAG) == RESET) {
 		if ( myTick > owTout ) {
 			return -1;
@@ -381,7 +395,37 @@ static int8_t OW_SendBits(uint8_t num_bits) {
 }
 
 void ddReadDoor( void ){
-		ddDev[0].ddData = (DD_1_PORT->IDR & DD_1_PIN) >> DD_1_PIN_NUM;
-		ddDev[1].ddData = (DD_2_PORT->IDR & DD_2_PIN) >> DD_2_PIN_NUM;
+
+	// Считываем показания датчиков
+#if OW_DD
+	uint8_t sendBuf[11];
+	uint8_t readBuf[11];
+
+	for ( uint8_t i = 0; i < OW_DD_DEV_NUM; i++ ){
+	// Формируем массив с командой и адресом
+		if (owDdDev[i].addr){
+			sendBuf[0] =MATCH_ROM;
+			*((uint64_t *)&sendBuf[1]) = owDdDev[i].addr;
+			// Отправляем в шину
+			if ((OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_ERR ) {
+				if( owDdDev[i].devStatus == OW_DEV_OK ){
+					owDdDev[i].addr = 0;
+					owDdDev[i].devStatus = OW_DD_DEV_ERR;
+					owDdDev[i].newErr = TRUE;
+				}
+			}
+			else {
+				*(uint32_t *)sendBuf = 0xFFFFFFFF;
+				sendBuf[0] = PIO_READ;
+				OW_Send(OW_NO_RESET, sendBuf, 2, readBuf, 1, 1);
+				owDdDev[i].ddData[0] = readBuf[0] & 0x1;
+				owDdDev[i].ddData[1] = (readBuf[0] >> 2) & 0x1;
+			}
+		}
+	}
+#else
+	ddDev[0].ddData = (DD_1_PORT->IDR & DD_1_PIN) >> DD_1_PIN_NUM;
+	ddDev[1].ddData = (DD_2_PORT->IDR & DD_2_PIN) >> DD_2_PIN_NUM;
+#endif
 }
 

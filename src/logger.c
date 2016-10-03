@@ -67,7 +67,7 @@ int8_t toLogWrite( void ) {
 	uint64_t *toPtr = (uint64_t *)(toLogUnit+sizeof(tXtime));
 
 	// Записываем штамп времени
-	*((tXtime *)toLogUnit) = getRtcTime();
+	*((tXtime *)toLogUnit) = uxTime;
 	// Записываем показания датчиков
 	*toPtr = 0;
 	for( uint8_t i = 0; i < TO_DEV_NUM; i++ ){
@@ -116,13 +116,18 @@ int8_t ddLogWrite( void ) {
 	uint8_t i;
 
 	// Записываем штамп времени
-	ddLogUnit.xTime = getRtcTime();
+	ddLogUnit.xTime = uxTime;
 	// Записываем показания датчиков
 	ddLogUnit.ddData = 0;
-	for( i = 0; i < DD_DEV_NUM; i++ ){
+#if OW_DD
+	for( i = 0; i < OW_DD_DEV_NUM; i++ ){
 		// Сохраняем номер датчика в старшей тетраде и значение температуры в младших трех тетрадах:
 		//		xxxx yyyy yyyy yyyy : x - номер датчика, y - 12-битное значение температуры этого датчика
-		ddLogUnit.ddData |= ddDev[i].ddData << i;
+		ddLogUnit.ddData |= (owDdDev[i].ddData[0] | (owDdDev[i].ddData[1]) << 1 ) << (i*2);
+#else
+	for( i = 0; i < DD_DEV_NUM; i++ ){
+		ddLogUnit.ddData |= (ddDev[i].ddData & 0x1) << i;
+#endif
 	}
 	if( i ) {
 		return logWriteBuff( &ddLogBuff, (uint8_t *)&ddLogUnit );
@@ -171,7 +176,6 @@ int8_t logSend( uint8_t toLogSendEn, uint8_t ddLogSendEn) {
 	int8_t ret;
 
 	nowLogFill = FALSE;
-	memset( tmpBuf, 0x00, sizeof(tmpBuf));
 
 	if ( toLogSendEn ) {
 		if ( blue.logStatus.toTxe ) {
@@ -182,6 +186,10 @@ int8_t logSend( uint8_t toLogSendEn, uint8_t ddLogSendEn) {
 			else if( ret > 0){
 				nowLogFill = TRUE;
 				blue.logStatus.toTxe = DISABLE;
+			}
+			else {
+				nowLogFill = TRUE;
+				memset( tmpBuf, 0x00, 12);
 			}
 		}
 	}
@@ -195,12 +203,15 @@ int8_t logSend( uint8_t toLogSendEn, uint8_t ddLogSendEn) {
 				nowLogFill = TRUE;
 				blue.logStatus.ddTxe = DISABLE;
 			}
+			else {
+				nowLogFill = TRUE;
+				memset( tmpBuf+12, 0x00, 5);
+			}
 		}
 	}
 
-	if ( nowLogFill || prevLogFill ) {
+	if ( nowLogFill ) {
 		logCharUpdate( tmpBuf, 17);
-		prevLogFill = nowLogFill;
 	}
 
 	return 0;

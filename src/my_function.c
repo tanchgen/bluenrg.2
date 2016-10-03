@@ -39,142 +39,20 @@ char * itoa(int n, char * s) {
                 ((word) >> (32-(bits))))
 
 extern volatile int connected;                  // Флаг действующего соединения
-
+/*
 static const uint8_t ch[] = {'0','1','2','3','4','5','6','7','8','9',
                        'A','B','C','D','E','F','G','H','I','J','K','L','M',
                        'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
                        'a','b','c','d','e','f','g','h','i','j','k','l','m',
                        'n','o','p','q','r','s','t','u','v','w','x','y','z' };
 static const char Device_UUID[] = { DEVICE_UUID };
+*/
 uint32_t Pin = 123456;
 
 volatile uint32_t disconnCount; // Таймаут аутентификации по SHA1-хэш 120 сек.
 extern volatile uint16_t myWD;
 
 uint16_t service_handle, dev_name_char_handle, appearance_char_handle;
-/*
-// Получение случайной строки для Токена
-void getTokenStr(uint8_t str[])
-{
-  uint32_t rand0;
-  uint8_t i, b;
-  uint32_t m, k;
-
-  rand0 = myTick;
-  m = 0x3FFFFFFF;                 // 2^31-1 - Модуль
-  k = 1220703125;              // Множитель
-  b = 7;                          // Прироащение
-  for ( i=0; i < TOKEN_LEN-32; i++ )
-  {
-    rand0 = (( k * rand0 + b ) % m);
-    str[i] = ch[(rand0 % 62)];     // 62 - Количество символов в наборе "ch[]"
-  }
-  for ( ; i < TOKEN_LEN; i++ ) {
-    str[i] = Device_UUID[i-(TOKEN_LEN-32)];
-  }
-  str[i]='\0';
-}
-
-// Поолучение SHA-хэш для токена. Строка выровнена побайтно 
-void getShaHash(uint8_t * str, uint8_t token[] )
-{
-   uint8_t hash[320];           //Буфер хэша - 80x32 бита
-   uint32_t h[] = { 0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0 };
-   uint32_t a = 0x67452301;
-   uint32_t b = 0xEFCDAB89;
-   uint32_t c = 0x98BADCFE;
-   uint32_t d = 0x10325476;
-   uint32_t e = 0xC3D2E1F0;
-
-   uint16_t i;
-   uint32_t w[80];
-   uint32_t k, f;
-
-   for ( i=0; i < TOKEN_LEN; i++)
-   {
-      hash[i] = *(str+i);
-   }
-   hash[i++] = 0x80;
-   for ( ;i < 62; i++ )
-   {
-      hash[i] = 0x00;
-   }
-  f = TOKEN_LEN*8;
-  // hash[i++] = (uint8_t)(( (uint32_t)(TOKEN_LEN*8) >> 24) & 0xFF);
-  // hash[i++] = (uint8_t)(( (uint32_t)(TOKEN_LEN * 8 ) >> 16) & 0xFF);
-   hash[i++] = (uint8_t)(( f >> 8) & 0xFF);
-   hash[i] = (uint8_t)( f & 0xFF);
-
-   //w = (uint32_t *)hash; // Оперируем 32-битными словами
-   // разбиваем этот кусок на 16 частей, слов по 32-бита w[i], 0 <= i <= 15
-   //   16 слов по 32-бита дополняются до 80 32-битовых слов: 
-
-    //  Initialize the first 16 words in the array W
-     
-  for(i = 0; i < 16; i++) {
-    w[i] = (hash[i * 4]) << 24;
-    w[i] |= (hash[i * 4 + 1]) << 16;
-    w[i] |= (hash[i * 4 + 2]) << 8;
-    w[i] |= (hash[i * 4 + 3]);
-  }
-
-
-   //for i from 16 to 79
-   //     w[i] = (w[i-3] xor w[i-8] xor w[i-14] xor w[i-16]) циклический сдвиг влево 1
-
-
-   for ( i=16; i < 80; i++ )
-   {
-      w[i] = RoL(1, w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16]);
-   }
-
-   for ( i=0; i<80; i++ )
-   {
-      if ( i<20 ) {
-         f = (b & c) | (~b & d);
-         k = 0x5A827999;
-      }
-      else if ( i<40 ) {
-         f = b ^ c ^ d;
-         k = 0x6ED9EBA1;
-      }
-      else if ( i<60 ) {
-         f = (b & c) | (b & d) | (c & d);
-         k = 0x8F1BBCDC;
-      }
-      else {
-         f = b ^ c ^ d;
-         k = 0xCA62C1D6;
-      }
-
-      //   temp = (a leftrotate 5) + f + e + k + w[i]
-      f += RoL( 5, a ) + e + k + w[i];
-      e = d;
-      d = c;
-      c = RoL( 30, b );
-      b = a;
-      a = f;
-   }
-
-   h[0] += a;
-   h[1] += b;
-   h[2] += c;
-   h[3] += d;
-   h[4] += e;
-  // Итоговое хеш-значение:
-  //       digest = hash = h0 append h1 append h2 append h3 append h4
-
-  for (i=0;i<5;i++){
-    uint8_t j,k;
-    for ( k=0; k<8; k++) {
-      j=(uint8_t)((h[i] >> (28-k*4)) & 0xF);
-      token[i*8+k] = j<0xA ? (j+'0') : ( j+0x57 );
-    }
-  }
-
-   return;
-}
-*/
   
 void myTimeOut( void ){
   // Таймаут 2 мин для токена

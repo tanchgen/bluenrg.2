@@ -15,6 +15,7 @@
 //#include "bt01.h"
 //#include "my_bt01_def.h"
 
+#define WATCHDOG	0
 
 uint8_t crc;
 
@@ -37,9 +38,9 @@ void User_Process(void);
 
 static void SetSysClock(void);
 
-
-
-//void iwdgInit( void );
+#if WATCHDOG
+void iwdgInit( void );
+#endif
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -103,6 +104,9 @@ int main(void)
 #if BLUENRG
 void User_Process(void)
 {
+	if(blue.bleStatus == BLE_STATUS_TIMEOUT){
+		bnrgFullRst();
+	}
   if(blue.connectable){
     /* Establish connection with remote device */
     Make_Connection();
@@ -202,6 +206,8 @@ static void SetSysClock(void)
     while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != (uint32_t)RCC_CFGR_SWS_PLL)
     {
     }
+    FLASH->ACR |= FLASH_ACR_LATENCY;
+
   }
   else
   { /* If HSE fails to start-up, the application will have wrong clock
@@ -223,16 +229,27 @@ static void SetSysClock(void)
 void Error_Handler( eErrStatus err ){
 
 	switch ( err ){
-		case OW_DEV_ERR:
+		case OW_TO_DEV_ERR:
 			alrmUpdate( ALARM_TO_FAULT );
+			break;
+		case OW_DD_DEV_ERR:
+			alrmUpdate( ALARM_DD_FAULT );
 			break;
 		case OW_WIRE_ERR:
 			for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
 				if( owToDev[i].devStatus == OW_DEV_OK ){
-					owToDev[i].devStatus = OW_DEV_ERR;
+					owToDev[i].devStatus = OW_TO_DEV_ERR;
 					owToDev[i].newErr = TRUE;
 				}
 			}
+#if OW_DD
+			for ( uint8_t i = 0; i < OW_DD_DEV_NUM; i++ ) {
+				if( owDdDev[i].devStatus == OW_DEV_OK ){
+					owDdDev[i].devStatus = OW_DD_DEV_ERR;
+					owDdDev[i].newErr = TRUE;
+				}
+			}
+#endif
 			alrmUpdate( ALARM_TO_FAULT );
 			break;
 		case 	LOG_ERR:
@@ -256,3 +273,20 @@ uint8_t crcDS(uint8_t inp, uint8_t crc) {
  if(inp & 0x80)  crc ^= 0x8c;
  return (crc);
 }
+
+#if WATCHDOG
+void iwdgInit( void ){
+  IWDG->KR = IWDG_START;          // Запуск WatchDog
+  IWDG->KR = IWDG_WRITE_ACCESS;   // Доступ записи в регистры
+  IWDG->PR = IWDG_PR_PR_2;        // Прескалер = 64;
+  IWDG->RLR = 2047;               // Записываем регистр перезагрузки
+  for ( uint32_t tickstart = myTick + HW_TIMEOUT; !(IWDG->SR ) ; ) {
+    if ( myTick >
+					tickstart ) {
+      // Проблема с IWDG
+      HardFault_Handler();
+    }
+  }
+  IWDG->KR = IWDG_REFRESH;
+}
+#endif

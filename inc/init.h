@@ -20,7 +20,6 @@ int8_t alrmInit( void );
 extern uint32_t toLogTout;										// Таймаут для логгирования температуры
 extern uint32_t toLogCount;
 
-extern uint32_t toReadTout;									// Таймаут для считывания температуры
 extern uint32_t toReadCount;
 
 extern uint32_t toMesgTout;									// Таймаут для предачи температуры

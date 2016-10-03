@@ -46,6 +46,7 @@
 /* Includes ------------------------------------------------------------------*/ 
 #include "stm32f0xx.h"
 #include "my_error.h"
+#include "ble_status.h"
   //#include "my_stm32l0xx_nucleo.h"
   //#include "stm32l0xx_nucleo_bluenrg.h"
 #define SYSCLK_FREQ 	24000000
@@ -139,6 +140,9 @@
 void SpiMspInit(SPI_TypeDef* hspi);
 void BNRG_SPI_Init(void);
 void BlueNRG_RST(void);
+
+void bnrgFullRst( void );
+
 uint8_t BlueNRG_DataPresent(void);
 void    BlueNRG_HW_Bootloader(void);
 int32_t BlueNRG_SPI_Read_All(SPI_TypeDef *hspi, uint8_t *buffer, uint8_t buff_size);

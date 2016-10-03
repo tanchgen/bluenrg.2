@@ -85,10 +85,10 @@ void toReadTemperature( void ) {
 			sendBuf[0] =MATCH_ROM;
 			*((uint64_t *)&sendBuf[1]) = owToDev[i].addr;
 			// Отправляем в шину
-			if ((OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_DEV_ERR ) {
+			if ((OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_ERR ) {
 				if( owToDev[i].devStatus == OW_DEV_OK ){
 					owToDev[i].addr = 0;
-					owToDev[i].devStatus = OW_DEV_ERR;
+					owToDev[i].devStatus = OW_TO_DEV_ERR;
 					owToDev[i].newErr = TRUE;
 				}
 			}

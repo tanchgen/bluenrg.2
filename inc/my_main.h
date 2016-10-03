@@ -18,7 +18,8 @@ typedef enum {
 	OW_OK,
 	OW_DEV_OK,
 	OW_WIRE_ERR,
-	OW_DEV_ERR,
+	OW_TO_DEV_ERR,
+	OW_DD_DEV_ERR,
 	OW_DEV_NUM_ERR,
 	OW_ERR,
 	LOG_ERR,
@@ -33,8 +34,9 @@ typedef enum {
 #define UNUSED(x)						(void)(x)
 #endif
 
-#define  TICK_INT_PRIORITY            ((uint32_t)3)    /*!< tick interrupt priority (lowest by default)  */
-
+#define  TICK_INT_PRIORITY            ((uint32_t)0)    /*!< tick interrupt priority (lowest by default)  */
+                                                                              /*  Warning: Must be set to higher priority for HAL_Delay()  */
+                                                                              /*  and HAL_GetTick() usage under interrupt context          */
 /* Definition for USARTx clock resources */
 #define USARTx                           USART2
 #define USARTx_CLK_ENABLE()              __USART2_CLK_ENABLE();

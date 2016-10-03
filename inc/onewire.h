@@ -29,6 +29,9 @@
 #define OW_DMA_CH_TX 		DMA1_Channel2
 #define OW_DMA_RX_FLAG	DMA1_FLAG_TC3
 
+// Скорость UART для работы с 1-Wire (рекомендуется 11520)
+#define OW_BAUDRATE			103000;	// Вычисленно опытным путем
+
 #define OW_TRANS_TOUT		500
 
 #define OW_PORT					GPIOA
@@ -36,6 +39,32 @@
 #define OW_TX_PIN_NUM		2
 #define OW_RX_PIN				GPIO_Pin_3
 #define OW_RX_PIN_NUM		3
+
+#endif //OW_USART1
+
+#define MAX_TO_DEV_NUM	4
+
+#define TO_DEV_NUM			3				// Количество термометров
+#if (MAX_TO_DEV_NUM < TO_DEV_NUM)
+#error "Число датчиков температуры превышает максимальное для данной EEPROM (128кБ) для Логов"
+#endif
+
+#define DS1820_SERIAL		0x28
+
+// ******************** Определения для Датчиков двери ********************
+
+// Датчики двери - на 1-Wire
+#define OW_DD						0
+#define DD_DEV_NUM			2				// Количество Датчиков Дверей (DD)
+
+#if OW_DD
+
+#define OW_DD_DEV_NUM	  ((DD_DEV_NUM)/2)				// Количество 1-wire контроллеров Датчиков Дверей (DD)
+#define DS2413_SERIAL		0x3A
+
+#else // OW_DD
+
+#define OW_DD_DEV_NUM	  (0)				// Количество 1-wire контроллеров Датчиков Дверей (DD)
 
 #define DD_1_PORT				GPIOB
 #define DD_1_PIN				GPIO_Pin_0
@@ -45,28 +74,27 @@
 #define DD_2_PIN				GPIO_Pin_1
 #define DD_2_PIN_NUM		1
 
-#define MAX_TO_DEV_NUM	4
-
-#define TO_DEV_NUM			3				// Количество термометров
-#if (MAX_TO_DEV_NUM < TO_DEV_NUM)
-#error "Число датчиков температуры превышает максимальное для данной EEPROM (128кБ) для Логов"
 #endif
 
-#define DD_DEV_NUM			2				// Количество Датчиков Дверей (DD)
-#define OW_DEV_NUM			TO_DEV_NUM
-
-#endif
-
+#define OW_DEV_NUM			(TO_DEV_NUM + OW_DD_DEV_NUM)
 
 typedef struct {
-	uint64_t addr;						//  Адрес устройства
-	uint8_t  mesurAcc;				//  Точность измерения ( 9-10-11-12 бит )
+	uint64_t addr;					//  Адрес устройства
+	uint8_t  mesurAcc;			//  Точность измерения ( 9-10-11-12 бит )
 	int16_t tMin;						//  Допустимый максимум температуры
 	int16_t tMax;						//  Допустимый минимум температуры
 	eErrStatus devStatus;
 	uint8_t newErr;					//	Признак новой ошибки
-	int16_t	temper;						// Действующее значение температуры
+	int16_t	temper;					// Действующее значение температуры
 } tOwToDev;
+
+typedef struct {
+	uint64_t addr;					//  Адрес устройства
+	uint8_t ddData[2];					// Действующее значение датчика двери
+	uint8_t ddDataPrev[2];
+	eErrStatus devStatus;
+	uint8_t newErr;					//	Признак новой ошибки
+} tOwDdDev;
 
 typedef struct {
 	uint8_t ddData;					// Действующее значение датчика двери
@@ -86,6 +114,8 @@ typedef struct {
 #define MEM_READ				0xBE
 #define RAM_TO_EEPROM		0x48
 #define EPPROM_TO_RAM		0xB8
+#define PIO_READ				0xF5
+#define PIO_WRITE				0x5A
 
 
 // первый параметр функции OW_Send
@@ -99,7 +129,11 @@ typedef struct {
 extern uint8_t owDevNum;
 extern eErrStatus owStatus;
 extern tOwToDev owToDev[]; 			// Массив структур устройств 1-Wire;
-extern tDdDev ddDev[]; 			// Массив структур Датчиков Двери 1-Wire;
+#if OW_DD
+	extern tOwDdDev owDdDev[]; 			// Массив структур Датчиков Двери 1-Wire;
+#else
+	extern tDdDev ddDev[]; 			// Массив структур Датчиков Двери 1-Wire;
+#endif
 
 extern uint32_t tmpModerOut, tmpModerAf;			 // Значения регистра MODER для UART и для подтяжки UART_RX к Vdd
 

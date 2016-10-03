@@ -26,7 +26,7 @@
 * @brief Handle of TX Characteristic on the Server. The handle should be
 *        discovered, but it is fixed only for this demo.
 */ 
-//#define TX_HANDLE 0x0011
+#define NON_ACTIVE_TOUT 240
 
 // Маска ошибок, отправляемых на сервер
 #define ALARM_GENERIC					0x01
@@ -83,12 +83,12 @@ void enableNotification(void);
 
 int8_t alrmUpdate( uint8_t alrmId );
 
-void alrmCharUpdate( void );
-void logCharUpdate( uint8_t *data, uint8_t len);
-void toCurCharUpdate( void );
-void ddCurCharUpdate( void );
-void rtcCharUpdate( void );
-void minMaxCharUpdate( void );
+tBleStatus alrmCharUpdate( void );
+tBleStatus logCharUpdate( uint8_t *data, uint8_t len);
+tBleStatus toCurCharUpdate( void );
+tBleStatus ddCurCharUpdate( void );
+tBleStatus rtcCharUpdate(  uint32_t xTime  );
+tBleStatus minMaxCharUpdate( void );
 
 void Attribute_Modified_CB(uint16_t handle, uint8_t data_length,
                            uint8_t *att_data);

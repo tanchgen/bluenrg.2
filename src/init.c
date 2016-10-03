@@ -19,7 +19,6 @@
 
 uint32_t toLogTout;										// Таймаут для логгирования температуры
 uint32_t toLogCount;
-uint32_t toReadTout;									// Таймаут для считывания температуры
 uint32_t toReadCount;
 uint32_t ddReadTout;										// Таймаут для считывания температуры
 uint32_t ddReadCount;
@@ -29,6 +28,7 @@ void Error_Handler( eErrStatus err );
 eErrStatus toInit( void ) {
 
 	uint8_t termNum = 0;
+	uint8_t ddNum = 0;
 
 	owStatus = OW_OK;
 
@@ -41,11 +41,16 @@ eErrStatus toInit( void ) {
   // Проверка на наличие необходимых устройств
   for ( uint8_t i =0; i < owDevNum; i++) {
   	uint64_t tmp = *((uint64_t *)(tmpAddr + i*8));
-		if ( (tmp & 0xFF) == 0x28 ){
+		if ( (tmp & 0xFF) == DS1820_SERIAL ){
 			owToDev[termNum++].addr = tmp;
 		}
+#if OW_DD
+		if ( (tmp & 0xFF) == DS2413_SERIAL ){
+			owDdDev[ddNum++].addr = tmp;
+		}
+#endif
   }
-	if ( (!termNum) ) {
+	if ( !( termNum + ddNum ) ) {
 		// Не хватает термометров или не хватает датчиков двери -
 		// предполагаем, что проблема с проводом
 		Error_Handler(OW_WIRE_ERR);
@@ -65,7 +70,6 @@ eErrStatus toInit( void ) {
   }
 
   // Устанавливаем таймаут сбора информации
-	toReadTout = TO_READ_TOUT;
 	toReadCount = TO_READ_TOUT;
 
   return OW_OK;
@@ -77,18 +81,18 @@ eErrStatus owToDevInit( uint8_t toDev ) {
 
 	if ( !owToDev[toDev].addr ) {
 		owToDev[toDev].newErr = TRUE;
-		Error_Handler(OW_DEV_ERR);
-		return ( owToDev[toDev].devStatus = OW_DEV_ERR );
+		Error_Handler(OW_TO_DEV_ERR);
+		return ( owToDev[toDev].devStatus = OW_TO_DEV_ERR );
 	}
 // Выбираем датчик
 // Формируем массив с командой и адресом
 	sendBuf[0] =MATCH_ROM;
 	*((uint64_t *)&sendBuf[1]) = owToDev[toDev].addr;
 // Отправляем в шину
-	if ((err = OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_DEV_ERR ) {
+	if ((err = OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_ERR ) {
 		owToDev[toDev].newErr = TRUE;
 		owToDev[toDev].addr = 0;
-		owToDev[toDev].devStatus = OW_DEV_ERR;
+		owToDev[toDev].devStatus = OW_TO_DEV_ERR;
 	}
 	else {
 		owToDev[toDev].newErr = FALSE;
@@ -114,6 +118,22 @@ eErrStatus owToDevInit( uint8_t toDev ) {
 }
 
 void ddInit( void ){
+#if OW_DD
+	for (uint8_t i = 0; i < OW_DD_DEV_NUM; i++){
+		if ( !owDdDev[i].addr ) {
+			owDdDev[i].newErr = TRUE;
+			Error_Handler(OW_DD_DEV_ERR);
+			owDdDev[i].devStatus = OW_DD_DEV_ERR;
+		}
+	}
+	// Установки для датчиков дверей
+	for (uint8_t i=0; i< OW_DD_DEV_NUM; i++){
+		owDdDev[i].ddData[0] = 1;
+		owDdDev[i].ddDataPrev[0] = 1;
+		owDdDev[i].ddData[1] = 1;
+		owDdDev[i].ddDataPrev[1] = 1;
+	}
+#else
 
 	if ( DD_1_PORT == GPIOA ) {
 		// Clock GPIOA enable
@@ -153,15 +173,15 @@ void ddInit( void ){
 	DD_2_PORT->PUPDR |= 1 << (DD_2_PIN_NUM*2);				// PULLUP
 	DD_2_PORT->OSPEEDR &= ~(3 << (DD_2_PIN_NUM*2));		// Low Speed
 
-	// Установки для датчиков дверей
-	ddDev[0].ddData = 1;
-	ddDev[0].ddDataPrev = 1;
-	ddDev[1].ddData = 1;
-	ddDev[1].ddDataPrev = 1;
+	for( uint8_t i = 0; i < DD_DEV_NUM; i++){
+		ddDev[i].ddData = 1;
+		ddDev[i].ddDataPrev = 1;
+	}
 
+#endif
 	// Устанавливаем таймаут сбора информации
-	 	ddReadTout = DD_READ_TOUT;
-	 	ddReadCount = DD_READ_TOUT;
+	ddReadTout = DD_READ_TOUT;
+	ddReadCount = DD_READ_TOUT;
 }
 
 int8_t logInit( void ){

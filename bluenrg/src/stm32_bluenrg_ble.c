@@ -43,8 +43,11 @@
 #include "gp_timer.h"
 #include "my_error.h"
 #include "my_main.h"
+#include "my_service.h"
 
 extern __IO uint32_t myTick;
+extern volatile uint32_t resetCount; // Таймаут отсутствия активности на bluetoth.
+extern struct _blue blue;
 eError bnrgErr;
 
 /** @addtogroup BSP
@@ -140,7 +143,7 @@ void SpiMspInit(SPI_TypeDef* hspi)
     EXTI_Init( &EXTI_InitStruct );
 
     /* Configure the NVIC for SPI */  
-    NVIC_SetPriority(BNRG_SPI_EXTI_IRQn, 2);
+    NVIC_SetPriority(BNRG_SPI_EXTI_IRQn, 3);
     NVIC_EnableIRQ(BNRG_SPI_EXTI_IRQn);
   }
 }
@@ -199,6 +202,26 @@ void BlueNRG_RST(void)
   myDelay(5);
   BNRG_SPI_RESET_PORT->BSRR |= BNRG_SPI_RESET_PIN;
   myDelay(5);
+}
+
+void bnrgFullRst( void ){
+	// BlueNRG завис - перезапускаем
+		RCC->APB2RSTR |= RCC_APB2RSTR_SPI1RST;
+		for(uint8_t i = 0; i < 2; i++){
+			__NOP();
+		}
+		RCC->APB2RSTR &= ~RCC_APB2RSTR_SPI1RST;
+		BNRG_SPI_Init();
+		if(BlueNRG_Init() != BLE_STATUS_SUCCESS){
+			blue.bleStatus = BLE_STATUS_TIMEOUT;
+			return;
+		}
+		resetCount = 120;
+		toCurCharUpdate();
+		ddCurCharUpdate();
+		rtcCharUpdate(  uxTime );
+		minMaxCharUpdate();
+		GAP_DisconnectionComplete_CB();
 }
 
 /**
@@ -294,6 +317,8 @@ int32_t BlueNRG_SPI_Write(SPI_TypeDef *hspi, uint8_t* data1,
   int32_t result = 0;
   
   int32_t spi_fix_enabled = 0;
+
+#define ENABLE_SPI_FIX
   
 #ifdef ENABLE_SPI_FIX
   spi_fix_enabled = 1;
