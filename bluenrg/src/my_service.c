@@ -202,10 +202,10 @@ static tBleStatus addService(void)
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Текущее Время"
-  ret =  aci_gatt_add_char(workServHandle, UUID_TYPE_128, timeCharUuid, 10,
+  ret =  aci_gatt_add_char(workServHandle, UUID_TYPE_128, timeCharUuid, 4,
                            CHAR_PROP_READ|CHAR_PROP_WRITE_WITHOUT_RESP,
 													 ATTR_PERMISSION_NONE,
-													 GATT_NOTIFY_ATTRIBUTE_WRITE, 16, 1, &timeCharHandle);
+													 GATT_NOTIFY_ATTRIBUTE_WRITE, 16, 0, &timeCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Температура Минимум-Максимум"
@@ -360,8 +360,14 @@ void Attribute_Modified_CB(uint16_t handle, uint8_t dataLen, uint8_t *att_data)
   	if( *att_data & 0x01 ) {
   		blue.logStatus.toReq = ENABLE;
   	}
+  	else {
+  		blue.logStatus.toReq = DISABLE;
+  	}
   	if( *att_data & 0x02 ) {
   		blue.logStatus.ddReq = ENABLE;
+  	}
+  	else {
+  		blue.logStatus.ddReq = DISABLE;
   	}
   }
   else if (handle == toMinMaxCharHandle + 1) {
@@ -397,8 +403,19 @@ static void readPermitRequest( uint16_t handle, uint8_t offset) {
 	handle--;
 
 	if ( handle == logCharHandle ) {
-		blue.logStatus.ddTxe = ENABLE;
-		blue.logStatus.toTxe = ENABLE;
+		// Какой Лог разрешено было читать, тот и освободился;
+		if(blue.logStatus.ddReq){
+			blue.logStatus.ddTxe = ENABLE;
+			if(	ddEmptyFill == 0){
+				logEndReadBuff(&ddLogBuff);
+			}
+		}
+		if(blue.logStatus.toReq){
+			blue.logStatus.toTxe = ENABLE;
+			if(	toEmptyFill == 0 ){
+				logEndReadBuff(&toLogBuff);
+			}
+		}
 	}
 	else 	if ( (handle == alrmNewCharHandle) || (handle == alrmNoReadCharHandle) ) {
 		if ( (handle == alrmNewCharHandle) && blue.alrmSendId ) {
@@ -572,7 +589,7 @@ tBleStatus ddCurCharUpdate( void ){
 #endif
 }
 
-tBleStatus logCharUpdate( uint8_t *data, uint8_t len) {
+tBleStatus logCharUpdate( uint8_t *data, uint8_t len ) {
 	return aci_gatt_update_char_value( workServHandle, logCharHandle, 0, len, data );
 }
 

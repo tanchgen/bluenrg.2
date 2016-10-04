@@ -171,7 +171,7 @@ void BNRG_SPI_Init(void)
 	  /* Initialize the SPI_NSS member */
 	  SPI_InitStruct.SPI_NSS = SPI_NSS_Soft;
 	  /* Initialize the SPI_BaudRatePrescaler member */
-	  SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+	  SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
 	  /* Initialize the SPI_FirstBit member */
 	  SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB;
 	  /* Initialize the SPI_CRCPolynomial member */
@@ -206,6 +206,7 @@ void BlueNRG_RST(void)
 
 void bnrgFullRst( void ){
 	// BlueNRG завис - перезапускаем
+
 		RCC->APB2RSTR |= RCC_APB2RSTR_SPI1RST;
 		for(uint8_t i = 0; i < 2; i++){
 			__NOP();

@@ -14,6 +14,16 @@
 
 tLogBuf toLogBuff;
 tLogBuf ddLogBuff;
+uint8_t toEmptyFill;
+uint8_t ddEmptyFill;
+
+int8_t saveStateBuff( tLogBuf *buf ){
+	// Сохраняем состояние данных буфера логгера
+	if( sendEeprom( (buf->bufAddr - sizeof(tLogBuf)), (uint8_t *)buf, sizeof(tLogBuf) ) != HAL_OK ) {
+		return -1;
+	}
+	return 0;
+}
 
 int8_t logWriteBuff( tLogBuf * buf, uint8_t * data ) {
 	if ( (buf->end == buf->begin) && ( buf->full == 1) ){
@@ -35,14 +45,14 @@ int8_t logWriteBuff( tLogBuf * buf, uint8_t * data ) {
 		buf->full = 1;
 	}
 	// Сохраняем состояние данных буфера логгера
-	if( sendEeprom( (buf->bufAddr - sizeof(tLogBuf)), (uint8_t *)buf, sizeof(tLogBuf) ) != HAL_OK ) {
+	if( saveStateBuff( buf ) ) {
 		return -1;
 	}
 
 	return 1;
 }
 
-int16_t logReadBuff( tLogBuf * buf, uint8_t * data ) {
+int16_t logStartReadBuff( tLogBuf * buf, uint8_t * data ) {
 	if ( (buf->begin == buf->end) && !buf->full) {
 		return 0;
 	}
@@ -52,13 +62,21 @@ int16_t logReadBuff( tLogBuf * buf, uint8_t * data ) {
 	if ( receiveEeprom( (buf->bufAddr + buf->begin * buf->size), data, buf->size ) != HAL_OK){
 		return -1;
 	}
+	buf->readStart = 1;
+	return 1;
+}
+
+int16_t logEndReadBuff( tLogBuf * buf ){
 	buf->begin++;
 	if (buf->begin == buf->len) {
 		buf->begin = 0;
 	}
-	return 1;
+	buf->readStart = 0;
+	if( saveStateBuff( buf ) ){
+		return -1;
+	}
+	return 0;
 }
-
 int8_t toLogWrite( void ) {
 	uint8_t toLogUnit[sizeof(tXtime)+sizeof(uint64_t)];
 #if (TO_DEV_NUM > 4)
@@ -90,16 +108,13 @@ int8_t toLogRead( tToLogUnit * toLog ){
 	uint16_t *toDataDst;
 	int8_t rd;
 
-	switch( rd = logReadBuff( &toLogBuff, (uint8_t *)toBuf ) )  {
+	switch( rd = logStartReadBuff( &toLogBuff, (uint8_t *)toBuf ) )  {
 		case -1:
 			// Ошибка чтения логов - на сервер будем отправлять значения, заполненные 0xFF
 			memset( toLog, 0xFF, sizeof(tToLogUnit) );
 			break;
-		case 0:
-			// В логе нет непрочитанных записей - на сервер будем отправлять значения, заполненные 0x00
-			memset( toLog, 0x00, sizeof(tToLogUnit) );
-			break;
-		default:
+		case 1:
+			// Прочитана 1 запись
 			toLog->xTime = ((tToLogUnit *)toBuf)->xTime;
 			toDataSrc = (uint64_t *)((tToLogUnit *)toBuf)->toData;
 			toDataDst = (uint16_t *)toLog->toData;
@@ -107,6 +122,11 @@ int8_t toLogRead( tToLogUnit * toLog ){
 				*toDataDst++ = (*toDataSrc) & 0xFFF;
 				*toDataSrc >>=12;
 			}
+			break;
+		default:
+			// В логе нет непрочитанных записей - на сервер будем отправлять значения, заполненные 0x00
+			// memset( toLog, 0x00, sizeof(tToLogUnit) );
+			__NOP();
 	}
 	return rd;
 }
@@ -138,7 +158,7 @@ int8_t ddLogWrite( void ) {
 int8_t ddLogRead( tDdLogUnit * ddLog ) {
 	int8_t rd;
 
-	switch( rd = logReadBuff( &ddLogBuff, (uint8_t *)ddLog ) ){
+	switch( rd = logStartReadBuff( &ddLogBuff, (uint8_t *)ddLog ) ){
 		case -1:
 			// Ошибка чтения логов - на сервер будем отправлять значения, заполненные 0xFF
 			memset( ddLog, 0xFF, sizeof(tDdLogUnit) );
@@ -170,48 +190,67 @@ int8_t alrmUpdate( uint8_t alrmId ) {
 }
 
 int8_t logSend( uint8_t toLogSendEn, uint8_t ddLogSendEn) {
-	static uint8_t prevLogFill;
-	static uint8_t nowLogFill;
+	uint8_t logFill = FALSE;
 	uint8_t tmpBuf[17];
 	int8_t ret;
 
-	nowLogFill = FALSE;
+	memset( tmpBuf, 0x00, 17);
 
 	if ( toLogSendEn ) {
 		if ( blue.logStatus.toTxe ) {
 			ret = toLogRead( (tToLogUnit *)tmpBuf );
 			if ( ret < 0) {
+				logFill = TRUE;
 				alrmUpdate( ALARM_LOG_FAULT );
 			}
 			else if( ret > 0){
-				nowLogFill = TRUE;
+				logFill = TRUE;
+				toEmptyFill = FALSE;
 				blue.logStatus.toTxe = DISABLE;
 			}
-			else {
-				nowLogFill = TRUE;
-				memset( tmpBuf, 0x00, 12);
+			else if( toEmptyFill == FALSE){
+				logFill = TRUE;
+				toEmptyFill = TRUE;
+				blue.logStatus.toTxe = ENABLE;
 			}
 		}
 	}
+	else if( toEmptyFill == FALSE){
+		logFill = TRUE;
+		toEmptyFill = TRUE;
+		blue.logStatus.toTxe = ENABLE;
+	}
+
 	if ( ddLogSendEn ) {
 		if ( blue.logStatus.ddTxe ) {
 			ret = ddLogRead( (tDdLogUnit *)&tmpBuf[12] );
 			if ( ret < 0) {
+				logFill = TRUE;
 				alrmUpdate( ALARM_LOG_FAULT );
 			}
 			else if( ret > 0){
-				nowLogFill = TRUE;
+				logFill = TRUE;
+				ddEmptyFill = FALSE;
 				blue.logStatus.ddTxe = DISABLE;
 			}
-			else {
-				nowLogFill = TRUE;
-				memset( tmpBuf+12, 0x00, 5);
+			else if( ddEmptyFill == FALSE){
+				logFill = TRUE;
+				ddEmptyFill = TRUE;
+				blue.logStatus.ddTxe = ENABLE;
 			}
 		}
 	}
+	else if( ddEmptyFill == FALSE){
+		logFill = TRUE;
+		ddEmptyFill = TRUE;
+		blue.logStatus.ddTxe = ENABLE;
+	}
 
-	if ( nowLogFill ) {
-		logCharUpdate( tmpBuf, 17);
+	if ( logFill ) {
+		if( logCharUpdate( tmpBuf, 17) != BLE_STATUS_SUCCESS ){
+			while(1)
+			{}
+		}
 	}
 
 	return 0;

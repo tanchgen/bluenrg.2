@@ -28,6 +28,7 @@ typedef struct {
 	uint32_t bufAddr;
 	uint8_t size;								//
 	uint32_t len;
+	uint8_t readStart;
 } tLogBuf;
 
 #define TO_LOG_RECORD_NUM			10080
@@ -50,12 +51,18 @@ typedef struct {
 
 extern tLogBuf toLogBuff;
 extern tLogBuf ddLogBuff;
+extern uint8_t toEmptyFill;
+extern uint8_t ddEmptyFill;
 
+
+int8_t saveStateBuff( tLogBuf *buf );
 int8_t logSend( uint8_t toLogReq, uint8_t ddLogReq );
 // Записывает байт в буфер
 int8_t logWriteBuff( tLogBuf * buf, uint8_t * data );
-// Считывает байт из буфера. Если буфер пуст - возвращает (-1)
-int16_t logReadBuff( tLogBuf * buf, uint8_t * data );
+// Начало считывания байт из буфера. Если буфер пуст - возвращает (-1)
+int16_t logStartReadBuff( tLogBuf * buf, uint8_t * data );
+// Завершение считывания из буфера. В т.ч. и запись состояния буфера.
+int16_t logEndReadBuff( tLogBuf * buf );
 
 int8_t toLogWrite( void );
 int8_t toLogRead( tToLogUnit * toLog );

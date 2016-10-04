@@ -201,6 +201,7 @@ int8_t logInit( void ){
 			toLogBuff.full = 0;
 			toLogBuff.size = TO_LOG_RECORD_SIZE;
 			toLogBuff.len = TO_LOG_RECORD_NUM;
+			toLogBuff.readStart = 0;
 			// Оставляем место для сохранения состояния структуры toLogBuff
 			toLogBuff.bufAddr = TO_LOG_START_ADDR + sizeof(tLogBuf);
 		}
@@ -216,6 +217,7 @@ int8_t logInit( void ){
 			ddLogBuff.full = 0;
 			ddLogBuff.size = DD_LOG_RECORD_SIZE;
 			ddLogBuff.len = DD_LOG_RECORD_NUM;
+			ddLogBuff.readStart = 0;
 			// Оставляем место для сохранения состояния структуры ddLogBuff
 			ddLogBuff.bufAddr = DD_LOG_START_ADDR + sizeof(tLogBuf);
 		}

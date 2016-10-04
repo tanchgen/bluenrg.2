@@ -20,6 +20,9 @@
 tEeprom eeprom;
 I2C_HandleTypeDef hepr;
 
+static HAL_StatusTypeDef my_I2C_IsDeviceReady(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint32_t Trials, uint32_t Timeout);
+static HAL_StatusTypeDef I2C_WaitOnFlagUntilTimeout(I2C_HandleTypeDef *hi2c, uint32_t Flag, FlagStatus Status, uint32_t Timeout);
+
 int8_t eepromInit( void ){
 
   /* Enable I2C1 reset state */
@@ -95,10 +98,21 @@ int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	 *
 	 * Организовать проверку на превышение границы памяти
 	 */
+	HAL_StatusTypeDef ret;
+	uint32_t tout = myTick + I2C_TOUT;
+
 	uint8_t eprAddr = EEPROM_I2C_ADDR | ((addr >> 16) & 0x2);
 	addr = addr & 0xFFFF;
 
-	return HAL_I2C_Mem_Write( &hepr, eprAddr, addr, I2C_MEMADD_SIZE_16BIT, data, len, EEPROM_TOUT);
+	if( (ret = HAL_I2C_Mem_Write( &hepr, eprAddr, addr, I2C_MEMADD_SIZE_16BIT, data, len, EEPROM_TOUT)) == HAL_OK){
+		// Check if the EEPROM is ready for a new operation
+		while ( (ret = my_I2C_IsDeviceReady(&hepr, eprAddr, 20, 300))== HAL_TIMEOUT){
+			if( myTick > tout ){
+				break;
+			}
+		}
+	}
+	return ret;
 }
 
 int8_t receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
@@ -109,10 +123,16 @@ int8_t receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	 *
 	 * Организовать проверку на превышение границы памяти
 	 */
+	HAL_StatusTypeDef ret;
 	uint8_t eprAddr = EEPROM_I2C_ADDR | ((addr >> 16) & 0x2);
 	addr = addr & 0xFFFF;
 
-	return HAL_I2C_Mem_Read( & hepr, eprAddr, addr, I2C_MEMADD_SIZE_16BIT, data, len, EEPROM_TOUT );
+	ret = HAL_I2C_Mem_Read( & hepr, eprAddr, addr, I2C_MEMADD_SIZE_16BIT, data, len, EEPROM_TOUT );
+	if( ret != HAL_OK ){
+		while(1)
+		{}
+	}
+	return ret;
 }
 
 void epprom_IRQHandler( void ) {
@@ -289,3 +309,168 @@ HAL_StatusTypeDef HAL_I2C_Init(I2C_HandleTypeDef *hi2c)
   return HAL_OK;
 }
 
+/**
+  * @brief  Checks if target device is ready for communication.
+  * @note   This function is used with Memory devices
+  * @param  hi2c : Pointer to a I2C_HandleTypeDef structure that contains
+  *                the configuration information for the specified I2C.
+  * @param  DevAddress: Target device address
+  * @param  Trials: Number of trials
+  * @param  Timeout: Timeout duration
+  * @retval HAL status
+  */
+static HAL_StatusTypeDef my_I2C_IsDeviceReady(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint32_t Trials, uint32_t Timeout) {
+  uint32_t tout;
+
+  __IO uint32_t I2C_Trials = 0;
+
+  if(hi2c->State == HAL_I2C_STATE_READY)
+  {
+    if(__HAL_I2C_GET_FLAG(hi2c, I2C_FLAG_BUSY) == SET)
+    {
+      return HAL_BUSY;
+    }
+
+    /* Process Locked */
+    __HAL_LOCK(hi2c);
+
+    hi2c->State = HAL_I2C_STATE_BUSY;
+    hi2c->ErrorCode = HAL_I2C_ERROR_NONE;
+
+    do
+    {
+      /* Generate Start */
+      hi2c->Instance->CR2 = I2C_GENERATE_START(hi2c->Init.AddressingMode,DevAddress);
+
+      /* No need to Check TC flag, with AUTOEND mode the stop is automatically generated */
+      /* Wait until STOPF flag is set or a NACK flag is set*/
+      tout = myTick + Timeout;
+      while((__HAL_I2C_GET_FLAG(hi2c, I2C_FLAG_STOPF) == RESET) && (__HAL_I2C_GET_FLAG(hi2c, I2C_FLAG_AF) == RESET) && (hi2c->State != HAL_I2C_STATE_TIMEOUT))
+      {
+        if(Timeout != HAL_MAX_DELAY)
+        {
+          if( (Timeout == 0) || (myTick > tout) )
+          {
+            /* Device is ready */
+            hi2c->State = HAL_I2C_STATE_READY;
+            /* Process Unlocked */
+            __HAL_UNLOCK(hi2c);
+            return HAL_TIMEOUT;
+          }
+        }
+      }
+
+      /* Check if the NACKF flag has not been set */
+      if (__HAL_I2C_GET_FLAG(hi2c, I2C_FLAG_AF) == RESET)
+      {
+        /* Wait until STOPF flag is reset */
+        if(I2C_WaitOnFlagUntilTimeout(hi2c, I2C_FLAG_STOPF, RESET, Timeout) != HAL_OK)
+        {
+          return HAL_TIMEOUT;
+        }
+
+        /* Clear STOP Flag */
+        __HAL_I2C_CLEAR_FLAG(hi2c, I2C_FLAG_STOPF);
+
+        /* Device is ready */
+        hi2c->State = HAL_I2C_STATE_READY;
+
+        /* Process Unlocked */
+        __HAL_UNLOCK(hi2c);
+
+        return HAL_OK;
+      }
+      else
+      {
+        /* Wait until STOPF flag is reset */
+        if(I2C_WaitOnFlagUntilTimeout(hi2c, I2C_FLAG_STOPF, RESET, Timeout) != HAL_OK)
+        {
+          return HAL_TIMEOUT;
+        }
+
+        /* Clear NACK Flag */
+        __HAL_I2C_CLEAR_FLAG(hi2c, I2C_FLAG_AF);
+
+        /* Clear STOP Flag, auto generated with autoend*/
+        __HAL_I2C_CLEAR_FLAG(hi2c, I2C_FLAG_STOPF);
+      }
+
+      /* Check if the maximum allowed number of trials has been reached */
+      if (I2C_Trials++ == Trials)
+      {
+        /* Generate Stop */
+        hi2c->Instance->CR2 |= I2C_CR2_STOP;
+
+        /* Wait until STOPF flag is reset */
+        if(I2C_WaitOnFlagUntilTimeout(hi2c, I2C_FLAG_STOPF, RESET, Timeout) != HAL_OK)
+        {
+          return HAL_TIMEOUT;
+        }
+
+        /* Clear STOP Flag */
+        __HAL_I2C_CLEAR_FLAG(hi2c, I2C_FLAG_STOPF);
+      }
+    }while(I2C_Trials < Trials);
+
+    hi2c->State = HAL_I2C_STATE_READY;
+
+    /* Process Unlocked */
+    __HAL_UNLOCK(hi2c);
+
+    return HAL_TIMEOUT;
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+}
+
+/**
+  * @brief  This function handles I2C Communication Timeout.
+  * @param  hi2c : Pointer to a I2C_HandleTypeDef structure that contains
+  *                the configuration information for the specified I2C.
+  * @param  Flag: specifies the I2C flag to check.
+  * @param  Status: The new Flag status (SET or RESET).
+  * @param  Timeout: Timeout duration
+  * @retval HAL status
+  */
+static HAL_StatusTypeDef I2C_WaitOnFlagUntilTimeout(I2C_HandleTypeDef *hi2c, uint32_t Flag, FlagStatus Status, uint32_t Timeout) {
+  uint32_t tickstart = getTick();
+
+  /* Wait until flag is set */
+  if(Status == RESET)
+  {
+    while(__HAL_I2C_GET_FLAG(hi2c, Flag) == RESET)
+    {
+      /* Check for the Timeout */
+      if(Timeout != HAL_MAX_DELAY)
+      {
+        if((Timeout == 0) || (( myTick - tickstart) > Timeout))
+        {
+          hi2c->State= HAL_I2C_STATE_READY;
+          /* Process Unlocked */
+          __HAL_UNLOCK(hi2c);
+          return HAL_TIMEOUT;
+        }
+      }
+    }
+  }
+  else
+  {
+    while(__HAL_I2C_GET_FLAG(hi2c, Flag) != RESET)
+    {
+      /* Check for the Timeout */
+      if(Timeout != HAL_MAX_DELAY)
+      {
+        if((Timeout == 0) || (( myTick - tickstart) > Timeout))
+        {
+          hi2c->State= HAL_I2C_STATE_READY;
+          /* Process Unlocked */
+          __HAL_UNLOCK(hi2c);
+          return HAL_TIMEOUT;
+        }
+      }
+    }
+  }
+  return HAL_OK;
+}

@@ -45,16 +45,18 @@ shaHash             0x29              ./bluenrg/src/my_service.o
 rx_handle           0x2               ./bluenrg/src/my_service.o
 dev_name_char_handle
                     0x2               ./src/my_function.o
-toLogBuff           0x10              ./src/logger.o
+toLogBuff           0x14              ./src/logger.o
 tmpModerOut         0x4               ./src/onewire.o
 owToDev             0x48              ./src/onewire.o
 ow_buf              0x8               ./src/onewire.o
 toLogCount          0x4               ./src/init.o
 txCount             0x1               ./src/onewire.o
-ddLogBuff           0x10              ./src/logger.o
+ddLogBuff           0x14              ./src/logger.o
 bnrgErr             0x1               ./bluenrg/src/stm32_bluenrg_ble.o
 myWD                0x2               ./src/main.o
+toEmptyFill         0x1               ./src/logger.o
 owStatus            0x1               ./src/onewire.o
+ddEmptyFill         0x1               ./src/logger.o
 service_handle      0x2               ./src/my_function.o
 resetCount          0x4               ./bluenrg/src/my_service.o
 tknStr              0x35              ./bluenrg/src/my_service.o
@@ -713,7 +715,6 @@ Discarded input sections
  .group         0x00000000        0x8 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .group         0x00000000        0x8 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .group         0x00000000        0x8 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .group         0x00000000        0x8 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .text          0x00000000        0x0 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .data          0x00000000        0x0 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .bss           0x00000000        0x0 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
@@ -892,7 +893,6 @@ Discarded input sections
  .group         0x00000000        0x8 ./src/eeprom.o
  .group         0x00000000        0x8 ./src/eeprom.o
  .group         0x00000000        0x8 ./src/eeprom.o
- .group         0x00000000        0x8 ./src/eeprom.o
  .text          0x00000000        0x0 ./src/eeprom.o
  .data          0x00000000        0x0 ./src/eeprom.o
  .bss           0x00000000        0x0 ./src/eeprom.o
@@ -927,7 +927,6 @@ Discarded input sections
  .debug_macro   0x00000000      0x353 ./src/eeprom.o
  .debug_macro   0x00000000       0x3b ./src/eeprom.o
  .debug_macro   0x00000000       0x1c ./src/eeprom.o
- .debug_macro   0x00000000     0x2ac7 ./src/eeprom.o
  .debug_macro   0x00000000       0x10 ./src/eeprom.o
  .debug_macro   0x00000000       0x10 ./src/eeprom.o
  .debug_macro   0x00000000       0x22 ./src/eeprom.o
@@ -936,7 +935,6 @@ Discarded input sections
  .debug_macro   0x00000000       0x16 ./src/eeprom.o
  .debug_macro   0x00000000      0x166 ./src/eeprom.o
  .debug_macro   0x00000000      0x22c ./src/eeprom.o
- .group         0x00000000        0x8 ./src/init.o
  .group         0x00000000        0x8 ./src/init.o
  .group         0x00000000        0x8 ./src/init.o
  .group         0x00000000        0x8 ./src/init.o
@@ -1031,7 +1029,6 @@ Discarded input sections
  .debug_macro   0x00000000      0x750 ./src/init.o
  .debug_macro   0x00000000      0x353 ./src/init.o
  .debug_macro   0x00000000       0x3b ./src/init.o
- .debug_macro   0x00000000     0x2ac7 ./src/init.o
  .debug_macro   0x00000000       0x1c ./src/init.o
  .debug_macro   0x00000000       0x10 ./src/init.o
  .debug_macro   0x00000000       0x10 ./src/init.o
@@ -1046,7 +1043,6 @@ Discarded input sections
  .debug_macro   0x00000000       0x1c ./src/init.o
  .debug_macro   0x00000000       0x58 ./src/init.o
  .debug_macro   0x00000000       0x82 ./src/init.o
- .group         0x00000000        0x8 ./src/logger.o
  .group         0x00000000        0x8 ./src/logger.o
  .group         0x00000000        0x8 ./src/logger.o
  .group         0x00000000        0x8 ./src/logger.o
@@ -1140,7 +1136,6 @@ Discarded input sections
  .debug_macro   0x00000000      0x750 ./src/logger.o
  .debug_macro   0x00000000      0x353 ./src/logger.o
  .debug_macro   0x00000000       0x3b ./src/logger.o
- .debug_macro   0x00000000     0x2ac7 ./src/logger.o
  .debug_macro   0x00000000       0x1c ./src/logger.o
  .debug_macro   0x00000000       0x10 ./src/logger.o
  .debug_macro   0x00000000       0x10 ./src/logger.o
@@ -2598,7 +2593,7 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
                 0x20000c00                __Main_Stack_Limit = (__stack - __Main_Stack_Size)
                 0x20000c00                PROVIDE (_Main_Stack_Limit, __Main_Stack_Limit)
                 0x00000100                _Minimum_Stack_Size = 0x100
-                0x20000698                PROVIDE (_Heap_Begin, _end_noinit)
+                0x200006a0                PROVIDE (_Heap_Begin, _end_noinit)
                 0x20000c00                PROVIDE (_Heap_Limit, (__stack - __Main_Stack_Size))
 
 .isr_vector     0x08000000       0xc0
@@ -2613,16 +2608,16 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
 
 .inits          0x080000c0       0x48
                 0x080000c0                __data_regions_array_start = .
-                0x080000c0        0x4 LONG 0x8004784 LOADADDR (.data)
+                0x080000c0        0x4 LONG 0x8004a5c LOADADDR (.data)
                 0x080000c4        0x4 LONG 0x20000000 ADDR (.data)
                 0x080000c8        0x4 LONG 0x20000014 (ADDR (.data) + SIZEOF (.data))
-                0x080000cc        0x4 LONG 0x8004784 LOADADDR (.data_CCMRAM)
+                0x080000cc        0x4 LONG 0x8004a5c LOADADDR (.data_CCMRAM)
                 0x080000d0        0x4 LONG 0x0 ADDR (.data_CCMRAM)
                 0x080000d4        0x4 LONG 0x0 (ADDR (.data_CCMRAM) + SIZEOF (.data_CCMRAM))
                 0x080000d8                __data_regions_array_end = .
                 0x080000d8                __bss_regions_array_start = .
                 0x080000d8        0x4 LONG 0x20000018 ADDR (.bss)
-                0x080000dc        0x4 LONG 0x20000698 (ADDR (.bss) + SIZEOF (.bss))
+                0x080000dc        0x4 LONG 0x200006a0 (ADDR (.bss) + SIZEOF (.bss))
                 0x080000e0        0x4 LONG 0x0 ADDR (.bss_CCMRAM)
                 0x080000e4        0x4 LONG 0x0 (ADDR (.bss_CCMRAM) + SIZEOF (.bss_CCMRAM))
                 0x080000e8                __bss_regions_array_end = .
@@ -2656,7 +2651,7 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
 .flashtext
  *(.flashtext .flashtext.*)
 
-.text           0x08000108     0x467c
+.text           0x08000108     0x4954
  *(.text .text.*)
  .text          0x08000108       0x60 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtbegin.o
  .text.DMA_DeInit
@@ -2762,458 +2757,468 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
  .text.SystemInit
                 0x08000f58       0x60 ./system/src/cmsis/system_stm32f0xx.o
                 0x08000f58                SystemInit
+ .text.I2C_WaitOnFlagUntilTimeout
+                0x08000fb8       0x7c ./src/eeprom.o
+ .text.my_I2C_IsDeviceReady
+                0x08001034      0x150 ./src/eeprom.o
  .text.sendEeprom
-                0x08000fb8       0x34 ./src/eeprom.o
-                0x08000fb8                sendEeprom
+                0x08001184       0x5c ./src/eeprom.o
+                0x08001184                sendEeprom
  .text.receiveEeprom
-                0x08000fec       0x34 ./src/eeprom.o
-                0x08000fec                receiveEeprom
+                0x080011e0       0x38 ./src/eeprom.o
+                0x080011e0                receiveEeprom
  .text.i2cMspInit
-                0x08001020       0xa0 ./src/eeprom.o
-                0x08001020                i2cMspInit
+                0x08001218       0xa0 ./src/eeprom.o
+                0x08001218                i2cMspInit
  .text.eepromErrorCallBack
-                0x080010c0       0x14 ./src/eeprom.o
-                0x080010c0                eepromErrorCallBack
+                0x080012b8       0x14 ./src/eeprom.o
+                0x080012b8                eepromErrorCallBack
  .text.epprom_IRQHandler
-                0x080010d4       0xb4 ./src/eeprom.o
-                0x080010d4                epprom_IRQHandler
+                0x080012cc       0xb4 ./src/eeprom.o
+                0x080012cc                epprom_IRQHandler
  .text.HAL_I2C_Init
-                0x08001188       0xb8 ./src/eeprom.o
-                0x08001188                HAL_I2C_Init
+                0x08001380       0xb8 ./src/eeprom.o
+                0x08001380                HAL_I2C_Init
  .text.eepromInit
-                0x08001240       0x6c ./src/eeprom.o
-                0x08001240                eepromInit
+                0x08001438       0x6c ./src/eeprom.o
+                0x08001438                eepromInit
  .text.owToDevInit
-                0x080012ac       0xd8 ./src/init.o
-                0x080012ac                owToDevInit
- .text.toInit   0x08001384       0x9c ./src/init.o
-                0x08001384                toInit
- .text.ddInit   0x08001420       0x94 ./src/init.o
-                0x08001420                ddInit
- .text.logInit  0x080014b4       0xc8 ./src/init.o
-                0x080014b4                logInit
+                0x080014a4       0xd8 ./src/init.o
+                0x080014a4                owToDevInit
+ .text.toInit   0x0800157c       0x9c ./src/init.o
+                0x0800157c                toInit
+ .text.ddInit   0x08001618       0x94 ./src/init.o
+                0x08001618                ddInit
+ .text.logInit  0x080016ac       0xcc ./src/init.o
+                0x080016ac                logInit
  .text.alrmInit
-                0x0800157c       0x1c ./src/init.o
-                0x0800157c                alrmInit
+                0x08001778       0x1c ./src/init.o
+                0x08001778                alrmInit
+ .text.saveStateBuff
+                0x08001794       0x18 ./src/logger.o
+                0x08001794                saveStateBuff
  .text.logWriteBuff
-                0x08001598       0x74 ./src/logger.o
-                0x08001598                logWriteBuff
- .text.logReadBuff
-                0x0800160c       0x50 ./src/logger.o
-                0x0800160c                logReadBuff
+                0x080017ac       0x6c ./src/logger.o
+                0x080017ac                logWriteBuff
+ .text.logStartReadBuff
+                0x08001818       0x40 ./src/logger.o
+                0x08001818                logStartReadBuff
+ .text.logEndReadBuff
+                0x08001858       0x30 ./src/logger.o
+                0x08001858                logEndReadBuff
  .text.toLogWrite
-                0x0800165c       0x70 ./src/logger.o
-                0x0800165c                toLogWrite
+                0x08001888       0x70 ./src/logger.o
+                0x08001888                toLogWrite
  .text.toLogRead
-                0x080016cc       0x6c ./src/logger.o
-                0x080016cc                toLogRead
+                0x080018f8       0x64 ./src/logger.o
+                0x080018f8                toLogRead
  .text.ddLogWrite
-                0x08001738       0x54 ./src/logger.o
-                0x08001738                ddLogWrite
+                0x0800195c       0x54 ./src/logger.o
+                0x0800195c                ddLogWrite
  .text.ddLogRead
-                0x0800178c       0x38 ./src/logger.o
-                0x0800178c                ddLogRead
+                0x080019b0       0x38 ./src/logger.o
+                0x080019b0                ddLogRead
  .text.alrmUpdate
-                0x080017c4       0x40 ./src/logger.o
-                0x080017c4                alrmUpdate
- .text.logSend  0x08001804       0xb4 ./src/logger.o
-                0x08001804                logSend
+                0x080019e8       0x40 ./src/logger.o
+                0x080019e8                alrmUpdate
+ .text.logSend  0x08001a28      0x120 ./src/logger.o
+                0x08001a28                logSend
  .text.SetSysClock
-                0x080018b8      0x140 ./src/main.o
+                0x08001b48      0x140 ./src/main.o
  .text.User_Process
-                0x080019f8       0x54 ./src/main.o
-                0x080019f8                User_Process
- .text.main     0x08001a4c       0x4c ./src/main.o
-                0x08001a4c                main
+                0x08001c88       0x40 ./src/main.o
+                0x08001c88                User_Process
+ .text.main     0x08001cc8       0x4c ./src/main.o
+                0x08001cc8                main
  .text.Error_Handler
-                0x08001a98       0x70 ./src/main.o
-                0x08001a98                Error_Handler
- .text.itoa     0x08001b08       0x48 ./src/my_function.o
-                0x08001b08                itoa
+                0x08001d14       0x70 ./src/main.o
+                0x08001d14                Error_Handler
+ .text.itoa     0x08001d84       0x48 ./src/my_function.o
+                0x08001d84                itoa
  .text.OW_toBits
-                0x08001b50       0x20 ./src/onewire.o
+                0x08001dcc       0x20 ./src/onewire.o
  .text.OW_toByte
-                0x08001b70       0x24 ./src/onewire.o
+                0x08001dec       0x24 ./src/onewire.o
  .text.OW_SendBits
-                0x08001b94       0xfc ./src/onewire.o
+                0x08001e10       0xfc ./src/onewire.o
  .text.OW_Reset
-                0x08001c90       0xe4 ./src/onewire.o
- .text.OW_Init  0x08001d74       0xc0 ./src/onewire.o
-                0x08001d74                OW_Init
- .text.OW_Send  0x08001e34       0x78 ./src/onewire.o
-                0x08001e34                OW_Send
- .text.OW_Scan  0x08001eac      0x138 ./src/onewire.o
-                0x08001eac                OW_Scan
+                0x08001f0c       0xe4 ./src/onewire.o
+ .text.OW_Init  0x08001ff0       0xc0 ./src/onewire.o
+                0x08001ff0                OW_Init
+ .text.OW_Send  0x080020b0       0x78 ./src/onewire.o
+                0x080020b0                OW_Send
+ .text.OW_Scan  0x08002128      0x138 ./src/onewire.o
+                0x08002128                OW_Scan
  .text.ddReadDoor
-                0x08001fe4       0x20 ./src/onewire.o
-                0x08001fe4                ddReadDoor
+                0x08002260       0x20 ./src/onewire.o
+                0x08002260                ddReadDoor
  .text.WWDG_IRQHandler
-                0x08002004        0x4 ./src/stm32xx_it.o
-                0x08002004                WWDG_IRQHandler
+                0x08002280        0x4 ./src/stm32xx_it.o
+                0x08002280                WWDG_IRQHandler
  .text.RTC_IRQHandler
-                0x08002008        0x4 ./src/stm32xx_it.o
-                0x08002008                RTC_IRQHandler
+                0x08002284        0x4 ./src/stm32xx_it.o
+                0x08002284                RTC_IRQHandler
  .text.FLASH_IRQHandler
-                0x0800200c        0x4 ./src/stm32xx_it.o
-                0x0800200c                FLASH_IRQHandler
+                0x08002288        0x4 ./src/stm32xx_it.o
+                0x08002288                FLASH_IRQHandler
  .text.RCC_IRQHandler
-                0x08002010        0x4 ./src/stm32xx_it.o
-                0x08002010                RCC_IRQHandler
+                0x0800228c        0x4 ./src/stm32xx_it.o
+                0x0800228c                RCC_IRQHandler
  .text.EXTI2_3_IRQHandler
-                0x08002014        0x4 ./src/stm32xx_it.o
-                0x08002014                EXTI2_3_IRQHandler
+                0x08002290        0x4 ./src/stm32xx_it.o
+                0x08002290                EXTI2_3_IRQHandler
  .text.DMA1_Channel1_IRQHandler
-                0x08002018        0x4 ./src/stm32xx_it.o
-                0x08002018                DMA1_Channel1_IRQHandler
+                0x08002294        0x4 ./src/stm32xx_it.o
+                0x08002294                DMA1_Channel1_IRQHandler
  .text.DMA1_Channel2_3_IRQHandler
-                0x0800201c        0x4 ./src/stm32xx_it.o
-                0x0800201c                DMA1_Channel2_3_IRQHandler
+                0x08002298        0x4 ./src/stm32xx_it.o
+                0x08002298                DMA1_Channel2_3_IRQHandler
  .text.DMA1_Channel4_5_IRQHandler
-                0x08002020        0x4 ./src/stm32xx_it.o
-                0x08002020                DMA1_Channel4_5_IRQHandler
+                0x0800229c        0x4 ./src/stm32xx_it.o
+                0x0800229c                DMA1_Channel4_5_IRQHandler
  .text.ADC1_IRQHandler
-                0x08002024        0x4 ./src/stm32xx_it.o
-                0x08002024                ADC1_IRQHandler
+                0x080022a0        0x4 ./src/stm32xx_it.o
+                0x080022a0                ADC1_IRQHandler
  .text.TIM1_BRK_UP_TRG_COM_IRQHandler
-                0x08002028        0x4 ./src/stm32xx_it.o
-                0x08002028                TIM1_BRK_UP_TRG_COM_IRQHandler
+                0x080022a4        0x4 ./src/stm32xx_it.o
+                0x080022a4                TIM1_BRK_UP_TRG_COM_IRQHandler
  .text.TIM1_CC_IRQHandler
-                0x0800202c        0x4 ./src/stm32xx_it.o
-                0x0800202c                TIM1_CC_IRQHandler
+                0x080022a8        0x4 ./src/stm32xx_it.o
+                0x080022a8                TIM1_CC_IRQHandler
  .text.TIM3_IRQHandler
-                0x08002030        0x4 ./src/stm32xx_it.o
-                0x08002030                TIM3_IRQHandler
+                0x080022ac        0x4 ./src/stm32xx_it.o
+                0x080022ac                TIM3_IRQHandler
  .text.TIM14_IRQHandler
-                0x08002034        0x4 ./src/stm32xx_it.o
-                0x08002034                TIM14_IRQHandler
+                0x080022b0        0x4 ./src/stm32xx_it.o
+                0x080022b0                TIM14_IRQHandler
  .text.TIM16_IRQHandler
-                0x08002038        0x4 ./src/stm32xx_it.o
-                0x08002038                TIM16_IRQHandler
+                0x080022b4        0x4 ./src/stm32xx_it.o
+                0x080022b4                TIM16_IRQHandler
  .text.TIM17_IRQHandler
-                0x0800203c        0x4 ./src/stm32xx_it.o
-                0x0800203c                TIM17_IRQHandler
+                0x080022b8        0x4 ./src/stm32xx_it.o
+                0x080022b8                TIM17_IRQHandler
  .text.SPI1_IRQHandler
-                0x08002040        0x4 ./src/stm32xx_it.o
-                0x08002040                SPI1_IRQHandler
+                0x080022bc        0x4 ./src/stm32xx_it.o
+                0x080022bc                SPI1_IRQHandler
  .text.NMI_Handler
-                0x08002044        0x4 ./src/stm32xx_it.o
-                0x08002044                NMI_Handler
+                0x080022c0        0x4 ./src/stm32xx_it.o
+                0x080022c0                NMI_Handler
  .text.HardFault_Handler
-                0x08002048        0x4 ./src/stm32xx_it.o
-                0x08002048                HardFault_Handler
+                0x080022c4        0x4 ./src/stm32xx_it.o
+                0x080022c4                HardFault_Handler
  .text.SVC_Handler
-                0x0800204c        0x4 ./src/stm32xx_it.o
-                0x0800204c                SVC_Handler
+                0x080022c8        0x4 ./src/stm32xx_it.o
+                0x080022c8                SVC_Handler
  .text.PendSV_Handler
-                0x08002050        0x4 ./src/stm32xx_it.o
-                0x08002050                PendSV_Handler
+                0x080022cc        0x4 ./src/stm32xx_it.o
+                0x080022cc                PendSV_Handler
  .text.SysTick_Handler
-                0x08002054       0x14 ./src/stm32xx_it.o
-                0x08002054                SysTick_Handler
+                0x080022d0       0x14 ./src/stm32xx_it.o
+                0x080022d0                SysTick_Handler
  .text.I2C1_IRQHandler
-                0x08002068        0x8 ./src/stm32xx_it.o
-                0x08002068                I2C1_IRQHandler
+                0x080022e4        0x8 ./src/stm32xx_it.o
+                0x080022e4                I2C1_IRQHandler
  .text.USART1_IRQHandler
-                0x08002070       0x4c ./src/stm32xx_it.o
-                0x08002070                USART1_IRQHandler
+                0x080022ec       0x4c ./src/stm32xx_it.o
+                0x080022ec                USART1_IRQHandler
  .text.EXTI4_15_IRQHandler
-                0x080020bc        0xc ./src/stm32xx_it.o
-                0x080020bc                EXTI4_15_IRQHandler
+                0x08002338        0xc ./src/stm32xx_it.o
+                0x08002338                EXTI4_15_IRQHandler
  .text.BNRG_RST_Callback
-                0x080020c8        0x8 ./src/stm32xx_it.o
-                0x080020c8                BNRG_RST_Callback
+                0x08002344        0x8 ./src/stm32xx_it.o
+                0x08002344                BNRG_RST_Callback
  .text.EXTI0_1_IRQHandler
-                0x080020d0       0x2c ./src/stm32xx_it.o
-                0x080020d0                EXTI0_1_IRQHandler
+                0x0800234c       0x2c ./src/stm32xx_it.o
+                0x0800234c                EXTI0_1_IRQHandler
  .text.toSetConfig
-                0x080020fc       0x34 ./src/thermo.o
-                0x080020fc                toSetConfig
+                0x08002378       0x34 ./src/thermo.o
+                0x08002378                toSetConfig
  .text.toWriteEeprom
-                0x08002130       0xc8 ./src/thermo.o
-                0x08002130                toWriteEeprom
+                0x080023ac       0xc8 ./src/thermo.o
+                0x080023ac                toWriteEeprom
  .text.mesureDelay
-                0x080021f8       0x34 ./src/thermo.o
-                0x080021f8                mesureDelay
+                0x08002474       0x34 ./src/thermo.o
+                0x08002474                mesureDelay
  .text.toReadTemperature
-                0x0800222c      0x120 ./src/thermo.o
-                0x0800222c                toReadTemperature
+                0x080024a8      0x120 ./src/thermo.o
+                0x080024a8                toReadTemperature
  .text.timeInit
-                0x0800234c      0x134 ./src/time.o
-                0x0800234c                timeInit
- .text.getTick  0x08002480        0xc ./src/time.o
-                0x08002480                getTick
+                0x080025c8      0x134 ./src/time.o
+                0x080025c8                timeInit
+ .text.getTick  0x080026fc        0xc ./src/time.o
+                0x080026fc                getTick
  .text.xTm2Utime
-                0x0800248c       0x6c ./src/time.o
-                0x0800248c                xTm2Utime
+                0x08002708       0x6c ./src/time.o
+                0x08002708                xTm2Utime
  .text.xUtime2Tm
-                0x080024f8       0xec ./src/time.o
-                0x080024f8                xUtime2Tm
+                0x08002774       0xec ./src/time.o
+                0x08002774                xUtime2Tm
  .text.setRtcTime
-                0x080025e4       0x24 ./src/time.o
-                0x080025e4                setRtcTime
+                0x08002860       0x24 ./src/time.o
+                0x08002860                setRtcTime
  .text.getRtcTime
-                0x08002608       0x20 ./src/time.o
-                0x08002608                getRtcTime
+                0x08002884       0x20 ./src/time.o
+                0x08002884                getRtcTime
  .text.timersHandler
-                0x08002628       0x58 ./src/time.o
-                0x08002628                timersHandler
+                0x080028a4       0x58 ./src/time.o
+                0x080028a4                timersHandler
  .text.timersProcess
-                0x08002680      0x134 ./src/time.o
-                0x08002680                timersProcess
- .text.myDelay  0x080027b4       0x14 ./src/time.o
-                0x080027b4                myDelay
+                0x080028fc      0x134 ./src/time.o
+                0x080028fc                timersProcess
+ .text.myDelay  0x08002a30       0x14 ./src/time.o
+                0x08002a30                myDelay
  .text.aci_gap_init
-                0x080027c8       0x70 ./bluenrg/src/bluenrg_gap_aci.o
-                0x080027c8                aci_gap_init
+                0x08002a44       0x70 ./bluenrg/src/bluenrg_gap_aci.o
+                0x08002a44                aci_gap_init
  .text.aci_gap_set_discoverable
-                0x08002838       0xc8 ./bluenrg/src/bluenrg_gap_aci.o
-                0x08002838                aci_gap_set_discoverable
+                0x08002ab4       0xc8 ./bluenrg/src/bluenrg_gap_aci.o
+                0x08002ab4                aci_gap_set_discoverable
  .text.aci_gap_set_auth_requirement
-                0x08002900       0x90 ./bluenrg/src/bluenrg_gap_aci.o
-                0x08002900                aci_gap_set_auth_requirement
+                0x08002b7c       0x90 ./bluenrg/src/bluenrg_gap_aci.o
+                0x08002b7c                aci_gap_set_auth_requirement
  .text.aci_gap_set_undirected_connectable
-                0x08002990       0x48 ./bluenrg/src/bluenrg_gap_aci.o
-                0x08002990                aci_gap_set_undirected_connectable
+                0x08002c0c       0x48 ./bluenrg/src/bluenrg_gap_aci.o
+                0x08002c0c                aci_gap_set_undirected_connectable
  .text.aci_gatt_init
-                0x080029d8       0x3c ./bluenrg/src/bluenrg_gatt_aci.o
-                0x080029d8                aci_gatt_init
+                0x08002c54       0x3c ./bluenrg/src/bluenrg_gatt_aci.o
+                0x08002c54                aci_gatt_init
  .text.aci_gatt_add_serv
-                0x08002a14       0x80 ./bluenrg/src/bluenrg_gatt_aci.o
-                0x08002a14                aci_gatt_add_serv
+                0x08002c90       0x80 ./bluenrg/src/bluenrg_gatt_aci.o
+                0x08002c90                aci_gatt_add_serv
  .text.aci_gatt_add_char
-                0x08002a94       0xe0 ./bluenrg/src/bluenrg_gatt_aci.o
-                0x08002a94                aci_gatt_add_char
+                0x08002d10       0xe0 ./bluenrg/src/bluenrg_gatt_aci.o
+                0x08002d10                aci_gatt_add_char
  .text.aci_gatt_add_char_desc
-                0x08002b74      0x134 ./bluenrg/src/bluenrg_gatt_aci.o
-                0x08002b74                aci_gatt_add_char_desc
+                0x08002df0      0x134 ./bluenrg/src/bluenrg_gatt_aci.o
+                0x08002df0                aci_gatt_add_char_desc
  .text.aci_gatt_update_char_value
-                0x08002ca8       0x84 ./bluenrg/src/bluenrg_gatt_aci.o
-                0x08002ca8                aci_gatt_update_char_value
+                0x08002f24       0x84 ./bluenrg/src/bluenrg_gatt_aci.o
+                0x08002f24                aci_gatt_update_char_value
  .text.aci_gatt_write_response
-                0x08002d2c       0x8c ./bluenrg/src/bluenrg_gatt_aci.o
-                0x08002d2c                aci_gatt_write_response
+                0x08002fa8       0x8c ./bluenrg/src/bluenrg_gatt_aci.o
+                0x08002fa8                aci_gatt_write_response
  .text.aci_gatt_allow_read
-                0x08002db8       0x48 ./bluenrg/src/bluenrg_gatt_aci.o
-                0x08002db8                aci_gatt_allow_read
+                0x08003034       0x48 ./bluenrg/src/bluenrg_gatt_aci.o
+                0x08003034                aci_gatt_allow_read
  .text.aci_hal_write_config_data
-                0x08002e00       0x64 ./bluenrg/src/bluenrg_hal_aci.o
-                0x08002e00                aci_hal_write_config_data
+                0x0800307c       0x64 ./bluenrg/src/bluenrg_hal_aci.o
+                0x0800307c                aci_hal_write_config_data
  .text.aci_hal_set_tx_power_level
-                0x08002e64       0x48 ./bluenrg/src/bluenrg_hal_aci.o
-                0x08002e64                aci_hal_set_tx_power_level
+                0x080030e0       0x48 ./bluenrg/src/bluenrg_hal_aci.o
+                0x080030e0                aci_hal_set_tx_power_level
  .text.Timer_Set
-                0x08002eac       0x10 ./bluenrg/src/gp_timer.o
-                0x08002eac                Timer_Set
+                0x08003128       0x10 ./bluenrg/src/gp_timer.o
+                0x08003128                Timer_Set
  .text.Timer_Expired
-                0x08002ebc       0x18 ./bluenrg/src/gp_timer.o
-                0x08002ebc                Timer_Expired
+                0x08003138       0x18 ./bluenrg/src/gp_timer.o
+                0x08003138                Timer_Expired
  .text.move_list
-                0x08002ed4       0x28 ./bluenrg/src/hci.o
+                0x08003150       0x28 ./bluenrg/src/hci.o
  .text.HCI_Init
-                0x08002efc       0x38 ./bluenrg/src/hci.o
-                0x08002efc                HCI_Init
+                0x08003178       0x38 ./bluenrg/src/hci.o
+                0x08003178                HCI_Init
  .text.HCI_verify
-                0x08002f34       0x20 ./bluenrg/src/hci.o
-                0x08002f34                HCI_verify
+                0x080031b0       0x20 ./bluenrg/src/hci.o
+                0x080031b0                HCI_verify
  .text.HCI_Process
-                0x08002f54       0x88 ./bluenrg/src/hci.o
-                0x08002f54                HCI_Process
+                0x080031d0       0x88 ./bluenrg/src/hci.o
+                0x080031d0                HCI_Process
  .text.HCI_Queue_Empty
-                0x08002fdc       0x10 ./bluenrg/src/hci.o
-                0x08002fdc                HCI_Queue_Empty
- .text.HCI_Isr  0x08002fec       0xa8 ./bluenrg/src/hci.o
-                0x08002fec                HCI_Isr
+                0x08003258       0x10 ./bluenrg/src/hci.o
+                0x08003258                HCI_Queue_Empty
+ .text.HCI_Isr  0x08003268       0xa8 ./bluenrg/src/hci.o
+                0x08003268                HCI_Isr
  .text.hci_write
-                0x08003094       0x38 ./bluenrg/src/hci.o
-                0x08003094                hci_write
+                0x08003310       0x38 ./bluenrg/src/hci.o
+                0x08003310                hci_write
  .text.hci_send_cmd
-                0x080030cc       0x34 ./bluenrg/src/hci.o
-                0x080030cc                hci_send_cmd
+                0x08003348       0x34 ./bluenrg/src/hci.o
+                0x08003348                hci_send_cmd
  .text.hci_send_req
-                0x08003100      0x160 ./bluenrg/src/hci.o
-                0x08003100                hci_send_req
+                0x0800337c      0x160 ./bluenrg/src/hci.o
+                0x0800337c                hci_send_req
  .text.hci_le_set_scan_resp_data
-                0x08003260       0x68 ./bluenrg/src/hci.o
-                0x08003260                hci_le_set_scan_resp_data
+                0x080034dc       0x68 ./bluenrg/src/hci.o
+                0x080034dc                hci_le_set_scan_resp_data
  .text.list_init_head
-                0x080032c8        0x8 ./bluenrg/src/list.o
-                0x080032c8                list_init_head
+                0x08003544        0x8 ./bluenrg/src/list.o
+                0x08003544                list_init_head
  .text.list_is_empty
-                0x080032d0        0xc ./bluenrg/src/list.o
-                0x080032d0                list_is_empty
+                0x0800354c        0xc ./bluenrg/src/list.o
+                0x0800354c                list_is_empty
  .text.list_insert_head
-                0x080032dc       0x10 ./bluenrg/src/list.o
-                0x080032dc                list_insert_head
+                0x08003558       0x10 ./bluenrg/src/list.o
+                0x08003558                list_insert_head
  .text.list_insert_tail
-                0x080032ec       0x10 ./bluenrg/src/list.o
-                0x080032ec                list_insert_tail
+                0x08003568       0x10 ./bluenrg/src/list.o
+                0x08003568                list_insert_tail
  .text.list_remove_node
-                0x080032fc       0x10 ./bluenrg/src/list.o
-                0x080032fc                list_remove_node
+                0x08003578       0x10 ./bluenrg/src/list.o
+                0x08003578                list_remove_node
  .text.list_remove_head
-                0x0800330c       0x1c ./bluenrg/src/list.o
-                0x0800330c                list_remove_head
+                0x08003588       0x1c ./bluenrg/src/list.o
+                0x08003588                list_remove_head
  .text.writePermitReq
-                0x08003328       0x50 ./bluenrg/src/my_service.o
+                0x080035a4       0x50 ./bluenrg/src/my_service.o
  .text.addService
-                0x08003378      0x260 ./bluenrg/src/my_service.o
+                0x080035f4      0x260 ./bluenrg/src/my_service.o
  .text.readPermitRequest
-                0x080035d8       0xbc ./bluenrg/src/my_service.o
+                0x08003854      0x100 ./bluenrg/src/my_service.o
  .text.BlueNRG_Init
-                0x08003694       0xa0 ./bluenrg/src/my_service.o
-                0x08003694                BlueNRG_Init
+                0x08003954       0xa0 ./bluenrg/src/my_service.o
+                0x08003954                BlueNRG_Init
  .text.Make_Connection
-                0x08003734       0x8c ./bluenrg/src/my_service.o
-                0x08003734                Make_Connection
+                0x080039f4       0x8c ./bluenrg/src/my_service.o
+                0x080039f4                Make_Connection
  .text.Attribute_Modified_CB
-                0x080037c0       0xb4 ./bluenrg/src/my_service.o
-                0x080037c0                Attribute_Modified_CB
+                0x08003a80       0xcc ./bluenrg/src/my_service.o
+                0x08003a80                Attribute_Modified_CB
  .text.GAP_DisconnectionComplete_CB
-                0x08003874       0x28 ./bluenrg/src/my_service.o
-                0x08003874                GAP_DisconnectionComplete_CB
+                0x08003b4c       0x28 ./bluenrg/src/my_service.o
+                0x08003b4c                GAP_DisconnectionComplete_CB
  .text.alrmCharUpdate
-                0x0800389c       0xb8 ./bluenrg/src/my_service.o
-                0x0800389c                alrmCharUpdate
+                0x08003b74       0xb8 ./bluenrg/src/my_service.o
+                0x08003b74                alrmCharUpdate
  .text.GAP_ConnectionComplete_CB
-                0x08003954       0x30 ./bluenrg/src/my_service.o
-                0x08003954                GAP_ConnectionComplete_CB
+                0x08003c2c       0x30 ./bluenrg/src/my_service.o
+                0x08003c2c                GAP_ConnectionComplete_CB
  .text.toCurCharUpdate
-                0x08003984       0x70 ./bluenrg/src/my_service.o
-                0x08003984                toCurCharUpdate
+                0x08003c5c       0x70 ./bluenrg/src/my_service.o
+                0x08003c5c                toCurCharUpdate
  .text.ddCurCharUpdate
-                0x080039f4       0x64 ./bluenrg/src/my_service.o
-                0x080039f4                ddCurCharUpdate
+                0x08003ccc       0x64 ./bluenrg/src/my_service.o
+                0x08003ccc                ddCurCharUpdate
  .text.logCharUpdate
-                0x08003a58       0x24 ./bluenrg/src/my_service.o
-                0x08003a58                logCharUpdate
+                0x08003d30       0x24 ./bluenrg/src/my_service.o
+                0x08003d30                logCharUpdate
  .text.rtcCharUpdate
-                0x08003a7c       0x28 ./bluenrg/src/my_service.o
-                0x08003a7c                rtcCharUpdate
+                0x08003d54       0x28 ./bluenrg/src/my_service.o
+                0x08003d54                rtcCharUpdate
  .text.minMaxCharUpdate
-                0x08003aa4       0x58 ./bluenrg/src/my_service.o
-                0x08003aa4                minMaxCharUpdate
+                0x08003d7c       0x58 ./bluenrg/src/my_service.o
+                0x08003d7c                minMaxCharUpdate
  .text.HCI_Event_CB
-                0x08003afc      0x2a0 ./bluenrg/src/my_service.o
-                0x08003afc                HCI_Event_CB
+                0x08003dd4      0x2a0 ./bluenrg/src/my_service.o
+                0x08003dd4                HCI_Event_CB
  .text.Osal_MemCpy
-                0x08003d9c        0x8 ./bluenrg/src/osal.o
-                0x08003d9c                Osal_MemCpy
+                0x08004074        0x8 ./bluenrg/src/osal.o
+                0x08004074                Osal_MemCpy
  .text.Osal_MemSet
-                0x08003da4        0x8 ./bluenrg/src/osal.o
-                0x08003da4                Osal_MemSet
+                0x0800407c        0x8 ./bluenrg/src/osal.o
+                0x0800407c                Osal_MemSet
  .text.us150Delay
-                0x08003dac       0x20 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x08004084       0x20 ./bluenrg/src/stm32_bluenrg_ble.o
  .text.SpiMspInit
-                0x08003dcc      0x144 ./bluenrg/src/stm32_bluenrg_ble.o
-                0x08003dcc                SpiMspInit
+                0x080040a4      0x144 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x080040a4                SpiMspInit
  .text.BNRG_SPI_Init
-                0x08003f10       0x74 ./bluenrg/src/stm32_bluenrg_ble.o
-                0x08003f10                BNRG_SPI_Init
+                0x080041e8       0x74 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x080041e8                BNRG_SPI_Init
  .text.BlueNRG_RST
-                0x08003f84       0x24 ./bluenrg/src/stm32_bluenrg_ble.o
-                0x08003f84                BlueNRG_RST
+                0x0800425c       0x24 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x0800425c                BlueNRG_RST
  .text.bnrgFullRst
-                0x08003fa8       0x70 ./bluenrg/src/stm32_bluenrg_ble.o
-                0x08003fa8                bnrgFullRst
+                0x08004280       0x70 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x08004280                bnrgFullRst
  .text.BlueNRG_DataPresent
-                0x08004018       0x14 ./bluenrg/src/stm32_bluenrg_ble.o
-                0x08004018                BlueNRG_DataPresent
+                0x080042f0       0x14 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x080042f0                BlueNRG_DataPresent
  .text.set_irq_as_output
-                0x0800402c       0x2c ./bluenrg/src/stm32_bluenrg_ble.o
-                0x0800402c                set_irq_as_output
+                0x08004304       0x2c ./bluenrg/src/stm32_bluenrg_ble.o
+                0x08004304                set_irq_as_output
  .text.set_irq_as_input
-                0x08004058       0x34 ./bluenrg/src/stm32_bluenrg_ble.o
-                0x08004058                set_irq_as_input
+                0x08004330       0x34 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x08004330                set_irq_as_input
  .text.Enable_SPI_IRQ
-                0x0800408c        0xc ./bluenrg/src/stm32_bluenrg_ble.o
-                0x0800408c                Enable_SPI_IRQ
+                0x08004364        0xc ./bluenrg/src/stm32_bluenrg_ble.o
+                0x08004364                Enable_SPI_IRQ
  .text.Disable_SPI_IRQ
-                0x08004098       0x10 ./bluenrg/src/stm32_bluenrg_ble.o
-                0x08004098                Disable_SPI_IRQ
+                0x08004370       0x10 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x08004370                Disable_SPI_IRQ
  .text.Clear_SPI_EXTI_Flag
-                0x080040a8        0xc ./bluenrg/src/stm32_bluenrg_ble.o
-                0x080040a8                Clear_SPI_EXTI_Flag
+                0x08004380        0xc ./bluenrg/src/stm32_bluenrg_ble.o
+                0x08004380                Clear_SPI_EXTI_Flag
  .text.SPI_TransmitReceive
-                0x080040b4       0xe8 ./bluenrg/src/stm32_bluenrg_ble.o
-                0x080040b4                SPI_TransmitReceive
+                0x0800438c       0xe8 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x0800438c                SPI_TransmitReceive
  .text.BlueNRG_SPI_Read_All
-                0x0800419c       0xb8 ./bluenrg/src/stm32_bluenrg_ble.o
-                0x0800419c                BlueNRG_SPI_Read_All
+                0x08004474       0xb8 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x08004474                BlueNRG_SPI_Read_All
  .text.BlueNRG_SPI_Write
-                0x08004254       0xbc ./bluenrg/src/stm32_bluenrg_ble.o
-                0x08004254                BlueNRG_SPI_Write
- .text          0x08004310      0x120 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
-                0x08004310                __udivsi3
-                0x08004310                __aeabi_uidiv
-                0x0800441c                __aeabi_uidivmod
- .text          0x08004430      0x1e0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
-                0x08004430                __aeabi_idiv
-                0x08004430                __divsi3
-                0x080045fc                __aeabi_idivmod
- .text          0x08004610        0x4 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
-                0x08004610                __aeabi_ldiv0
-                0x08004610                __aeabi_idiv0
+                0x0800452c       0xbc ./bluenrg/src/stm32_bluenrg_ble.o
+                0x0800452c                BlueNRG_SPI_Write
+ .text          0x080045e8      0x120 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+                0x080045e8                __udivsi3
+                0x080045e8                __aeabi_uidiv
+                0x080046f4                __aeabi_uidivmod
+ .text          0x08004708      0x1e0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
+                0x08004708                __aeabi_idiv
+                0x08004708                __divsi3
+                0x080048d4                __aeabi_idivmod
+ .text          0x080048e8        0x4 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_dvmd_tls.o)
+                0x080048e8                __aeabi_ldiv0
+                0x080048e8                __aeabi_idiv0
  .text.__libc_init_array
-                0x08004614       0x4c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-init.o)
-                0x08004614                __libc_init_array
- .text.memcpy   0x08004660       0x12 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-memcpy.o)
-                0x08004660                memcpy
- .text.memset   0x08004672       0x10 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-memset.o)
-                0x08004672                memset
- .text.strcat   0x08004682       0x1a /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-strcat.o)
-                0x08004682                strcat
+                0x080048ec       0x4c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-init.o)
+                0x080048ec                __libc_init_array
+ .text.memcpy   0x08004938       0x12 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-memcpy.o)
+                0x08004938                memcpy
+ .text.memset   0x0800494a       0x10 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-memset.o)
+                0x0800494a                memset
+ .text.strcat   0x0800495a       0x1a /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-strcat.o)
+                0x0800495a                strcat
  *(.rodata .rodata.* .constdata .constdata.*)
  .rodata.str1.4
-                0x0800469c        0x4 ./src/onewire.o
+                0x08004974        0x4 ./src/onewire.o
                                   0x2 (size before relaxing)
- .rodata.lmos   0x080046a0       0x18 ./src/time.o
-                0x080046a0                lmos
- .rodata.mos    0x080046b8       0x18 ./src/time.o
-                0x080046b8                mos
+ .rodata.lmos   0x08004978       0x18 ./src/time.o
+                0x08004978                lmos
+ .rodata.mos    0x08004990       0x18 ./src/time.o
+                0x08004990                mos
  .rodata.HCI_Event_CB
-                0x080046d0       0x18 ./bluenrg/src/my_service.o
- .rodata        0x080046e8       0x96 ./bluenrg/src/my_service.o
+                0x080049a8       0x18 ./bluenrg/src/my_service.o
+ .rodata        0x080049c0       0x96 ./bluenrg/src/my_service.o
  *(vtable)
  *(.eh_frame*)
- *fill*         0x0800477e        0x2 
- .eh_frame      0x08004780        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtbegin.o
- .eh_frame      0x08004780        0x4 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtend.o
+ *fill*         0x08004a56        0x2 
+ .eh_frame      0x08004a58        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtbegin.o
+ .eh_frame      0x08004a58        0x4 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtend.o
  *(.glue_7)
  .glue_7        0x00000000        0x0 linker stubs
  *(.glue_7t)
  .glue_7t       0x00000000        0x0 linker stubs
 
-.vfp11_veneer   0x08004784        0x0
+.vfp11_veneer   0x08004a5c        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x08004784        0x0
+.v4_bx          0x08004a5c        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x08004784        0x0
+.iplt           0x08004a5c        0x0
  .iplt          0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtbegin.o
 
-.rel.dyn        0x08004784        0x0
+.rel.dyn        0x08004a5c        0x0
  .rel.iplt      0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtbegin.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x08004784                . = ALIGN (0x4)
-                0x08004784                __exidx_start = .
+                0x08004a5c                . = ALIGN (0x4)
+                0x08004a5c                __exidx_start = .
 
 .ARM.exidx
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-                0x08004784                __exidx_end = .
-                0x08004784                . = ALIGN (0x4)
-                0x08004784                _etext = .
-                0x08004784                __etext = .
+                0x08004a5c                __exidx_end = .
+                0x08004a5c                . = ALIGN (0x4)
+                0x08004a5c                _etext = .
+                0x08004a5c                __etext = .
 
-.data_CCMRAM    0x00000000        0x0 load address 0x08004784
+.data_CCMRAM    0x00000000        0x0 load address 0x08004a5c
  FILL mask 0xff
  *(.data.CCMRAM .data.CCMRAM.*)
                 0x00000000                . = ALIGN (0x4)
-                0x08004784                _sidata = LOADADDR (.data)
+                0x08004a5c                _sidata = LOADADDR (.data)
 
-.data           0x20000000       0x14 load address 0x08004784
+.data           0x20000000       0x14 load address 0x08004a5c
  FILL mask 0xff
                 0x20000000                _sdata = .
                 0x20000000                __data_start__ = .
@@ -3228,128 +3233,128 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
                 0x20000014                _edata = .
                 0x20000014                __data_end__ = .
 
-.jcr            0x20000014        0x0 load address 0x08004798
+.jcr            0x20000014        0x0 load address 0x08004a70
  .jcr           0x20000014        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtbegin.o
 
-.igot.plt       0x20000014        0x0 load address 0x08004798
+.igot.plt       0x20000014        0x0 load address 0x08004a70
  .igot.plt      0x00000000        0x0 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtbegin.o
 
 .bss_CCMRAM     0x00000000        0x0
  *(.bss.CCMRAM .bss.CCMRAM.*)
 
-.bss            0x20000018      0x680
+.bss            0x20000018      0x688
                 0x20000018                __bss_start__ = .
                 0x20000018                _sbss = .
  *(.bss_begin .bss_begin.*)
  *(.bss .bss.*)
  .bss           0x20000018       0x1c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtbegin.o
- .bss.nowLogFill.7830
-                0x20000034        0x1 ./src/logger.o
- *fill*         0x20000035        0x3 
- .bss.myTick    0x20000038        0x4 ./src/stm32xx_it.o
-                0x20000038                myTick
+ .bss.myTick    0x20000034        0x4 ./src/stm32xx_it.o
+                0x20000034                myTick
  .bss.button_event
-                0x2000003c        0x1 ./src/stm32xx_it.o
-                0x2000003c                button_event
+                0x20000038        0x1 ./src/stm32xx_it.o
+                0x20000038                button_event
  .bss.secondFlag
-                0x2000003d        0x1 ./src/time.o
-                0x2000003d                secondFlag
- *fill*         0x2000003e        0x2 
+                0x20000039        0x1 ./src/time.o
+                0x20000039                secondFlag
+ *fill*         0x2000003a        0x2 
  .bss.hciReadPacketBuffer
-                0x20000040      0x2bc ./bluenrg/src/hci.o
+                0x2000003c      0x2bc ./bluenrg/src/hci.o
  .bss.readPacketListFull
-                0x200002fc        0x1 ./bluenrg/src/hci.o
- *fill*         0x200002fd        0x1 
+                0x200002f8        0x1 ./bluenrg/src/hci.o
+ *fill*         0x200002f9        0x1 
  .bss.timeCharHandle
-                0x200002fe        0x2 ./bluenrg/src/my_service.o
+                0x200002fa        0x2 ./bluenrg/src/my_service.o
  .bss.logCharHandle
-                0x20000300        0x2 ./bluenrg/src/my_service.o
+                0x200002fc        0x2 ./bluenrg/src/my_service.o
  .bss.alrmIdCharHandle
-                0x20000302        0x2 ./bluenrg/src/my_service.o
+                0x200002fe        0x2 ./bluenrg/src/my_service.o
  .bss.notification_enabled
-                0x20000304        0x1 ./bluenrg/src/my_service.o
-                0x20000304                notification_enabled
- *fill*         0x20000305        0x1 
+                0x20000300        0x1 ./bluenrg/src/my_service.o
+                0x20000300                notification_enabled
+ *fill*         0x20000301        0x1 
  .bss.toCurCharHandle
-                0x20000306        0x2 ./bluenrg/src/my_service.o
+                0x20000302        0x2 ./bluenrg/src/my_service.o
  .bss.ddCurCharHandle
-                0x20000308        0x2 ./bluenrg/src/my_service.o
+                0x20000304        0x2 ./bluenrg/src/my_service.o
  .bss.alrmNoReadCharHandle
-                0x2000030a        0x2 ./bluenrg/src/my_service.o
+                0x20000306        0x2 ./bluenrg/src/my_service.o
  .bss.alrmNewCharHandle
-                0x2000030c        0x2 ./bluenrg/src/my_service.o
+                0x20000308        0x2 ./bluenrg/src/my_service.o
  .bss.logReqDescHandle
-                0x2000030e        0x2 ./bluenrg/src/my_service.o
+                0x2000030a        0x2 ./bluenrg/src/my_service.o
  .bss.workServHandle
-                0x20000310        0x2 ./bluenrg/src/my_service.o
+                0x2000030c        0x2 ./bluenrg/src/my_service.o
  .bss.toMinMaxCharHandle
-                0x20000312        0x2 ./bluenrg/src/my_service.o
+                0x2000030e        0x2 ./bluenrg/src/my_service.o
  .bss.nonResolvPkt
-                0x20000314        0x2 ./bluenrg/src/my_service.o
+                0x20000310        0x2 ./bluenrg/src/my_service.o
  *(COMMON)
- *fill*         0x20000316        0x2 
- COMMON         0x20000318      0x240 ./src/eeprom.o
-                0x20000318                eeprom
-                0x20000524                hepr
- COMMON         0x20000558       0x14 ./src/init.o
-                0x20000558                ddReadTout
-                0x2000055c                toReadCount
-                0x20000560                toLogTout
-                0x20000564                toLogCount
-                0x20000568                ddReadCount
- COMMON         0x2000056c       0x20 ./src/logger.o
-                0x2000056c                toLogBuff
+ *fill*         0x20000312        0x2 
+ COMMON         0x20000314      0x240 ./src/eeprom.o
+                0x20000314                eeprom
+                0x20000520                hepr
+ COMMON         0x20000554       0x14 ./src/init.o
+                0x20000554                ddReadTout
+                0x20000558                toReadCount
+                0x2000055c                toLogTout
+                0x20000560                toLogCount
+                0x20000564                ddReadCount
+ COMMON         0x20000568       0x2a ./src/logger.o
+                0x20000568                toLogBuff
                 0x2000057c                ddLogBuff
- COMMON         0x2000058c        0x4 ./src/main.o
-                0x2000058c                crc
-                0x2000058e                myWD
- COMMON         0x20000590       0x6a ./src/onewire.o
-                0x20000590                tmpModerAf
-                0x20000594                owDevNum
-                0x20000598                ddDev
-                0x2000059c                rxCount
-                0x200005a0                tmpModerOut
-                0x200005a8                owToDev
-                0x200005f0                ow_buf
-                0x200005f8                txCount
-                0x200005f9                owStatus
- *fill*         0x200005fa        0x2 
- COMMON         0x200005fc        0x4 ./src/time.o
-                0x200005fc                uxTime
- COMMON         0x20000600       0x14 ./bluenrg/src/hci.o
-                0x20000600                hciReadPktPool
-                0x20000608                bleStatus
-                0x2000060c                hciReadPktRxQueue
- COMMON         0x20000614       0x81 ./bluenrg/src/my_service.o
-                0x20000614                tx_handle
-                0x20000618                blue
-                0x2000062c                tokenPart
-                0x20000630                shaHash
-                0x2000065a                rx_handle
-                0x2000065c                resetCount
-                0x20000660                tknStr
+                0x20000590                toEmptyFill
+                0x20000591                ddEmptyFill
+ COMMON         0x20000592        0x4 ./src/main.o
+                0x20000592                crc
+                0x20000594                myWD
+ *fill*         0x20000596        0x2 
+ COMMON         0x20000598       0x6a ./src/onewire.o
+                0x20000598                tmpModerAf
+                0x2000059c                owDevNum
+                0x200005a0                ddDev
+                0x200005a4                rxCount
+                0x200005a8                tmpModerOut
+                0x200005b0                owToDev
+                0x200005f8                ow_buf
+                0x20000600                txCount
+                0x20000601                owStatus
+ *fill*         0x20000602        0x2 
+ COMMON         0x20000604        0x4 ./src/time.o
+                0x20000604                uxTime
+ COMMON         0x20000608       0x14 ./bluenrg/src/hci.o
+                0x20000608                hciReadPktPool
+                0x20000610                bleStatus
+                0x20000614                hciReadPktRxQueue
+ COMMON         0x2000061c       0x81 ./bluenrg/src/my_service.o
+                0x2000061c                tx_handle
+                0x20000620                blue
+                0x20000634                tokenPart
+                0x20000638                shaHash
+                0x20000662                rx_handle
+                0x20000664                resetCount
+                0x20000668                tknStr
  *(.bss_end .bss_end.*)
-                0x20000698                . = ALIGN (0x4)
- *fill*         0x20000695        0x3 
-                0x20000698                __bss_end__ = .
-                0x20000698                _ebss = .
+                0x200006a0                . = ALIGN (0x4)
+ *fill*         0x2000069d        0x3 
+                0x200006a0                __bss_end__ = .
+                0x200006a0                _ebss = .
 
 .noinit_CCMRAM
  *(.noinit.CCMRAM .noinit.CCMRAM.*)
 
-.noinit         0x20000698        0x0
-                0x20000698                _noinit = .
+.noinit         0x200006a0        0x0
+                0x200006a0                _noinit = .
  *(.noinit .noinit.*)
-                0x20000698                . = ALIGN (0x4)
-                0x20000698                _end_noinit = .
-                0x20000698                PROVIDE (end, _end_noinit)
-                0x20000698                PROVIDE (_end, _end_noinit)
-                0x20000698                PROVIDE (__end, _end_noinit)
-                0x20000698                PROVIDE (__end__, _end_noinit)
+                0x200006a0                . = ALIGN (0x4)
+                0x200006a0                _end_noinit = .
+                0x200006a0                PROVIDE (end, _end_noinit)
+                0x200006a0                PROVIDE (_end, _end_noinit)
+                0x200006a0                PROVIDE (__end, _end_noinit)
+                0x200006a0                PROVIDE (__end__, _end_noinit)
 
-._check_stack   0x20000698      0x100
-                0x20000798                . = (. + _Minimum_Stack_Size)
- *fill*         0x20000698      0x100 
+._check_stack   0x200006a0      0x100
+                0x200007a0                . = (. + _Minimum_Stack_Size)
+ *fill*         0x200006a0      0x100 
 
 .b1text
  *(.b1text)
@@ -3518,7 +3523,7 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000     0x1200
+.debug_aranges  0x00000000     0x1220
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x70 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
@@ -3541,46 +3546,46 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
  .debug_aranges
                 0x00000868       0x28 ./system/src/cmsis/system_stm32f0xx.o
  .debug_aranges
-                0x00000890       0x58 ./src/eeprom.o
+                0x00000890       0x68 ./src/eeprom.o
  .debug_aranges
-                0x000008e8       0x40 ./src/init.o
+                0x000008f8       0x40 ./src/init.o
  .debug_aranges
-                0x00000928       0x58 ./src/logger.o
+                0x00000938       0x68 ./src/logger.o
  .debug_aranges
-                0x00000980       0x40 ./src/main.o
+                0x000009a0       0x40 ./src/main.o
  .debug_aranges
-                0x000009c0       0x28 ./src/my_function.o
+                0x000009e0       0x28 ./src/my_function.o
  .debug_aranges
-                0x000009e8       0x58 ./src/onewire.o
+                0x00000a08       0x58 ./src/onewire.o
  .debug_aranges
-                0x00000a40       0xf0 ./src/stm32xx_it.o
+                0x00000a60       0xf0 ./src/stm32xx_it.o
  .debug_aranges
-                0x00000b30       0x38 ./src/thermo.o
+                0x00000b50       0x38 ./src/thermo.o
  .debug_aranges
-                0x00000b68       0x60 ./src/time.o
+                0x00000b88       0x60 ./src/time.o
  .debug_aranges
-                0x00000bc8      0x130 ./bluenrg/src/bluenrg_gap_aci.o
+                0x00000be8      0x130 ./bluenrg/src/bluenrg_gap_aci.o
  .debug_aranges
-                0x00000cf8      0x168 ./bluenrg/src/bluenrg_gatt_aci.o
+                0x00000d18      0x168 ./bluenrg/src/bluenrg_gatt_aci.o
  .debug_aranges
-                0x00000e60       0x40 ./bluenrg/src/bluenrg_hal_aci.o
+                0x00000e80       0x40 ./bluenrg/src/bluenrg_hal_aci.o
  .debug_aranges
-                0x00000ea0       0x40 ./bluenrg/src/gp_timer.o
+                0x00000ec0       0x40 ./bluenrg/src/gp_timer.o
  .debug_aranges
-                0x00000ee0      0x158 ./bluenrg/src/hci.o
+                0x00000f00      0x158 ./bluenrg/src/hci.o
  .debug_aranges
-                0x00001038       0x78 ./bluenrg/src/list.o
+                0x00001058       0x78 ./bluenrg/src/list.o
  .debug_aranges
-                0x000010b0       0x90 ./bluenrg/src/my_service.o
+                0x000010d0       0x90 ./bluenrg/src/my_service.o
  .debug_aranges
-                0x00001140       0x28 ./bluenrg/src/osal.o
+                0x00001160       0x28 ./bluenrg/src/osal.o
  .debug_aranges
-                0x00001168       0x98 ./bluenrg/src/stm32_bluenrg_ble.o
+                0x00001188       0x98 ./bluenrg/src/stm32_bluenrg_ble.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000    0x17133
+.debug_info     0x00000000    0x1741a
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x406 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_info    0x00000406      0x2ff ./system/src/stm32f0-stdperiph/stm32f0xx_exti.o
@@ -3592,26 +3597,26 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
  .debug_info    0x00004071     0x19ab ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .debug_info    0x00005a1c       0x78 ./system/src/cmsis/startup_stm32f030x6.o
  .debug_info    0x00005a94      0x201 ./system/src/cmsis/system_stm32f0xx.o
- .debug_info    0x00005c95      0xaa1 ./src/eeprom.o
- .debug_info    0x00006736      0x8d8 ./src/init.o
- .debug_info    0x0000700e      0x916 ./src/logger.o
- .debug_info    0x00007924      0xaa0 ./src/main.o
- .debug_info    0x000083c4      0x3f8 ./src/my_function.o
- .debug_info    0x000087bc      0xc2e ./src/onewire.o
- .debug_info    0x000093ea      0x660 ./src/stm32xx_it.o
- .debug_info    0x00009a4a      0x4f5 ./src/thermo.o
- .debug_info    0x00009f3f      0xaf5 ./src/time.o
- .debug_info    0x0000aa34     0x282a ./bluenrg/src/bluenrg_gap_aci.o
- .debug_info    0x0000d25e     0x2f90 ./bluenrg/src/bluenrg_gatt_aci.o
- .debug_info    0x000101ee      0x4a0 ./bluenrg/src/bluenrg_hal_aci.o
- .debug_info    0x0001068e      0x1a7 ./bluenrg/src/gp_timer.o
- .debug_info    0x00010835     0x2c69 ./bluenrg/src/hci.o
- .debug_info    0x0001349e      0x323 ./bluenrg/src/list.o
- .debug_info    0x000137c1     0x255a ./bluenrg/src/my_service.o
- .debug_info    0x00015d1b      0x198 ./bluenrg/src/osal.o
- .debug_info    0x00015eb3     0x1280 ./bluenrg/src/stm32_bluenrg_ble.o
+ .debug_info    0x00005c95      0xc76 ./src/eeprom.o
+ .debug_info    0x0000690b      0x8e4 ./src/init.o
+ .debug_info    0x000071ef      0x987 ./src/logger.o
+ .debug_info    0x00007b76      0xa74 ./src/main.o
+ .debug_info    0x000085ea      0x3f8 ./src/my_function.o
+ .debug_info    0x000089e2      0xc2e ./src/onewire.o
+ .debug_info    0x00009610      0x660 ./src/stm32xx_it.o
+ .debug_info    0x00009c70      0x4f5 ./src/thermo.o
+ .debug_info    0x0000a165      0xaf5 ./src/time.o
+ .debug_info    0x0000ac5a     0x282a ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_info    0x0000d484     0x2f90 ./bluenrg/src/bluenrg_gatt_aci.o
+ .debug_info    0x00010414      0x4a0 ./bluenrg/src/bluenrg_hal_aci.o
+ .debug_info    0x000108b4      0x1a7 ./bluenrg/src/gp_timer.o
+ .debug_info    0x00010a5b     0x2c69 ./bluenrg/src/hci.o
+ .debug_info    0x000136c4      0x323 ./bluenrg/src/list.o
+ .debug_info    0x000139e7     0x261b ./bluenrg/src/my_service.o
+ .debug_info    0x00016002      0x198 ./bluenrg/src/osal.o
+ .debug_info    0x0001619a     0x1280 ./bluenrg/src/stm32_bluenrg_ble.o
 
-.debug_abbrev   0x00000000     0x35e7
+.debug_abbrev   0x00000000     0x3670
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x147 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_abbrev  0x00000147      0x17f ./system/src/stm32f0-stdperiph/stm32f0xx_exti.o
@@ -3623,26 +3628,26 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
  .debug_abbrev  0x00000c18      0x1c7 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .debug_abbrev  0x00000ddf       0x12 ./system/src/cmsis/startup_stm32f030x6.o
  .debug_abbrev  0x00000df1       0xf3 ./system/src/cmsis/system_stm32f0xx.o
- .debug_abbrev  0x00000ee4      0x243 ./src/eeprom.o
- .debug_abbrev  0x00001127      0x270 ./src/init.o
- .debug_abbrev  0x00001397      0x1df ./src/logger.o
- .debug_abbrev  0x00001576      0x336 ./src/main.o
- .debug_abbrev  0x000018ac      0x1c2 ./src/my_function.o
- .debug_abbrev  0x00001a6e      0x281 ./src/onewire.o
- .debug_abbrev  0x00001cef      0x20d ./src/stm32xx_it.o
- .debug_abbrev  0x00001efc      0x195 ./src/thermo.o
- .debug_abbrev  0x00002091      0x2ff ./src/time.o
- .debug_abbrev  0x00002390      0x1db ./bluenrg/src/bluenrg_gap_aci.o
- .debug_abbrev  0x0000256b      0x20c ./bluenrg/src/bluenrg_gatt_aci.o
- .debug_abbrev  0x00002777      0x167 ./bluenrg/src/bluenrg_hal_aci.o
- .debug_abbrev  0x000028de      0x109 ./bluenrg/src/gp_timer.o
- .debug_abbrev  0x000029e7      0x31b ./bluenrg/src/hci.o
- .debug_abbrev  0x00002d02      0x10c ./bluenrg/src/list.o
- .debug_abbrev  0x00002e0e      0x351 ./bluenrg/src/my_service.o
- .debug_abbrev  0x0000315f       0xcf ./bluenrg/src/osal.o
- .debug_abbrev  0x0000322e      0x3b9 ./bluenrg/src/stm32_bluenrg_ble.o
+ .debug_abbrev  0x00000ee4      0x2d5 ./src/eeprom.o
+ .debug_abbrev  0x000011b9      0x270 ./src/init.o
+ .debug_abbrev  0x00001429      0x1f0 ./src/logger.o
+ .debug_abbrev  0x00001619      0x31c ./src/main.o
+ .debug_abbrev  0x00001935      0x1c2 ./src/my_function.o
+ .debug_abbrev  0x00001af7      0x281 ./src/onewire.o
+ .debug_abbrev  0x00001d78      0x20d ./src/stm32xx_it.o
+ .debug_abbrev  0x00001f85      0x195 ./src/thermo.o
+ .debug_abbrev  0x0000211a      0x2ff ./src/time.o
+ .debug_abbrev  0x00002419      0x1db ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_abbrev  0x000025f4      0x20c ./bluenrg/src/bluenrg_gatt_aci.o
+ .debug_abbrev  0x00002800      0x167 ./bluenrg/src/bluenrg_hal_aci.o
+ .debug_abbrev  0x00002967      0x109 ./bluenrg/src/gp_timer.o
+ .debug_abbrev  0x00002a70      0x31b ./bluenrg/src/hci.o
+ .debug_abbrev  0x00002d8b      0x10c ./bluenrg/src/list.o
+ .debug_abbrev  0x00002e97      0x351 ./bluenrg/src/my_service.o
+ .debug_abbrev  0x000031e8       0xcf ./bluenrg/src/osal.o
+ .debug_abbrev  0x000032b7      0x3b9 ./bluenrg/src/stm32_bluenrg_ble.o
 
-.debug_line     0x00000000     0x9aa9
+.debug_line     0x00000000     0x9a64
  *(.debug_line)
  .debug_line    0x00000000      0x352 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_line    0x00000352      0x309 ./system/src/stm32f0-stdperiph/stm32f0xx_exti.o
@@ -3651,29 +3656,29 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
  .debug_line    0x00000fa5      0x79f ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
  .debug_line    0x00001744      0x507 ./system/src/stm32f0-stdperiph/stm32f0xx_spi.o
  .debug_line    0x00001c4b      0x65b ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_line    0x000022a6      0xe00 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_line    0x000030a6       0x8c ./system/src/cmsis/startup_stm32f030x6.o
- .debug_line    0x00003132      0x296 ./system/src/cmsis/system_stm32f0xx.o
- .debug_line    0x000033c8      0x5e0 ./src/eeprom.o
- .debug_line    0x000039a8      0x733 ./src/init.o
- .debug_line    0x000040db      0x741 ./src/logger.o
- .debug_line    0x0000481c      0x6cf ./src/main.o
- .debug_line    0x00004eeb      0x5a5 ./src/my_function.o
- .debug_line    0x00005490      0x458 ./src/onewire.o
- .debug_line    0x000058e8      0x58d ./src/stm32xx_it.o
- .debug_line    0x00005e75      0x45b ./src/thermo.o
- .debug_line    0x000062d0      0x73a ./src/time.o
- .debug_line    0x00006a0a      0x65f ./bluenrg/src/bluenrg_gap_aci.o
- .debug_line    0x00007069      0x79e ./bluenrg/src/bluenrg_gatt_aci.o
- .debug_line    0x00007807      0x266 ./bluenrg/src/bluenrg_hal_aci.o
- .debug_line    0x00007a6d      0x309 ./bluenrg/src/gp_timer.o
- .debug_line    0x00007d76      0x88c ./bluenrg/src/hci.o
- .debug_line    0x00008602      0x206 ./bluenrg/src/list.o
- .debug_line    0x00008808      0x873 ./bluenrg/src/my_service.o
- .debug_line    0x0000907b      0x231 ./bluenrg/src/osal.o
- .debug_line    0x000092ac      0x7fd ./bluenrg/src/stm32_bluenrg_ble.o
+ .debug_line    0x000022a6      0xda8 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_line    0x0000304e       0x8c ./system/src/cmsis/startup_stm32f030x6.o
+ .debug_line    0x000030da      0x296 ./system/src/cmsis/system_stm32f0xx.o
+ .debug_line    0x00003370      0x651 ./src/eeprom.o
+ .debug_line    0x000039c1      0x6dd ./src/init.o
+ .debug_line    0x0000409e      0x734 ./src/logger.o
+ .debug_line    0x000047d2      0x6cc ./src/main.o
+ .debug_line    0x00004e9e      0x5a5 ./src/my_function.o
+ .debug_line    0x00005443      0x458 ./src/onewire.o
+ .debug_line    0x0000589b      0x58d ./src/stm32xx_it.o
+ .debug_line    0x00005e28      0x45b ./src/thermo.o
+ .debug_line    0x00006283      0x73a ./src/time.o
+ .debug_line    0x000069bd      0x65f ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_line    0x0000701c      0x79e ./bluenrg/src/bluenrg_gatt_aci.o
+ .debug_line    0x000077ba      0x266 ./bluenrg/src/bluenrg_hal_aci.o
+ .debug_line    0x00007a20      0x309 ./bluenrg/src/gp_timer.o
+ .debug_line    0x00007d29      0x88c ./bluenrg/src/hci.o
+ .debug_line    0x000085b5      0x206 ./bluenrg/src/list.o
+ .debug_line    0x000087bb      0x87b ./bluenrg/src/my_service.o
+ .debug_line    0x00009036      0x231 ./bluenrg/src/osal.o
+ .debug_line    0x00009267      0x7fd ./bluenrg/src/stm32_bluenrg_ble.o
 
-.debug_frame    0x00000000     0x2e84
+.debug_frame    0x00000000     0x2ef8
  *(.debug_frame)
  .debug_frame   0x00000000       0xc8 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_frame   0x000000c8       0x98 ./system/src/stm32f0-stdperiph/stm32f0xx_exti.o
@@ -3684,89 +3689,89 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
  .debug_frame   0x00000b2c      0x354 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .debug_frame   0x00000e80      0x420 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .debug_frame   0x000012a0       0x38 ./system/src/cmsis/system_stm32f0xx.o
- .debug_frame   0x000012d8       0xd0 ./src/eeprom.o
- .debug_frame   0x000013a8       0x88 ./src/init.o
- .debug_frame   0x00001430       0xe0 ./src/logger.o
- .debug_frame   0x00001510       0x80 ./src/main.o
- .debug_frame   0x00001590       0x48 ./src/my_function.o
- .debug_frame   0x000015d8       0xf0 ./src/onewire.o
- .debug_frame   0x000016c8      0x1e0 ./src/stm32xx_it.o
- .debug_frame   0x000018a8       0x8c ./src/thermo.o
- .debug_frame   0x00001934       0xe8 ./src/time.o
- .debug_frame   0x00001a1c      0x44c ./bluenrg/src/bluenrg_gap_aci.o
- .debug_frame   0x00001e68      0x514 ./bluenrg/src/bluenrg_gatt_aci.o
- .debug_frame   0x0000237c       0xa0 ./bluenrg/src/bluenrg_hal_aci.o
- .debug_frame   0x0000241c       0x68 ./bluenrg/src/gp_timer.o
- .debug_frame   0x00002484      0x4c0 ./bluenrg/src/hci.o
- .debug_frame   0x00002944       0xe0 ./bluenrg/src/list.o
- .debug_frame   0x00002a24      0x19c ./bluenrg/src/my_service.o
- .debug_frame   0x00002bc0       0x40 ./bluenrg/src/osal.o
- .debug_frame   0x00002c00      0x1a8 ./bluenrg/src/stm32_bluenrg_ble.o
- .debug_frame   0x00002da8       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
- .debug_frame   0x00002dc8       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
- .debug_frame   0x00002de8       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-init.o)
- .debug_frame   0x00002e14       0x28 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-memcpy.o)
- .debug_frame   0x00002e3c       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-memset.o)
- .debug_frame   0x00002e5c       0x28 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-strcat.o)
+ .debug_frame   0x000012d8      0x114 ./src/eeprom.o
+ .debug_frame   0x000013ec       0x88 ./src/init.o
+ .debug_frame   0x00001474      0x110 ./src/logger.o
+ .debug_frame   0x00001584       0x80 ./src/main.o
+ .debug_frame   0x00001604       0x48 ./src/my_function.o
+ .debug_frame   0x0000164c       0xf0 ./src/onewire.o
+ .debug_frame   0x0000173c      0x1e0 ./src/stm32xx_it.o
+ .debug_frame   0x0000191c       0x8c ./src/thermo.o
+ .debug_frame   0x000019a8       0xe8 ./src/time.o
+ .debug_frame   0x00001a90      0x44c ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_frame   0x00001edc      0x514 ./bluenrg/src/bluenrg_gatt_aci.o
+ .debug_frame   0x000023f0       0xa0 ./bluenrg/src/bluenrg_hal_aci.o
+ .debug_frame   0x00002490       0x68 ./bluenrg/src/gp_timer.o
+ .debug_frame   0x000024f8      0x4c0 ./bluenrg/src/hci.o
+ .debug_frame   0x000029b8       0xe0 ./bluenrg/src/list.o
+ .debug_frame   0x00002a98      0x19c ./bluenrg/src/my_service.o
+ .debug_frame   0x00002c34       0x40 ./bluenrg/src/osal.o
+ .debug_frame   0x00002c74      0x1a8 ./bluenrg/src/stm32_bluenrg_ble.o
+ .debug_frame   0x00002e1c       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_udivsi3.o)
+ .debug_frame   0x00002e3c       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/libgcc.a(_divsi3.o)
+ .debug_frame   0x00002e5c       0x2c /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-init.o)
+ .debug_frame   0x00002e88       0x28 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-memcpy.o)
+ .debug_frame   0x00002eb0       0x20 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-memset.o)
+ .debug_frame   0x00002ed0       0x28 /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv6-m/libg_nano.a(lib_a-strcat.o)
 
-.debug_str      0x00000000    0x4e087
+.debug_str      0x00000000    0x3a70e
  *(.debug_str)
- .debug_str     0x00000000    0x28121 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
+ .debug_str     0x00000000    0x28130 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
                               0x282bf (size before relaxing)
- .debug_str     0x00028121      0x1d6 ./system/src/stm32f0-stdperiph/stm32f0xx_exti.o
+ .debug_str     0x00028130      0x1d6 ./system/src/stm32f0-stdperiph/stm32f0xx_exti.o
                               0x27fad (size before relaxing)
- .debug_str     0x000282f7      0x2ca ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
+ .debug_str     0x00028306      0x2ca ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
                               0x280d1 (size before relaxing)
- .debug_str     0x000285c1      0x628 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
+ .debug_str     0x000285d0      0x639 ./system/src/stm32f0-stdperiph/stm32f0xx_rcc.o
                               0x2847a (size before relaxing)
- .debug_str     0x00028be9      0x9cc ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
+ .debug_str     0x00028c09      0x9cc ./system/src/stm32f0-stdperiph/stm32f0xx_rtc.o
                               0x287e7 (size before relaxing)
- .debug_str     0x000295b5      0x4ca ./system/src/stm32f0-stdperiph/stm32f0xx_spi.o
+ .debug_str     0x000295d5      0x4ca ./system/src/stm32f0-stdperiph/stm32f0xx_spi.o
                               0x283c5 (size before relaxing)
- .debug_str     0x00029a7f      0x7fd ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
+ .debug_str     0x00029a9f      0x7fd ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
                               0x286f2 (size before relaxing)
- .debug_str     0x0002a27c    0x1958f ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
-                              0x414e9 (size before relaxing)
- .debug_str     0x0004380b       0x65 ./system/src/cmsis/system_stm32f0xx.o
+ .debug_str     0x0002a29c     0x5bac ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+                              0x2da74 (size before relaxing)
+ .debug_str     0x0002fe48       0x65 ./system/src/cmsis/system_stm32f0xx.o
                               0x27e74 (size before relaxing)
- .debug_str     0x00043870     0x1405 ./src/eeprom.o
-                              0x416d7 (size before relaxing)
- .debug_str     0x00044c75     0x53e5 ./src/init.o
-                              0x452f9 (size before relaxing)
- .debug_str     0x0004a05a      0x12e ./src/logger.o
-                              0x451f3 (size before relaxing)
- .debug_str     0x0004a188      0x5e3 ./src/main.o
-                              0x31a97 (size before relaxing)
- .debug_str     0x0004a76b      0x158 ./src/my_function.o
-                              0x30cee (size before relaxing)
- .debug_str     0x0004a8c3      0x164 ./src/onewire.o
+ .debug_str     0x0002fead     0x141a ./src/eeprom.o
+                              0x2dcf2 (size before relaxing)
+ .debug_str     0x000312c7     0x53f0 ./src/init.o
+                              0x3188f (size before relaxing)
+ .debug_str     0x000366b7      0x15f ./src/logger.o
+                              0x317ba (size before relaxing)
+ .debug_str     0x00036816      0x5ec ./src/main.o
+                              0x31a80 (size before relaxing)
+ .debug_str     0x00036e02      0x152 ./src/my_function.o
+                              0x30cef (size before relaxing)
+ .debug_str     0x00036f54      0x15a ./src/onewire.o
                               0x2941c (size before relaxing)
- .debug_str     0x0004aa27      0x1c0 ./src/stm32xx_it.o
+ .debug_str     0x000370ae      0x1c0 ./src/stm32xx_it.o
                               0x2bc24 (size before relaxing)
- .debug_str     0x0004abe7       0x48 ./src/thermo.o
+ .debug_str     0x0003726e       0x48 ./src/thermo.o
                               0x2b471 (size before relaxing)
- .debug_str     0x0004ac2f      0x205 ./src/time.o
-                              0x31b27 (size before relaxing)
- .debug_str     0x0004ae34      0xbc9 ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_str     0x000372b6      0x205 ./src/time.o
+                              0x31b28 (size before relaxing)
+ .debug_str     0x000374bb      0xbc9 ./bluenrg/src/bluenrg_gap_aci.o
                                0x933f (size before relaxing)
- .debug_str     0x0004b9fd      0xb84 ./bluenrg/src/bluenrg_gatt_aci.o
+ .debug_str     0x00038084      0xb84 ./bluenrg/src/bluenrg_gatt_aci.o
                                0x93dd (size before relaxing)
- .debug_str     0x0004c581       0xe2 ./bluenrg/src/bluenrg_hal_aci.o
+ .debug_str     0x00038c08       0xe2 ./bluenrg/src/bluenrg_hal_aci.o
                                0x86ec (size before relaxing)
- .debug_str     0x0004c663       0x7d ./bluenrg/src/gp_timer.o
+ .debug_str     0x00038cea       0x7d ./bluenrg/src/gp_timer.o
                               0x2857b (size before relaxing)
- .debug_str     0x0004c6e0      0xaa4 ./bluenrg/src/hci.o
+ .debug_str     0x00038d67      0xaa4 ./bluenrg/src/hci.o
                               0x2c656 (size before relaxing)
- .debug_str     0x0004d184       0xad ./bluenrg/src/list.o
+ .debug_str     0x0003980b       0xad ./bluenrg/src/list.o
                                0x3d9c (size before relaxing)
- .debug_str     0x0004d231      0xc71 ./bluenrg/src/my_service.o
-                              0x32a25 (size before relaxing)
- .debug_str     0x0004dea2       0x1b ./bluenrg/src/osal.o
+ .debug_str     0x000398b8      0xc71 ./bluenrg/src/my_service.o
+                              0x32a8b (size before relaxing)
+ .debug_str     0x0003a529       0x1b ./bluenrg/src/osal.o
                                0x5517 (size before relaxing)
- .debug_str     0x0004debd      0x1ca ./bluenrg/src/stm32_bluenrg_ble.o
-                              0x319be (size before relaxing)
+ .debug_str     0x0003a544      0x1ca ./bluenrg/src/stm32_bluenrg_ble.o
+                              0x319bf (size before relaxing)
 
-.debug_loc      0x00000000     0xce1d
+.debug_loc      0x00000000     0xd20d
  *(.debug_loc)
  .debug_loc     0x00000000      0x143 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_loc     0x00000143      0x12c ./system/src/stm32f0-stdperiph/stm32f0xx_exti.o
@@ -3777,24 +3782,24 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
  .debug_loc     0x000022bb      0x88f ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .debug_loc     0x00002b4a     0x1cbd ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .debug_loc     0x00004807       0xfe ./system/src/cmsis/system_stm32f0xx.o
- .debug_loc     0x00004905      0x215 ./src/eeprom.o
- .debug_loc     0x00004b1a      0x196 ./src/init.o
- .debug_loc     0x00004cb0      0x2e9 ./src/logger.o
- .debug_loc     0x00004f99      0x175 ./src/main.o
- .debug_loc     0x0000510e       0xf0 ./src/my_function.o
- .debug_loc     0x000051fe      0x494 ./src/onewire.o
- .debug_loc     0x00005692       0x21 ./src/stm32xx_it.o
- .debug_loc     0x000056b3       0xb5 ./src/thermo.o
- .debug_loc     0x00005768      0x34c ./src/time.o
- .debug_loc     0x00005ab4     0x229c ./bluenrg/src/bluenrg_gap_aci.o
- .debug_loc     0x00007d50     0x25f5 ./bluenrg/src/bluenrg_gatt_aci.o
- .debug_loc     0x0000a345      0x1a6 ./bluenrg/src/bluenrg_hal_aci.o
- .debug_loc     0x0000a4eb       0x42 ./bluenrg/src/gp_timer.o
- .debug_loc     0x0000a52d     0x106c ./bluenrg/src/hci.o
- .debug_loc     0x0000b599       0xfb ./bluenrg/src/list.o
- .debug_loc     0x0000b694     0x121a ./bluenrg/src/my_service.o
- .debug_loc     0x0000c8ae       0xc6 ./bluenrg/src/osal.o
- .debug_loc     0x0000c974      0x4a9 ./bluenrg/src/stm32_bluenrg_ble.o
+ .debug_loc     0x00004905      0x489 ./src/eeprom.o
+ .debug_loc     0x00004d8e      0x196 ./src/init.o
+ .debug_loc     0x00004f24      0x435 ./src/logger.o
+ .debug_loc     0x00005359      0x14f ./src/main.o
+ .debug_loc     0x000054a8       0xf0 ./src/my_function.o
+ .debug_loc     0x00005598      0x494 ./src/onewire.o
+ .debug_loc     0x00005a2c       0x21 ./src/stm32xx_it.o
+ .debug_loc     0x00005a4d       0xb5 ./src/thermo.o
+ .debug_loc     0x00005b02      0x34c ./src/time.o
+ .debug_loc     0x00005e4e     0x229c ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_loc     0x000080ea     0x25f5 ./bluenrg/src/bluenrg_gatt_aci.o
+ .debug_loc     0x0000a6df      0x1a6 ./bluenrg/src/bluenrg_hal_aci.o
+ .debug_loc     0x0000a885       0x42 ./bluenrg/src/gp_timer.o
+ .debug_loc     0x0000a8c7     0x106c ./bluenrg/src/hci.o
+ .debug_loc     0x0000b933       0xfb ./bluenrg/src/list.o
+ .debug_loc     0x0000ba2e     0x1270 ./bluenrg/src/my_service.o
+ .debug_loc     0x0000cc9e       0xc6 ./bluenrg/src/osal.o
+ .debug_loc     0x0000cd64      0x4a9 ./bluenrg/src/stm32_bluenrg_ble.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -3812,7 +3817,7 @@ LOAD /home/jet/work/toolchain/bin/../lib/gcc/arm-none-eabi/4.9.3/armv6-m/crtn.o
  *(.debug_varnames)
 OUTPUT(expedition.elf elf32-littlearm)
 
-.debug_ranges   0x00000000     0x1118
+.debug_ranges   0x00000000     0x1138
  .debug_ranges  0x00000000       0x60 ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_ranges  0x00000060       0x48 ./system/src/stm32f0-stdperiph/stm32f0xx_exti.o
  .debug_ranges  0x000000a8       0x70 ./system/src/stm32f0-stdperiph/stm32f0xx_gpio.o
@@ -3823,26 +3828,26 @@ OUTPUT(expedition.elf elf32-littlearm)
  .debug_ranges  0x00000680      0x140 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
  .debug_ranges  0x000007c0       0x20 ./system/src/cmsis/startup_stm32f030x6.o
  .debug_ranges  0x000007e0       0x18 ./system/src/cmsis/system_stm32f0xx.o
- .debug_ranges  0x000007f8       0x48 ./src/eeprom.o
- .debug_ranges  0x00000840       0x60 ./src/init.o
- .debug_ranges  0x000008a0       0x48 ./src/logger.o
- .debug_ranges  0x000008e8       0x48 ./src/main.o
- .debug_ranges  0x00000930       0x18 ./src/my_function.o
- .debug_ranges  0x00000948       0x60 ./src/onewire.o
- .debug_ranges  0x000009a8       0xe0 ./src/stm32xx_it.o
- .debug_ranges  0x00000a88       0x40 ./src/thermo.o
- .debug_ranges  0x00000ac8       0x50 ./src/time.o
- .debug_ranges  0x00000b18      0x120 ./bluenrg/src/bluenrg_gap_aci.o
- .debug_ranges  0x00000c38      0x158 ./bluenrg/src/bluenrg_gatt_aci.o
- .debug_ranges  0x00000d90       0x30 ./bluenrg/src/bluenrg_hal_aci.o
- .debug_ranges  0x00000dc0       0x30 ./bluenrg/src/gp_timer.o
- .debug_ranges  0x00000df0      0x160 ./bluenrg/src/hci.o
- .debug_ranges  0x00000f50       0x68 ./bluenrg/src/list.o
- .debug_ranges  0x00000fb8       0xc0 ./bluenrg/src/my_service.o
- .debug_ranges  0x00001078       0x18 ./bluenrg/src/osal.o
- .debug_ranges  0x00001090       0x88 ./bluenrg/src/stm32_bluenrg_ble.o
+ .debug_ranges  0x000007f8       0x58 ./src/eeprom.o
+ .debug_ranges  0x00000850       0x60 ./src/init.o
+ .debug_ranges  0x000008b0       0x58 ./src/logger.o
+ .debug_ranges  0x00000908       0x48 ./src/main.o
+ .debug_ranges  0x00000950       0x18 ./src/my_function.o
+ .debug_ranges  0x00000968       0x60 ./src/onewire.o
+ .debug_ranges  0x000009c8       0xe0 ./src/stm32xx_it.o
+ .debug_ranges  0x00000aa8       0x40 ./src/thermo.o
+ .debug_ranges  0x00000ae8       0x50 ./src/time.o
+ .debug_ranges  0x00000b38      0x120 ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_ranges  0x00000c58      0x158 ./bluenrg/src/bluenrg_gatt_aci.o
+ .debug_ranges  0x00000db0       0x30 ./bluenrg/src/bluenrg_hal_aci.o
+ .debug_ranges  0x00000de0       0x30 ./bluenrg/src/gp_timer.o
+ .debug_ranges  0x00000e10      0x160 ./bluenrg/src/hci.o
+ .debug_ranges  0x00000f70       0x68 ./bluenrg/src/list.o
+ .debug_ranges  0x00000fd8       0xc0 ./bluenrg/src/my_service.o
+ .debug_ranges  0x00001098       0x18 ./bluenrg/src/osal.o
+ .debug_ranges  0x000010b0       0x88 ./bluenrg/src/stm32_bluenrg_ble.o
 
-.debug_macro    0x00000000     0xf91c
+.debug_macro    0x00000000     0xce31
  .debug_macro   0x00000000      0x10b ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_macro   0x0000010b      0x84a ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
  .debug_macro   0x00000955       0x2e ./system/src/stm32f0-stdperiph/stm32f0xx_dma.o
@@ -3874,87 +3879,86 @@ OUTPUT(expedition.elf elf32-littlearm)
  .debug_macro   0x00007259      0x391 ./system/src/stm32f0-stdperiph/stm32f0xx_spi.o
  .debug_macro   0x000075ea       0xf3 ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
  .debug_macro   0x000076dd      0x34d ./system/src/stm32f0-stdperiph/stm32f0xx_usart.o
- .debug_macro   0x00007a2a      0x26b ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x00007c95     0x2ac7 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000a75c       0x58 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000a7b4       0x22 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000a7d6       0x35 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000a80b       0x9c ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000a8a7       0x16 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000a8bd       0x4a ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000a907       0x97 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000a99e      0x29d ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000ac3b       0xef ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000ad2a       0x10 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000ad3a       0x52 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000ad8c       0x16 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000ada2       0x43 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000ade5      0x180 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000af65       0x10 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000af75       0x22 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000af97       0x22 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000afb9       0xbe ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000b077       0x16 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000b08d      0x166 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000b1f3       0x50 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000b243       0x4d ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000b290       0xea ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000b37a      0x22c ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000b5a6       0x1c ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
- .debug_macro   0x0000b5c2       0xd1 ./system/src/cmsis/system_stm32f0xx.o
- .debug_macro   0x0000b693      0x271 ./src/eeprom.o
- .debug_macro   0x0000b904      0x166 ./src/eeprom.o
- .debug_macro   0x0000ba6a       0x10 ./src/eeprom.o
- .debug_macro   0x0000ba7a       0x35 ./src/eeprom.o
- .debug_macro   0x0000baaf      0x19c ./src/eeprom.o
- .debug_macro   0x0000bc4b       0x6a ./src/eeprom.o
- .debug_macro   0x0000bcb5      0x112 ./src/eeprom.o
- .debug_macro   0x0000bdc7       0x58 ./src/eeprom.o
- .debug_macro   0x0000be1f       0x82 ./src/eeprom.o
- .debug_macro   0x0000bea1       0x1c ./src/eeprom.o
- .debug_macro   0x0000bebd       0x4a ./src/eeprom.o
- .debug_macro   0x0000bf07      0x36a ./src/init.o
- .debug_macro   0x0000c271       0x64 ./src/init.o
- .debug_macro   0x0000c2d5       0x46 ./src/init.o
- .debug_macro   0x0000c31b       0x1c ./src/init.o
- .debug_macro   0x0000c337      0x15a ./src/init.o
- .debug_macro   0x0000c491      0x15e ./src/init.o
- .debug_macro   0x0000c5ef       0x9a ./src/init.o
- .debug_macro   0x0000c689      0x18e ./src/init.o
- .debug_macro   0x0000c817      0x1c9 ./src/init.o
- .debug_macro   0x0000c9e0      0x291 ./src/init.o
- .debug_macro   0x0000cc71       0x59 ./src/init.o
- .debug_macro   0x0000ccca      0x47c ./src/init.o
- .debug_macro   0x0000d146      0x184 ./src/init.o
- .debug_macro   0x0000d2ca       0xdc ./src/init.o
- .debug_macro   0x0000d3a6       0x16 ./src/init.o
- .debug_macro   0x0000d3bc       0x3a ./src/init.o
- .debug_macro   0x0000d3f6      0x34d ./src/logger.o
- .debug_macro   0x0000d743      0x370 ./src/main.o
- .debug_macro   0x0000dab3       0x16 ./src/main.o
- .debug_macro   0x0000dac9       0xef ./src/main.o
- .debug_macro   0x0000dbb8      0x318 ./src/my_function.o
- .debug_macro   0x0000ded0       0x22 ./src/my_function.o
- .debug_macro   0x0000def2       0x10 ./src/my_function.o
- .debug_macro   0x0000df02      0x134 ./src/onewire.o
- .debug_macro   0x0000e036      0x1a0 ./src/stm32xx_it.o
- .debug_macro   0x0000e1d6       0x7c ./src/stm32xx_it.o
- .debug_macro   0x0000e252      0x1c4 ./src/thermo.o
- .debug_macro   0x0000e416      0x38d ./src/time.o
- .debug_macro   0x0000e7a3      0x118 ./src/time.o
- .debug_macro   0x0000e8bb      0x101 ./bluenrg/src/bluenrg_gap_aci.o
- .debug_macro   0x0000e9bc       0xa0 ./bluenrg/src/bluenrg_gap_aci.o
- .debug_macro   0x0000ea5c      0x101 ./bluenrg/src/bluenrg_gatt_aci.o
- .debug_macro   0x0000eb5d       0xfc ./bluenrg/src/bluenrg_hal_aci.o
- .debug_macro   0x0000ec59       0xfc ./bluenrg/src/gp_timer.o
- .debug_macro   0x0000ed55       0x16 ./bluenrg/src/gp_timer.o
- .debug_macro   0x0000ed6b      0x1a3 ./bluenrg/src/hci.o
- .debug_macro   0x0000ef0e       0x4f ./bluenrg/src/list.o
- .debug_macro   0x0000ef5d      0x390 ./bluenrg/src/my_service.o
- .debug_macro   0x0000f2ed       0x16 ./bluenrg/src/my_service.o
- .debug_macro   0x0000f303      0x10e ./bluenrg/src/my_service.o
- .debug_macro   0x0000f411       0x7f ./bluenrg/src/my_service.o
- .debug_macro   0x0000f490       0x22 ./bluenrg/src/my_service.o
- .debug_macro   0x0000f4b2       0x40 ./bluenrg/src/my_service.o
- .debug_macro   0x0000f4f2       0xe8 ./bluenrg/src/osal.o
- .debug_macro   0x0000f5da      0x342 ./bluenrg/src/stm32_bluenrg_ble.o
+ .debug_macro   0x00007a2a      0x262 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00007c8c       0x58 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00007ce4       0x22 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00007d06       0x35 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00007d3b       0x9c ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00007dd7       0x16 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00007ded       0x4a ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00007e37       0x97 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00007ece      0x29d ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x0000816b       0xef ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x0000825a       0x10 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x0000826a       0x52 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x000082bc       0x16 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x000082d2       0x43 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00008315      0x180 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00008495       0x10 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x000084a5       0x22 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x000084c7       0x22 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x000084e9       0xbe ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x000085a7       0x16 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x000085bd      0x166 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00008723       0x50 ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00008773       0x4d ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x000087c0       0xea ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x000088aa      0x22c ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00008ad6       0x1c ./system/src/stm32f0-hal/stm32f0xx_hal_i2c.o
+ .debug_macro   0x00008af2       0xd1 ./system/src/cmsis/system_stm32f0xx.o
+ .debug_macro   0x00008bc3      0x268 ./src/eeprom.o
+ .debug_macro   0x00008e2b      0x166 ./src/eeprom.o
+ .debug_macro   0x00008f91       0x10 ./src/eeprom.o
+ .debug_macro   0x00008fa1       0x35 ./src/eeprom.o
+ .debug_macro   0x00008fd6      0x19c ./src/eeprom.o
+ .debug_macro   0x00009172       0x6a ./src/eeprom.o
+ .debug_macro   0x000091dc      0x112 ./src/eeprom.o
+ .debug_macro   0x000092ee       0x58 ./src/eeprom.o
+ .debug_macro   0x00009346       0x82 ./src/eeprom.o
+ .debug_macro   0x000093c8       0x1c ./src/eeprom.o
+ .debug_macro   0x000093e4       0x4a ./src/eeprom.o
+ .debug_macro   0x0000942e      0x361 ./src/init.o
+ .debug_macro   0x0000978f       0x64 ./src/init.o
+ .debug_macro   0x000097f3       0x46 ./src/init.o
+ .debug_macro   0x00009839       0x1c ./src/init.o
+ .debug_macro   0x00009855      0x15a ./src/init.o
+ .debug_macro   0x000099af      0x15e ./src/init.o
+ .debug_macro   0x00009b0d       0x9a ./src/init.o
+ .debug_macro   0x00009ba7      0x18e ./src/init.o
+ .debug_macro   0x00009d35      0x1c9 ./src/init.o
+ .debug_macro   0x00009efe      0x291 ./src/init.o
+ .debug_macro   0x0000a18f       0x59 ./src/init.o
+ .debug_macro   0x0000a1e8      0x47c ./src/init.o
+ .debug_macro   0x0000a664      0x184 ./src/init.o
+ .debug_macro   0x0000a7e8       0xdc ./src/init.o
+ .debug_macro   0x0000a8c4       0x16 ./src/init.o
+ .debug_macro   0x0000a8da       0x3a ./src/init.o
+ .debug_macro   0x0000a914      0x344 ./src/logger.o
+ .debug_macro   0x0000ac58      0x370 ./src/main.o
+ .debug_macro   0x0000afc8       0x16 ./src/main.o
+ .debug_macro   0x0000afde       0xef ./src/main.o
+ .debug_macro   0x0000b0cd      0x318 ./src/my_function.o
+ .debug_macro   0x0000b3e5       0x22 ./src/my_function.o
+ .debug_macro   0x0000b407       0x10 ./src/my_function.o
+ .debug_macro   0x0000b417      0x134 ./src/onewire.o
+ .debug_macro   0x0000b54b      0x1a0 ./src/stm32xx_it.o
+ .debug_macro   0x0000b6eb       0x7c ./src/stm32xx_it.o
+ .debug_macro   0x0000b767      0x1c4 ./src/thermo.o
+ .debug_macro   0x0000b92b      0x38d ./src/time.o
+ .debug_macro   0x0000bcb8      0x118 ./src/time.o
+ .debug_macro   0x0000bdd0      0x101 ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_macro   0x0000bed1       0xa0 ./bluenrg/src/bluenrg_gap_aci.o
+ .debug_macro   0x0000bf71      0x101 ./bluenrg/src/bluenrg_gatt_aci.o
+ .debug_macro   0x0000c072       0xfc ./bluenrg/src/bluenrg_hal_aci.o
+ .debug_macro   0x0000c16e       0xfc ./bluenrg/src/gp_timer.o
+ .debug_macro   0x0000c26a       0x16 ./bluenrg/src/gp_timer.o
+ .debug_macro   0x0000c280      0x1a3 ./bluenrg/src/hci.o
+ .debug_macro   0x0000c423       0x4f ./bluenrg/src/list.o
+ .debug_macro   0x0000c472      0x390 ./bluenrg/src/my_service.o
+ .debug_macro   0x0000c802       0x16 ./bluenrg/src/my_service.o
+ .debug_macro   0x0000c818      0x10e ./bluenrg/src/my_service.o
+ .debug_macro   0x0000c926       0x7f ./bluenrg/src/my_service.o
+ .debug_macro   0x0000c9a5       0x22 ./bluenrg/src/my_service.o
+ .debug_macro   0x0000c9c7       0x40 ./bluenrg/src/my_service.o
+ .debug_macro   0x0000ca07       0xe8 ./bluenrg/src/osal.o
+ .debug_macro   0x0000caef      0x342 ./bluenrg/src/stm32_bluenrg_ble.o

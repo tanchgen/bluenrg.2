@@ -24,7 +24,9 @@
 
 #define EEPROM_I2C						I2C1
 #define I2C_FAST_SPEED				400000
-#define I2C_TIMING						0x00E0D3FF   // 0x00B01A4B
+/* I2C TIMING is calculated in case of the I2C Clock source is the SYSCLK = 48 MHz */
+/* Set TIMING to 0x00E0D3FF to reach 100 KHz speed (Rise time = 50ns, Fall time = 10ns) */
+#define I2C_TIMING                      0x00B01A4B //0x00E0D3FF
 #define I2C_OWN_ADDR					0x00
 #define I2C_TOUT								100
 #define EEPROM_I2C_ADDR				(0x50<<1)

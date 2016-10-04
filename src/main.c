@@ -114,11 +114,7 @@ void User_Process(void)
   }
 
   if ( blue.connected ) {
-  	uint8_t ddLogSendEn = blue.logStatus.ddReq && blue.logStatus.ddTxe;
-  	uint8_t toLogSendEn = blue.logStatus.toReq && blue.logStatus.toTxe;
-  	if ( toLogSendEn || ddLogSendEn ){
-  		logSend( toLogSendEn, ddLogSendEn );
-  	}
+  		logSend( blue.logStatus.toReq, blue.logStatus.ddReq );
   }
 
 }
