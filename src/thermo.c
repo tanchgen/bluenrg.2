@@ -80,6 +80,8 @@ void toReadTemperature( void ) {
 
 	// Считываем показания датчиков
 	for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ){
+	// По умолчанию - несуществующая температура 127.9375 гр.С
+		owToDev[i].temper = 0x7FF;
 	// Формируем массив с командой и адресом
 		if (owToDev[i].addr){
 			sendBuf[0] =MATCH_ROM;
@@ -87,6 +89,7 @@ void toReadTemperature( void ) {
 			// Отправляем в шину
 			if ((OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_ERR ) {
 				if( owToDev[i].devStatus == OW_DEV_OK ){
+					// До этого был нормальный
 					owToDev[i].addr = 0;
 					owToDev[i].devStatus = OW_TO_DEV_ERR;
 					owToDev[i].newErr = TRUE;
