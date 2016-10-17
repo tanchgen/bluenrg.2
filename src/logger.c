@@ -118,8 +118,12 @@ int8_t toLogRead( tToLogUnit * toLog ){
 			toLog->xTime = ((tToLogUnit *)toBuf)->xTime;
 			toDataSrc = (uint64_t *)((tToLogUnit *)toBuf)->toData;
 			toDataDst = (uint16_t *)toLog->toData;
-			for( uint8_t i=0; i < 4; i++ ){
-				*toDataDst++ = (*toDataSrc) & 0xFFF;
+			for( uint8_t i=0; i < 4; i++, toDataDst++ ){
+				*toDataDst = (*toDataSrc) & 0xFFF;
+				if( *toDataDst & 0x0800 ){
+					// Температура отрицательная - дополняем до signed int16_t
+					*toDataDst |= 0xF000;
+				}
 				*toDataSrc >>=12;
 			}
 			break;

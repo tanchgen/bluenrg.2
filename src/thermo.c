@@ -100,6 +100,10 @@ void toReadTemperature( void ) {
 				sendBuf[0] = MEM_READ;
 				OW_Send(OW_NO_RESET, sendBuf, 3, readBuf, 2, 1);
 				owToDev[i].temper = *((uint16_t *)readBuf);
+				if( owToDev[i].temper & 0x0800 ){
+					// Температура отрицательная - дополняем до signed int16_t
+					owToDev[i].temper |= 0xF000;
+				}
 			}
 		}
 	}
