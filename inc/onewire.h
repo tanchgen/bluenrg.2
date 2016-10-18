@@ -64,7 +64,7 @@
 
 #else // OW_DD
 
-#define OW_DD_DEV_NUM	  (0)				// Количество 1-wire контроллеров Датчиков Дверей (DD)
+#define OW_DD_DEV_NUM	  (2)				// Количество 1-wire контроллеров Датчиков Дверей (DD)
 
 #define DD_1_PORT				GPIOB
 #define DD_1_PIN				GPIO_Pin_0

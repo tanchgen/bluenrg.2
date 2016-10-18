@@ -96,17 +96,32 @@ void toReadTemperature( void ) {
 				}
 			}
 			else {
-				*(uint32_t *)sendBuf = 0xFFFFFFFF;
+				*(uint64_t *)&(sendBuf[1]) = 0xFFFFFFFFFFFFFFFF;
 				sendBuf[0] = MEM_READ;
-				OW_Send(OW_NO_RESET, sendBuf, 3, readBuf, 2, 1);
-				owToDev[i].temper = *((uint16_t *)readBuf);
-				if( owToDev[i].temper & 0x0800 ){
-					// Температура отрицательная - дополняем до signed int16_t
-					owToDev[i].temper |= 0xF000;
+				OW_Send(OW_NO_RESET, sendBuf, 6, readBuf, 5, 1);
+				if( (readBuf[4] & 0x80) == 0 ) {
+					// Регистр конфигурации "правильный" - значит датчик откликнулся
+					uint16_t mask;
+					switch(owToDev[i].mesurAcc){
+					case 9:
+						mask = ~(0x0007);
+						break;
+					case 10:
+						mask = ~(0x0003);
+						break;
+					case 11:
+						mask = ~(0x0001);
+						break;
+					default:
+						mask = 0xFFFF;
+						break;
+					}
+					owToDev[i].temper = *((uint16_t *)readBuf) & mask;
 				}
 			}
 		}
 	}
+
 }
 
 void mesureDelay( void ){

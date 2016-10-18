@@ -34,18 +34,6 @@ uint8_t tokenPart;
 
 int itoa(int n, char s[]);
 
-/*
-#ifdef BLUENRG_MS
-// Hardcoded values for X-NUCLEO-IDB05A1
-uint16_t tx_handle = 0x000D;
-uint16_t rx_handle = 0x0010;
-#else
-// Hardcoded values for X-NUCLEO-IDB04A1
-uint16_t tx_handle = 0x0011;
-uint16_t rx_handle = 0x0014;
-#endif
-*/
-
 static tBleStatus addService(void);
 
 static uint16_t workServHandle;				// WORK Service Handle
@@ -69,6 +57,9 @@ extern uint16_t myWD;
 /**
  * @}
  */
+
+// Work Service UUID
+const uint8_t workServiceUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x30,0xf2,0x73,0xd9};
 
 /** @defgroup SAMPLE_SERVICE_Private_Macros
  * @{
@@ -170,7 +161,6 @@ static tBleStatus addService(void)
   D973F234-B19E-11E2-9E96-0800200C9A66
   */
 
-  const uint8_t workServUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x30,0xf2,0x73,0xd9};
   const uint8_t timeCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x31,0xf2,0x73,0xd9};
   const uint8_t toMinMaxCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x32,0xf2,0x73,0xd9};
   const uint8_t toCurCharUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x33,0xf2,0x73,0xd9};
@@ -198,7 +188,7 @@ static tBleStatus addService(void)
   const uint16_t logReqDescUuid = 0x29ff;
 
 
-  ret = aci_gatt_add_serv(UUID_TYPE_128, workServUuid, PRIMARY_SERVICE, 36, &workServHandle); /* original is 9?? */
+  ret = aci_gatt_add_serv(UUID_TYPE_128, workServiceUuid, PRIMARY_SERVICE, 36, &workServHandle); /* original is 9?? */
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Текущее Время"
@@ -240,14 +230,14 @@ static tBleStatus addService(void)
 
 // Характеристика "Новая тревога"
   ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, alrmNewCharUuid, 2,
- 														CHAR_PROP_READ|CHAR_PROP_NOTIFY,
+ 														CHAR_PROP_READ|CHAR_PROP_INDICATE,
 														ATTR_PERMISSION_NONE,
 														GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, 16, 0, &alrmNewCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Непрочитанные тревоги"
   ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, alrmNoReadCharUuid, 2,
-  													CHAR_PROP_READ|CHAR_PROP_NOTIFY,
+  													CHAR_PROP_READ|CHAR_PROP_INDICATE,
    												  ATTR_PERMISSION_NONE,
    													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, 16, 0, &alrmNoReadCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
@@ -256,7 +246,7 @@ static tBleStatus addService(void)
 
 // Характеристика "Отправка логов"
   ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, logCharUuid, 17,
-													CHAR_PROP_READ|CHAR_PROP_NOTIFY,
+													CHAR_PROP_READ|CHAR_PROP_INDICATE,
  												  ATTR_PERMISSION_NONE,
  													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
  													16, 0, &logCharHandle);
@@ -282,10 +272,17 @@ fail:
 void Make_Connection(void)
 {
 	// ОТображаемое имя устройства: "ITM-20.001"
-  char local_name[16] = {	AD_TYPE_COMPLETE_LOCAL_NAME,'I','T','M','-',				// Indigo Thermo Meter
+  char local_name[12] = {	AD_TYPE_COMPLETE_LOCAL_NAME,'I','T','M','-',				// Indigo Thermo Meter
   														VER_MAJOR,VER_MINOR,'.'};
-
 	char nameSuff[5] = { 0, 0, 0, 0, 0 };
+
+  char short_name[4] = {	AD_TYPE_SHORTENED_LOCAL_NAME,'I','T','M' };				// Indigo Thermo Meter
+
+	uint8_t servUuidList[17];
+
+	servUuidList[0] = AD_TYPE_128_BIT_SERV_UUID_CMPLT_LIST;
+	memcpy( &(servUuidList[1]), workServiceUuid, 16);
+
 	itoa( BDADDR, nameSuff );
 	while ( nameSuff[2] == '\0') {
 			nameSuff[2] = nameSuff[1];
@@ -305,7 +302,14 @@ void Make_Connection(void)
   Slave_Conn_Interval_Max
   */
   aci_gap_set_discoverable(ADV_IND, 0, 0, PUBLIC_ADDR, NO_WHITE_LIST_USE,
-                                 sizeof(local_name), local_name, 0, NULL, 0, 0);
+  													4, short_name, 17, servUuidList,
+													 0, 0);
+
+/*
+  aci_gap_set_discoverable(ADV_IND, 0, 0, PUBLIC_ADDR, NO_WHITE_LIST_USE,
+                           sizeof(local_name), local_name, 0, NULL,
+													 0, 0);
+*/
 }
 
 /* Вызывается, если у сервера есть изменение данных */

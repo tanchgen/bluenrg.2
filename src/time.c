@@ -289,6 +289,7 @@ void timersProcess( void ) {
 	if ( toReadCount == 1 ) {
 		toReadCount += TO_READ_TOUT;
 		toReadTemperature();
+
 	  while ( toCurCharUpdate() != BLE_STATUS_SUCCESS ){
 			bnrgFullRst();
 			if( blue.bleStatus == BLE_STATUS_TIMEOUT ){
