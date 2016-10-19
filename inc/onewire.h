@@ -54,12 +54,12 @@
 // ******************** Определения для Датчиков двери ********************
 
 // Датчики двери - на 1-Wire
-#define OW_DD						0
+#define OW_DD						1
 #define DD_DEV_NUM			2				// Количество Датчиков Дверей (DD)
 
 #if OW_DD
 
-#define OW_DD_DEV_NUM	  ((DD_DEV_NUM)/2)				// Количество 1-wire контроллеров Датчиков Дверей (DD)
+#define OW_DD_DEV_NUM	  DD_DEV_NUM				// Количество 1-wire контроллеров Датчиков Дверей (DD)
 #define DS2413_SERIAL		0x3A
 
 #else // OW_DD

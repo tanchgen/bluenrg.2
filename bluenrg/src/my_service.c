@@ -562,7 +562,8 @@ tBleStatus ddCurCharUpdate( void ){
 #if OW_DD
 // Обновляем Характеристику "Действующее значение состояния дверей"
 	for (uint8_t i=0; i< OW_DD_DEV_NUM; i++){
-		data |= (owDdDev[i].ddData[0] | (owDdDev[i].ddData[1] << 1)) << (i*2);
+		// Один датчик двери на одну 1-wire мс
+		data |= (owDdDev[i].ddData[0]) << i;
 	}
 
 	ret = aci_gatt_update_char_value( workServHandle, ddCurCharHandle, 0, 1, (uint8_t *)&data );

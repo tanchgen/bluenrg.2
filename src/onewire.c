@@ -299,14 +299,14 @@ static uint8_t OW_Reset() {
 	while ( (OW_USART->ISR & USART_ISR_RXNE) == RESET){
 		if ( myTick > owtout ) {
 			for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
-				if( !owToDev[i].devStatus == OW_DEV_OK ){
+				if( owToDev[i].devStatus == OW_DEV_OK ){
 					owToDev[i].devStatus = OW_TO_DEV_ERR;
 					owToDev[i].newErr = TRUE;
 				}
 			}
 #if OW_DD
-			for ( uint8_t i = 0; i < DD_DEV_NUM; i++ ) {
-				if( !owDdDev[i].devStatus == OW_DEV_OK ){
+			for ( uint8_t i = 0; i < OW_DD_DEV_NUM; i++ ) {
+				if( owDdDev[i].devStatus == OW_DEV_OK ){
 					owDdDev[i].devStatus = OW_DD_DEV_ERR;
 					owDdDev[i].newErr = TRUE;
 				}
