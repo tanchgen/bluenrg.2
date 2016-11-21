@@ -590,8 +590,8 @@ tBleStatus ddCurCharUpdate( void ){
 			ddDev[1].ddDataPrev = ddDev[1].ddData;
 		}
 	}
+	#endif
 	return ret;
-#endif
 }
 
 tBleStatus logCharUpdate( uint8_t *data, uint8_t len ) {

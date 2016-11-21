@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354/PATH/delimiter=\:
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354/PATH/operation=append
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354/PATH/value=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/usr/games\:/usr/local/games
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354/append=true
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.290790354/appendContributed=true

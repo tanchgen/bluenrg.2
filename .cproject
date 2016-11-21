@@ -65,7 +65,6 @@
 									<listOptionValue builtIn="false" value="HSE_VALUE=16000000"/>
 									<listOptionValue builtIn="false" value="STM32F030x6"/>
 									<listOptionValue builtIn="false" value="BLUENRG=1"/>
-									<listOptionValue builtIn="false" value="WATCHDOG=0"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
 									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
@@ -86,7 +85,6 @@
 									<listOptionValue builtIn="false" value="HSE_VALUE=16000000"/>
 									<listOptionValue builtIn="false" value="STM32F030x6"/>
 									<listOptionValue builtIn="false" value="BLUENRG=1"/>
-									<listOptionValue builtIn="false" value="WATCHDOG=0"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
 									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>
@@ -108,7 +106,6 @@
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F030x6"/>
 									<listOptionValue builtIn="false" value="BLUENRG=1"/>
-									<listOptionValue builtIn="false" value="WATCHDOG=0"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
 									<listOptionValue builtIn="false" value="ONE_WIRE=1"/>
 								</option>

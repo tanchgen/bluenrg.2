@@ -70,22 +70,6 @@ void myTimeOut( void ){
   
 }  
 
-#if WATCHDOG
-void iwdgInit( void ){
-  IWDG->KR = IWDG_START;          // Запуск WatchDog 
-  IWDG->KR = IWDG_WRITE_ACCESS;   // Доступ записи в регистры
-  IWDG->PR = IWDG_PR_PR_2;        // Прескалер = 64;
-  IWDG->RLR = 2047;               // Записываем регистр перезагрузки
-  for ( uint32_t tout = myTick+HW_TIMEOUT; !(IWDG->SR ) ; ) {
-    if ( myTick  > tout) {
-      // Проблема с IWDG
-      HardFault_Handler();
-    }
-  }
-  IWDG->KR = IWDG_REFRESH;
-}
-#endif // WATCHDOG
-
 /*
 static void us50Delay(void)
 {

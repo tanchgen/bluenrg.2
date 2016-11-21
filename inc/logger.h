@@ -22,8 +22,8 @@ typedef struct {
 } tDdLogUnit;
 
 typedef struct {
-	uint8_t begin;
-	uint8_t end;
+	uint32_t begin;
+	uint32_t end;
 	uint8_t full;
 	uint32_t bufAddr;
 	uint8_t size;								//
@@ -33,7 +33,7 @@ typedef struct {
 
 #define TO_LOG_RECORD_NUM			10080
 #define TO_LOG_RECORD_SIZE		sizeof(tToLogUnit)
-#define TO_LOG_START_ADDR			(uint32_t)512
+#define TO_LOG_START_ADDR			(uint32_t)256
 #define TO_LOG_END_ADDR				(TO_LOG_START_ADDR + (TO_LOG_RECORD_NUM * TO_LOG_RECORD_SIZE) - 1)
 
 #define DD_LOG_RECORD_NUM			5000
