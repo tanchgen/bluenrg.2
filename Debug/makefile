@@ -47,38 +47,38 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 SECONDARY_FLASH += \
-expedition.bin \
+pak.exp-2.bin \
 
 SECONDARY_SIZE += \
-expedition.siz \
+pak.exp-2.siz \
 
 
 # All Target
-all: expedition.elf secondary-outputs
+all: pak.exp-2.elf secondary-outputs
 
 # Tool invocations
-expedition.elf: $(OBJS) $(USER_OBJS)
+pak.exp-2.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM C++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"expedition.map" --specs=nano.specs -o "expedition.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-g++ -mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"pak.exp-2.map" --specs=nano.specs -o "pak.exp-2.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-expedition.bin: expedition.elf
+pak.exp-2.bin: pak.exp-2.elf
 	@echo 'Invoking: Cross ARM GNU Create Flash Image'
-	arm-none-eabi-objcopy -O binary "expedition.elf"  "expedition.bin"
+	arm-none-eabi-objcopy -O binary "pak.exp-2.elf"  "pak.exp-2.bin"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-expedition.siz: expedition.elf
+pak.exp-2.siz: pak.exp-2.elf
 	@echo 'Invoking: Cross ARM GNU Print Size'
-	arm-none-eabi-size --format=berkeley "expedition.elf"
+	arm-none-eabi-size --format=berkeley "pak.exp-2.elf"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(SECONDARY_SIZE)$(C++_DEPS)$(OBJS)$(C_DEPS)$(ASM_DEPS)$(CC_DEPS)$(SECONDARY_FLASH)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS)$(S_UPPER_DEPS) expedition.elf
+	-$(RM) $(SECONDARY_SIZE)$(C++_DEPS)$(OBJS)$(C_DEPS)$(ASM_DEPS)$(CC_DEPS)$(SECONDARY_FLASH)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS)$(S_UPPER_DEPS) pak.exp-2.elf
 	-@echo ' '
 
 secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_SIZE)
