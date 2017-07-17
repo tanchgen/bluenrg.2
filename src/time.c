@@ -245,21 +245,17 @@ void timersProcess( void ) {
 	if ( toLogCount == 1 ) {
 		toLogCount += toLogTout;
 		// Проверяем флаги ошибки TO
-		for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
-			if( owToDev[i].newErr ){
-				alrmUpdate( ALARM_TO_FAULT );
-				break;
+		for ( uint8_t i = 0; i < owDevNum; i++ ) {
+			if( owDev[i].newErr ){
+			  if( owDev[i].devType == DEV_TO ){
+			    alrmUpdate( ALARM_TO_FAULT );
+			  }
+			  else {
+          alrmUpdate( ALARM_TO_FAULT );
+			  }
+        break;
 			}
 		}
-#if OW_DD
-		// Проверяем флаги ошибки DD
-		for ( uint8_t i = 0; i < OW_DD_DEV_NUM; i++ ) {
-			if( owDdDev[i].newErr ){
-				alrmUpdate( ALARM_DD_FAULT );
-				break;
-			}
-		}
-#endif
 		toLogWrite();
 		while( toCurCharUpdate() != BLE_STATUS_SUCCESS ){
 			bnrgFullRst();

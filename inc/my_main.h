@@ -14,6 +14,10 @@
  */
 /* Exported defines --------------------------------------------------------*/
 
+#ifndef __packed
+#define __packed __attribute__((packed))
+#endif
+
 typedef enum {
 	OW_OK,
 	OW_DEV_OK,

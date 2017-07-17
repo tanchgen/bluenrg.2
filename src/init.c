@@ -25,10 +25,7 @@ uint32_t ddReadCount;
 
 void Error_Handler( eErrStatus err );
 
-eErrStatus toInit( void ) {
-
-	uint8_t termNum = 0;
-	uint8_t ddNum = 0;
+eErrStatus devInit( void ) {
 
 	owStatus = OW_OK;
 
@@ -38,147 +35,91 @@ eErrStatus toInit( void ) {
 	uint8_t tmpAddr[OW_DEV_NUM*8];
 	memset(tmpAddr, 0x00, OW_DEV_NUM*8);
   owDevNum = OW_Scan( tmpAddr, OW_DEV_NUM );
+  if ( owDevNum <= 0 ) {
+    // Не хватает термометров или не хватает датчиков двери -
+    // предполагаем, что проблема с проводом
+    Error_Handler(OW_WIRE_ERR);
+    return OW_WIRE_ERR;
+  }
+  if( owDevNum > MAX_TO_DEV_NUM ) {
+    owDevNum = MAX_TO_DEV_NUM;
+  }
+
   // Проверка на наличие необходимых устройств
   for ( uint8_t i =0; i < owDevNum; i++) {
   	uint64_t tmp = *((uint64_t *)(tmpAddr + i*8));
+    owDev[i].addr = tmp;
 		if ( (tmp & 0xFF) == DS1820_SERIAL ){
-			owToDev[termNum++].addr = tmp;
+			owDev[i].devType = DEV_TO;
+			toDevNum++;
+		  // Установки для термометров
+	    owToInit( &owDev[i] );
 		}
-#if OW_DD
 		if ( (tmp & 0xFF) == DS2413_SERIAL ){
-			owDdDev[ddNum++].addr = tmp;
+			owDev[i].addr = tmp;
+      owDev[i].devType = DEV_DD;
+			ddDevNum++;
+			owDdInit( &(owDev[i]) );
 		}
-#endif
   }
-	if ( !( termNum + ddNum ) ) {
-		// Не хватает термометров или не хватает датчиков двери -
-		// предполагаем, что проблема с проводом
-		Error_Handler(OW_WIRE_ERR);
-		return OW_WIRE_ERR;
-	}
-/*
-	else if( (termNum != TO_DEV_NUM) ) {
- 		// Количество термометров или всех устройств не соответствует указанным
- 		// в "onewire.h"
-
- 		return OW_DEV_ERR;
- 	}
-*/
-	// Установки для термометров
-  for (uint8_t i = 0; i < TO_DEV_NUM; i ++ ){
-  	owToDevInit( i );
-  }
-
   // Устанавливаем таймаут сбора информации
 	toReadCount = TO_READ_TOUT;
+	toTempStart();
 
   return OW_OK;
 }
 
-eErrStatus owToDevInit( uint8_t toDev ) {
+eErrStatus owToInit( tOwDev * toDev ) {
 	eErrStatus err = OW_OK;
-	uint8_t sendBuf[9];
+	tOwSendBuf sendBuf;
 
-	if ( !owToDev[toDev].addr ) {
-		owToDev[toDev].newErr = TRUE;
+	if ( !(toDev->addr) ) {
+		toDev->newErr = TRUE;
 		Error_Handler(OW_TO_DEV_ERR);
-		return ( owToDev[toDev].devStatus = OW_TO_DEV_ERR );
+		return ( toDev->devStatus = OW_TO_DEV_ERR );
 	}
 // Выбираем датчик
 // Формируем массив с командой и адресом
-	sendBuf[0] =MATCH_ROM;
-	*((uint64_t *)&sendBuf[1]) = owToDev[toDev].addr;
+	sendBuf.cmd =MATCH_ROM;
+	sendBuf.adr = toDev->addr;
 // Отправляем в шину
-	if ((err = OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_ERR ) {
-		owToDev[toDev].newErr = TRUE;
-		owToDev[toDev].addr = 0;
-		owToDev[toDev].devStatus = OW_TO_DEV_ERR;
+	if ((err = OW_Send(OW_SEND_RESET, (uint8_t*)&sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_ERR ) {
+		toDev->newErr = TRUE;
+		toDev->addr = 0;
+		toDev->devStatus = OW_TO_DEV_ERR;
 	}
 	else {
-		owToDev[toDev].newErr = FALSE;
-		owToDev[toDev].devStatus = OW_DEV_OK;
+		toDev->newErr = FALSE;
+		toDev->devStatus = OW_DEV_OK;
 
 // Устанавливаем точность измерения
-		owToDev[toDev].mesurAcc = MESUR_ACC;
+		toDev->mesurAcc = MESUR_ACC;
 // Выставляем допустимый Минимум температуры
-		if( (owToDev[toDev].tMin = TEMPER_MIN) & 0x800 ) {
-			owToDev[toDev].tMin |= 0xF000;
+		if( (toDev->tMin = TEMPER_MIN) & 0x800 ) {
+			toDev->tMin |= 0xF000;
 		}
 		// Выставляем допустимый Максимум температуры
-		if( (owToDev[toDev].tMax = TEMPER_MAX) & 0x800 ) {
-			owToDev[toDev].tMax |= 0xF000;
+		if( (toDev->tMax = TEMPER_MAX) & 0x800 ) {
+			toDev->tMax |= 0xF000;
 		}
 
-		toSetConfig( &owToDev[toDev] );
+		toSetConfig( toDev );
 // Сохраняем в ПЗУ
-		toWriteEeprom( &owToDev[toDev] );
+		toWriteEeprom( toDev->addr );
 	}
 
 	return err;
 }
 
-void ddInit( void ){
-#if OW_DD
-	for (uint8_t i = 0; i < OW_DD_DEV_NUM; i++){
-		if ( !owDdDev[i].addr ) {
-			owDdDev[i].newErr = TRUE;
-			Error_Handler(OW_DD_DEV_ERR);
-			owDdDev[i].devStatus = OW_DD_DEV_ERR;
-		}
-	}
+void owDdInit( tOwDev * powdev ){
 	// Установки для датчиков дверей
-	for (uint8_t i=0; i< OW_DD_DEV_NUM; i++){
-		owDdDev[i].ddData[0] = 1;
-		owDdDev[i].ddDataPrev[0] = 1;
-		owDdDev[i].ddData[1] = 1;
-		owDdDev[i].ddDataPrev[1] = 1;
+	if ( !powdev->addr ) {
+	  powdev->newErr = TRUE;
+		Error_Handler(OW_DD_DEV_ERR);
+		powdev->devStatus = OW_DD_DEV_ERR;
 	}
-#else
-
-	if ( DD_1_PORT == GPIOA ) {
-		// Clock GPIOA enable
-		RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-	}
-	else if( DD_1_PORT == GPIOB ) {
-		// Clock GPIOB enable
-		RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
-	}
-	else {
-		Error_Handler( HW_ERR );
-	}
-
-	if ( DD_2_PORT == GPIOA ) {
-		// Clock GPIOA enable
-		RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-	}
-	else if( DD_2_PORT == GPIOB ) {
-		// Clock GPIOB enable
-		RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
-	}
-	else {
-		Error_Handler( HW_ERR );
-	}
-
-	// Датчик двери №1
-	DD_1_PORT->MODER &= ~(3 << (DD_1_PIN_NUM*2));			// Выставляем в INPUT
-	DD_1_PORT->OTYPER &= ~(DD_1_PIN);									// PullUp-PullDown
-	DD_1_PORT->PUPDR &= ~(3 << (DD_1_PIN_NUM*2));			// NoPULL
-	DD_1_PORT->PUPDR |= 1 << (DD_1_PIN_NUM*2);				// PULLUP
-	DD_1_PORT->OSPEEDR &= ~(3 << (DD_1_PIN_NUM*2));		// Low Speed
-
-	// Датчик двери №2
-	DD_2_PORT->MODER &= ~(3 << (DD_2_PIN_NUM*2));			// Выставляем в INPUT
-	DD_2_PORT->OTYPER &= ~(DD_2_PIN);									// PullUp-PullDown
-	DD_2_PORT->PUPDR &= ~(3 << (DD_2_PIN_NUM*2));			// NoPULL
-	DD_2_PORT->PUPDR |= 1 << (DD_2_PIN_NUM*2);				// PULLUP
-	DD_2_PORT->OSPEEDR &= ~(3 << (DD_2_PIN_NUM*2));		// Low Speed
-
-	for( uint8_t i = 0; i < DD_DEV_NUM; i++){
-		ddDev[i].ddData = 1;
-		ddDev[i].ddDataPrev = 1;
-	}
-
-#endif
+	powdev->ddState = 0x11;
+	powdev->ddStatePrev = 0x11;
 	// Устанавливаем таймаут сбора информации
 	ddReadTout = DD_READ_TOUT;
 	ddReadCount = DD_READ_TOUT;
@@ -195,13 +136,15 @@ int8_t logInit( void ){
 
 		// Восстанавливаем состояние данных буфера логгера
 		err = receiveEeprom( TO_LOG_START_ADDR, (uint8_t *)&toLogBuff, sizeof(tLogBuf) );
-		if ( (err != HAL_OK) || (toLogBuff.bufAddr != TO_LOG_START_ADDR + sizeof(tLogBuf)) ) {
+		if ( (err != HAL_OK) || (toLogBuff.bufAddr != (TO_LOG_START_ADDR + sizeof(tLogBuf))) ) {
 			toLogBuff.begin = 0;
 			toLogBuff.end = 0;
 			toLogBuff.full = 0;
-			toLogBuff.size = TO_LOG_RECORD_SIZE;
-			toLogBuff.len = TO_LOG_RECORD_NUM;
-			toLogBuff.readStart = 0;
+			// Размер одной записи
+			toLogBuff.size = sizeof(tXtime) + (2 * toDevNum);
+			// Количество записей в буфере.
+			toLogBuff.len = (TO_LOG_END_ADDR - TO_LOG_START_ADDR - sizeof(tLogBuf));
+			toLogBuff.b1 = 0;
 			// Оставляем место для сохранения состояния структуры toLogBuff
 			toLogBuff.bufAddr = TO_LOG_START_ADDR + sizeof(tLogBuf);
 		}
@@ -210,14 +153,14 @@ int8_t logInit( void ){
 
 		// Восстанавливаем состояние данных буфера логгера
 		err = receiveEeprom( DD_LOG_START_ADDR, (uint8_t *)&ddLogBuff, sizeof(tLogBuf) );
-		if ( (err != HAL_OK) || (ddLogBuff.bufAddr != DD_LOG_START_ADDR + sizeof(tLogBuf)) ) {
+		if ( (err != HAL_OK) || (ddLogBuff.bufAddr != (DD_LOG_START_ADDR + sizeof(tLogBuf))) ) {
 			// Инициализация Логирования DD
 			ddLogBuff.begin = 0;
 			ddLogBuff.end = 0;
 			ddLogBuff.full = 0;
 			ddLogBuff.size = DD_LOG_RECORD_SIZE;
 			ddLogBuff.len = DD_LOG_RECORD_NUM;
-			ddLogBuff.readStart = 0;
+			ddLogBuff.b1 = 0;
 			// Оставляем место для сохранения состояния структуры ddLogBuff
 			ddLogBuff.bufAddr = DD_LOG_START_ADDR + sizeof(tLogBuf);
 		}

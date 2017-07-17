@@ -11,9 +11,10 @@
 #include "my_main.h"
 #include "onewire.h"
 
-eErrStatus toInit( void );
-void ddInit( void );
-eErrStatus owToDevInit( uint8_t toDev );
+
+void owDdInit( tOwDev * powdev );
+eErrStatus devInit( void );
+eErrStatus owToInit( tOwDev * toDev );
 int8_t logInit( void );
 int8_t alrmInit( void );
 

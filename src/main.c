@@ -60,13 +60,8 @@ int main(void)
   timeInit();
   alrmInit();
 
-#if ONE_WIRE
-  toInit();
-#else
-  toLogCount = 0;
-  toReadCount = 0;
-#endif  // ONE_WIRE
-  ddInit();
+  devInit();
+//  ddInit();
   // Установки логирования
   logInit();
 
@@ -81,6 +76,7 @@ int main(void)
  		blue.bleStatus = BLE_STATUS_TIMEOUT;
   }
 #endif  // BLUENRG
+  owDevCharUpdate();
 
 #if WATCHDOG
   iwdgInit();
@@ -114,9 +110,13 @@ void User_Process(void)
   }
 
   if ( blue.connected ) {
-  		logSend( blue.logStatus.toReq, blue.logStatus.ddReq );
+    if( blue.logStatus.toReq ){
+      toLogSend();
+    }
+    if( blue.logStatus.ddReq ){
+    	ddLogSend();
+    }
   }
-
 }
 #endif
 
@@ -223,37 +223,40 @@ static void SetSysClock(void)
 }
 
 void Error_Handler( eErrStatus err ){
+  uint8_t err2 = 0;
 
 	switch ( err ){
 		case OW_TO_DEV_ERR:
-			alrmUpdate( ALARM_TO_FAULT );
+			err2 = ALARM_TO_FAULT;
 			break;
 		case OW_DD_DEV_ERR:
-			alrmUpdate( ALARM_DD_FAULT );
+		  err2 = ALARM_DD_FAULT;
 			break;
 		case OW_WIRE_ERR:
-			for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
-				if( owToDev[i].devStatus == OW_DEV_OK ){
-					owToDev[i].devStatus = OW_TO_DEV_ERR;
-					owToDev[i].newErr = TRUE;
+			for ( uint8_t i = 0; i < owDevNum; i++ ) {
+				if( owDev[i].devStatus == OW_DEV_OK ){
+				  if( owDev[i].devType == DEV_TO){
+				    owDev[i].devStatus = OW_TO_DEV_ERR;
+				    err2 = ALARM_TO_FAULT;
+				  }
+				  else{
+            owDev[i].devStatus = OW_DD_DEV_ERR;
+            err2 = ALARM_DD_FAULT;
+				  }
+					owDev[i].newErr = TRUE;
 				}
 			}
-#if OW_DD
-			for ( uint8_t i = 0; i < OW_DD_DEV_NUM; i++ ) {
-				if( owDdDev[i].devStatus == OW_DEV_OK ){
-					owDdDev[i].devStatus = OW_DD_DEV_ERR;
-					owDdDev[i].newErr = TRUE;
-				}
-			}
-#endif
-			alrmUpdate( ALARM_TO_FAULT );
 			break;
 		case 	LOG_ERR:
-			alrmUpdate( ALARM_LOG_FAULT );
+			err2 = ALARM_LOG_FAULT;
+			break;
+		case HW_ERR:
+			err2 = ALARM_HW_FAULT;
 			break;
 		default:
-			while(1);
+		  break;
 	}
+  alrmUpdate( err2 );
 }
 
 uint8_t crcDS(uint8_t inp, uint8_t crc) {

@@ -12,18 +12,15 @@
 // Буфер для приема/передачи по 1-wire
 uint8_t ow_buf[8];
 
-uint8_t owDevNum;
+int8_t owDevNum;
+uint8_t toDevNum = 0;
+uint8_t ddDevNum = 0;
+
+
 eErrStatus owStatus;
-tOwToDev owToDev[ TO_DEV_NUM ]; 			// Массив структур термометров 1-Wire;
-#if OW_DD
-tOwDdDev owDdDev[ OW_DD_DEV_NUM ]; 			// Массив структур Датчиков Двери 1-Wire;
-#else
-tDdDev ddDev[ DD_DEV_NUM ]; 			// Массив структур Датчиков Двери 1-Wire;
-#endif
+tOwDev owDev[ OW_DEV_NUM ]; 			// Массив структур устройств 1-Wire;
 uint8_t rxCount;
 uint8_t txCount;
-
-uint32_t tmpModerOut, tmpModerAf;			 // Значения регистра MODER для UART и для подтяжки UART_RX к Vdd
 
 
 #define OW_0	0x00
@@ -298,20 +295,28 @@ static uint8_t OW_Reset() {
 	// Ждем, пока нe примем байт
 	while ( (OW_USART->ISR & USART_ISR_RXNE) == RESET){
 		if ( myTick > owtout ) {
-			for ( uint8_t i = 0; i < TO_DEV_NUM; i++ ) {
-				if( owToDev[i].devStatus == OW_DEV_OK ){
-					owToDev[i].devStatus = OW_TO_DEV_ERR;
-					owToDev[i].newErr = TRUE;
-				}
+			for ( uint8_t i = 0; i < owDevNum; i++ ) {
+			  switch(owDev[i].devType){
+			    case DEV_TO:
+			      if( owDev[i].devStatus == OW_DEV_OK ){
+			        owDev[i].devStatus = OW_TO_DEV_ERR;
+			        owDev[i].newErr = TRUE;
+			      }
+			      break;
+			    case DEV_DD:
+			      if( owDev[i].devStatus == OW_DEV_OK ){
+			        owDev[i].devStatus = OW_DD_DEV_ERR;
+			        owDev[i].newErr = TRUE;
+			      }
+			      break;
+			    default:
+			      // Не термометр и не датчик двери
+            if( owDev[i].devStatus == OW_DEV_OK ){
+              owDev[i].devStatus = OW_ERR;
+              owDev[i].newErr = TRUE;
+            }
+			  }
 			}
-#if OW_DD
-			for ( uint8_t i = 0; i < OW_DD_DEV_NUM; i++ ) {
-				if( owDdDev[i].devStatus == OW_DEV_OK ){
-					owDdDev[i].devStatus = OW_DD_DEV_ERR;
-					owDdDev[i].newErr = TRUE;
-				}
-			}
-#endif
 			return OW_ERR;
 		}
 	}
@@ -397,36 +402,36 @@ static int8_t OW_SendBits(uint8_t num_bits) {
 void ddReadDoor( void ){
 
 	// Считываем показания датчиков
-#if OW_DD
-	uint8_t sendBuf[11];
+	tOwSendBuf sendBuf;
 	uint8_t readBuf[11];
 
-	for ( uint8_t i = 0; i < OW_DD_DEV_NUM; i++ ){
+	for ( uint8_t i = 0; i < owDevNum; i++ ){
 	// Формируем массив с командой и адресом
-		if (owDdDev[i].addr){
-			sendBuf[0] =MATCH_ROM;
-			*((uint64_t *)&sendBuf[1]) = owDdDev[i].addr;
+		if((owDev[i].devType == DEV_DD) && (owDev[i].addr) ){
+			sendBuf.cmd =MATCH_ROM;
+			//TODO: Использовать STRUCT tOwSendBuf
+
+			sendBuf.adr = owDev[i].addr;
 			// Отправляем в шину
-			if ((OW_Send(OW_SEND_RESET, sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_ERR ) {
-				if( owDdDev[i].devStatus == OW_DEV_OK ){
-					owDdDev[i].addr = 0;
-					owDdDev[i].devStatus = OW_DD_DEV_ERR;
-					owDdDev[i].newErr = TRUE;
+			if ((OW_Send(OW_SEND_RESET, (uint8_t *)&sendBuf, 9, NULL, 0, OW_NO_READ)) == OW_ERR ) {
+				if( owDev[i].devStatus == OW_DEV_OK ){
+					owDev[i].addr = 0;
+					owDev[i].devStatus = OW_DD_DEV_ERR;
+					owDev[i].newErr = TRUE;
 				}
 			}
 			else {
-				*(uint32_t *)sendBuf = 0xFFFFFFFF;
-				sendBuf[0] = PIO_READ;
-				OW_Send(OW_NO_RESET, sendBuf, 2, readBuf, 1, 1);
-				owDdDev[i].ddData[0] = readBuf[0] & 0x1;
-				owDdDev[i].ddData[1] = (readBuf[0] >> 2) & 0x1;
+				sendBuf.adr = 0;
+				sendBuf.adr--;
+
+				sendBuf.cmd = PIO_READ;
+				sendBuf.data.ui8[0] = 0xFF;
+				OW_Send(OW_NO_RESET, (uint8_t *)&sendBuf, 2, readBuf, 1, 1);
+        owDev[i].ddState = readBuf[0] & DD_1;    // Показания датчиков   0bxxxxxxx1
+//				owDev[i].ddState = readBuf[0] & (DD_1 | DD_2);    // Показания датчиков   0bxxxxx1x1
 			}
 		}
 	}
-#else
-	ddDev[0].ddData = (DD_1_PORT->IDR & DD_1_PIN) >> DD_1_PIN_NUM;
-	ddDev[1].ddData = (DD_2_PORT->IDR & DD_2_PIN) >> DD_2_PIN_NUM;
-#endif
 }
 
 /*
@@ -448,7 +453,8 @@ static const uint8_t dscrc_table[] = {
   202,148,118, 40,171,245, 23, 73,  8, 86,180,234,105, 55,213,139,
    87,  9,235,181, 54,104,138,212,149,203, 41,119,244,170, 72, 22,
   233,183, 85, 11,136,214, 52,106, 43,117,151,201, 74, 20,246,168,
-  116, 42,200,150, 21, 75,169,247,182,232, 10, 84,215,137,107, 53};
+  116, 42,200,150, 21, 75,169,247,182,232, 10, 84,215,137,107, 53
+};
 //
 // Compute a Dallas Semiconductor 8 bit CRC. These show up in the ROM
 // and the registers. (note: this might better be done without to

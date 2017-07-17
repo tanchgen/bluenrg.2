@@ -101,19 +101,22 @@ static void WakeupBlueNRG(void)
 }
 */
 
-int itoa(int n, char s[])
-{
-  int i =  0;
+uint8_t hlToStr(uint32_t l, uint8_t **str){
+  int i;
+  uint8_t nb = 0;
 
-  if(n / 10 != 0){
-    i = itoa(n/10, s);
+  if ((i = l/16) != 0)
+     nb += hlToStr( i, str );
+  if( (i = (l % 16 )) < 10) {
+    i += '0';
   }
-  else if(n < 0){
-    s[i++] = '-';
-    n = -n;
+  else {
+    i += 'A'-10;
   }
-  s[i++] = n % 10 + '0';
-  s[i] = '\0';
+  *((*str)++) = i;
+  *(*str) = '\0';
+  nb++;
 
-  return i;
+  return nb;
+
 }

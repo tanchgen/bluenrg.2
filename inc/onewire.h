@@ -42,9 +42,9 @@
 
 #endif //OW_USART1
 
-#define MAX_TO_DEV_NUM	4
+#define MAX_TO_DEV_NUM	16
 
-#define TO_DEV_NUM			3				// Количество термометров
+//#define TO_DEV_NUM			3				// Количество термометров
 #if (MAX_TO_DEV_NUM < TO_DEV_NUM)
 #error "Число датчиков температуры превышает максимальное для данной EEPROM (128кБ) для Логов"
 #endif
@@ -53,53 +53,71 @@
 
 // ******************** Определения для Датчиков двери ********************
 
+#define MAX_DD_DEV_NUM	16
 // Датчики двери - на 1-Wire
-#define OW_DD						0
-#define DD_DEV_NUM			2				// Количество Датчиков Дверей (DD)
+//#define OW_DD						1
+//#define DD_DEV_NUM			2				// Количество Датчиков Дверей (DD)
 
-#if OW_DD
 
 #define OW_DD_DEV_NUM	  DD_DEV_NUM				// Количество 1-wire контроллеров Датчиков Дверей (DD)
 #define DS2413_SERIAL		0x3A
 
-#else // OW_DD
+// Маски для датчиков дверей на одном 1-wire устройстве
+#define DD_1				    0x1
+#define DD_2            0x4
 
-#define OW_DD_DEV_NUM	  (0)				// Количество 1-wire контроллеров Датчиков Дверей (DD)
+#define OW_DEV_NUM			16
 
-#define DD_1_PORT				GPIOB
-#define DD_1_PIN				GPIO_Pin_0
-#define DD_1_PIN_NUM		0
-
-#define DD_2_PORT				GPIOB
-#define DD_2_PIN				GPIO_Pin_1
-#define DD_2_PIN_NUM		1
-
-#endif
-
-#define OW_DEV_NUM			(TO_DEV_NUM + OW_DD_DEV_NUM)
+typedef enum {
+  DEV_NULL,
+  DEV_DD,
+  DEV_TO
+} eDevType;
 
 typedef struct {
 	uint64_t addr;					//  Адрес устройства
+  eErrStatus devStatus;
+  uint8_t newErr;         //  Признак новой ошибки
+  union{
+    int16_t temper;         // Действующее значение температуры
+    struct{
+      uint8_t state;          // Действующее значение датчика двери
+      uint8_t statePrev;
+    } dd;
+  } data;
+#define toTemp  data.temper
+#define ddState data.dd.state
+#define ddStatePrev data.dd.statePrev
 	uint8_t  mesurAcc;			//  Точность измерения ( 9-10-11-12 бит )
 	int16_t tMin;						//  Допустимый максимум температуры
 	int16_t tMax;						//  Допустимый минимум температуры
-	eErrStatus devStatus;
-	uint8_t newErr;					//	Признак новой ошибки
-	int16_t	temper;					// Действующее значение температуры
-} tOwToDev;
+	eDevType devType;        //  Тип 1-Wire устройства
+} __attribute__((packed)) tOwDev;
 
 typedef struct {
-	uint64_t addr;					//  Адрес устройства
-	uint8_t ddData[2];					// Действующее значение датчика двери
-	uint8_t ddDataPrev[2];
-	eErrStatus devStatus;
-	uint8_t newErr;					//	Признак новой ошибки
-} tOwDdDev;
+  uint8_t cmd;
+  union{
+    uint64_t address;
+    uint8_t ui8[8];
+  } data;
+  uint8_t empty[2];
+#define adr    data.address
+#define u_8     data.ui8
+} __attribute__((packed)) tOwSendBuf;
 
+// Запись одного датчика температуры в характеристиках
 typedef struct {
-	uint8_t ddData;					// Действующее значение датчика двери
-	uint8_t ddDataPrev;
-} tDdDev;
+  uint8_t toNumber;
+  int16_t temp;
+} __attribute__((packed)) tToRec;
+
+// Запись одного датчика температуры в характеристиках
+typedef struct {
+  uint8_t owDevNumber;
+  uint8_t owDevType;
+  uint8_t err;
+  uint64_t owId;
+} __attribute__((packed)) tOwDevRec;
 
 #define DD_READ_TOUT				500					// Таймаут считывания датчиков двери
 
@@ -107,7 +125,7 @@ typedef struct {
 #define SEARCH_ROM			0xF0
 #define READ_ROM				0x33
 #define MATCH_ROM				0x55
-#define SCIP_ROM				0xCC
+#define SKIP_ROM				0xCC
 #define ALARM_SEACH			0xEC
 #define TERM_CONVERT		0x44
 #define MEM_WRITE				0x4E
@@ -126,16 +144,13 @@ typedef struct {
 
 #define OW_READ_SLOT		0xff
 
-extern uint8_t owDevNum;
-extern eErrStatus owStatus;
-extern tOwToDev owToDev[]; 			// Массив структур устройств 1-Wire;
-#if OW_DD
-	extern tOwDdDev owDdDev[]; 			// Массив структур Датчиков Двери 1-Wire;
-#else
-	extern tDdDev ddDev[]; 			// Массив структур Датчиков Двери 1-Wire;
-#endif
+extern uint8_t toDevNum;
+extern uint8_t ddDevNum;
 
-extern uint32_t tmpModerOut, tmpModerAf;			 // Значения регистра MODER для UART и для подтяжки UART_RX к Vdd
+extern int8_t owDevNum;
+
+extern eErrStatus owStatus;
+extern tOwDev owDev[]; 			// Массив структур устройств 1-Wire;
 
 uint8_t OW_Init();
 uint8_t OW_Send(uint8_t sendReset, uint8_t *command, uint8_t cLen, uint8_t *data, uint8_t dLen, uint8_t readStart);
