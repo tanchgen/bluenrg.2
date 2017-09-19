@@ -21,6 +21,8 @@
 #include "sm.h"
 #include "debug.h"
 
+#define BDADDR_FLASH_START    (0x08007C00L)
+
 /** 
 * @brief Handle of TX Characteristic on the Server. The handle should be
 *        discovered, but it is fixed only for this demo.

@@ -6,9 +6,12 @@
 #include "my_main.h"
 #include "my_time.h"
 #include "osal.h"
+#include "stm32f0xx_hal_def.h"
+#include "stm32f0xx_flash.h"
 #include "deviceid.h"
 #include "onewire.h"
 #include "logger.h"
+#include "eeprom.h"
 #include "my_service.h"
 
 struct _blue blue;
@@ -16,7 +19,6 @@ struct _blue blue;
 static uint16_t nonResolvPkt;
 static uint8_t toCurRecCount; // Счетчик записей датчиков в toCurChar
 
-extern uint32_t Pin;
 volatile uint32_t resetCount; // Таймаут отсутствия активности на bluetoth.
 
 /* Private variables ---------------------------------------------------------*/
@@ -36,7 +38,13 @@ uint8_t tokenPart;
 uint8_t hlToStr(uint32_t l, uint8_t **str);
 
 // Уникальный ID
-uint32_t blueID;
+union {
+  uint16_t blueID16;
+  uint32_t blueID32;
+  uint8_t bdaddr[BDADDR];
+} btId;
+
+void flashBdaddrSave( uint8_t * bdaddr );
 
 static tBleStatus addService(void);
 
@@ -64,7 +72,6 @@ extern uint16_t myWD;
 /**
  * @}
  */
-
 // Work Service UUID
 const uint8_t workServiceUuid[16] = {0x66,0x9a,0x0c,0x20,0x00,0x08,0x96,0x9e,0xe2,0x11,0x9e,0xb1,0x30,0xf2,0x73,0xd9};
 
@@ -84,23 +91,17 @@ tBleStatus BlueNRG_Init( void )
 {
   tBleStatus ret;
   uint16_t service_handle, dev_name_char_handle, appearance_char_handle;
-  uint8_t bdaddr[BDADDR_SIZE];
-/*
-  bdaddr[0] = BDADDR&0xFF;
-  bdaddr[1] = (BDADDR>>8)&0xFF;
-  bdaddr[2] = 0x00;
-*/
-  blueID = *((uint32_t *)0x1FFFF7F8);
-  
-  bdaddr[0] = blueID;
-  bdaddr[1] = (blueID>>8);
-  bdaddr[2] = (blueID>>16);
+  uint8_t *bdaddrFlash = (uint8_t *)BDADDR_FLASH_START;
 
-//  bdaddr[3] =  (blueID>>24);
-//  bdaddr[3] =  0xE1;
-  bdaddr[3] =  0x00;
-  bdaddr[4] = 0x80;
-  bdaddr[5] = 0x02;
+  // Восстанавливаем состояние данных буфера логгера
+  if ( *bdaddrFlash == 0xFF ) {
+    // MAC-адрес еще не сохранен - читаем ROM датчика
+    memcpy( btId.bdaddr, ((uint8_t *)&owDev[0].addr) + 1, 6 );
+    flashBdaddrSave( btId.bdaddr );
+  }
+  else {
+    memcpy( btId.bdaddr, bdaddrFlash, BDADDR );
+  }
 
   /* Reset BlueNRG hardware */
   BlueNRG_RST();
@@ -130,7 +131,7 @@ tBleStatus BlueNRG_Init( void )
   //Osal_MemCpy(bdaddr, BDADDR, sizeof(BDADDR));
   ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                                    CONFIG_DATA_PUBADDR_LEN,
-                                   bdaddr);
+                                   btId.bdaddr);
   ret = aci_gatt_init();
   if( !ret ){
   	ret = aci_gap_init(GAP_PERIPHERAL_ROLE, &service_handle, &dev_name_char_handle, &appearance_char_handle);
@@ -140,14 +141,14 @@ tBleStatus BlueNRG_Init( void )
 #if 0
     ret = aci_gap_set_author_requirement( 0, AUTHORIZATION_REQUIRED );
 #else
-    ret = aci_gap_set_auth_requirement(MITM_PROTECTION_REQUIRED,
+    ret = aci_gap_set_auth_requirement(MITM_PROTECTION_NOT_REQUIRED,
                                      OOB_AUTH_DATA_ABSENT,
                                      NULL,
                                      7,
                                      16,
                                      USE_FIXED_PIN_FOR_PAIRING,
-                                     Pin,
-                                     BONDING);
+                                     btId.blueID32 % 1000000,
+                                     NO_BONDING);
 #endif
   }
 
@@ -342,13 +343,19 @@ void Make_Connection(void)
 //  char short_name[4] = {  AD_TYPE_SHORTENED_LOCAL_NAME,'I','T','M' };       // Indigo Thermo Meter
 
   uint8_t servUuidList[17];
+  uint8_t len;
+  uint8_t *pName = local_name + 5;
 
   servUuidList[0] = AD_TYPE_128_BIT_SERV_UUID_CMPLT_LIST;
   memcpy( &(servUuidList[1]), workServiceUuid, 16);
 
-  hlToStr( blueID, &pns );
+  len = hlToStr( btId.blueID32, &pns );
 
-  memcpy( local_name+5, nameSuff, 8);
+  for(uint8_t i = len; i < 8; i++){
+    *pName++ = '0';
+  }
+
+  memcpy( pName, nameSuff, len);
   local_name[13] = '\0';
   //hci_le_set_scan_resp_data(18,serviceUuidScan);
   /* disable scan response */
@@ -536,7 +543,7 @@ void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle)
 			break;
 		}
 	}
-//  aci_gap_slave_security_request( blue.connHandle, BONDING, MITM_PROTECTION_NOT_REQUIRED);
+  // aci_gap_slave_security_request( blue.connHandle, NO_BONDING, MITM_PROTECTION_NOT_REQUIRED);
 
 }
 
