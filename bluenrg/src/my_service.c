@@ -885,7 +885,7 @@ void HCI_Event_CB(void *pckt)
 
             if( evt->status != 0 ){
               // Не прошел проверку пин-кода
-              aci_gap_terminate( blue.connHandle, SHA_ERR_REASON);
+//              aci_gap_terminate( blue.connHandle, SHA_ERR_REASON);
             }
           }
             
