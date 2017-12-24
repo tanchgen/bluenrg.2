@@ -26,7 +26,6 @@ uint8_t crcDS(uint8_t inp, uint8_t crc);
 
 // Private variables ---------------------------------------------------------
 
-
 // SPI handler declaration 
 #if BLUENRG
 

@@ -107,7 +107,7 @@ int8_t sendEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 
 	for( uint32_t i = addr; i < (addr+len); i++ ){
 	  ret = -1;
-		eprAddr = EEPROM_I2C_ADDR | ((i >> 16) & 0x2);
+		eprAddr = (EEPROM_I2C_ADDR | ((i >> 16) & 0x1)) << 1;
 
 		if( (ret = I2cMemWrite( &hepr, eprAddr, i & 0xFFFF, I2C_MEMADD_SIZE_16BIT, data++, EEPROM_TOUT)) == HAL_OK){
 		  myDelay(5);
@@ -133,7 +133,7 @@ int8_t receiveEeprom( uint32_t addr, uint8_t * data, uint16_t len) {
 	 * Организовать проверку на превышение границы памяти
 	 */
 	HAL_StatusTypeDef ret;
-	uint8_t eprAddr = EEPROM_I2C_ADDR | ((addr >> 16) & 0x2);
+	uint8_t eprAddr = (EEPROM_I2C_ADDR | ((addr >> 16) & 0x1)) << 1;
 	addr = addr & 0xFFFF;
 
 	ret = HAL_I2C_Mem_Read( & hepr, eprAddr, addr, I2C_MEMADD_SIZE_16BIT, data, len, EEPROM_TOUT );

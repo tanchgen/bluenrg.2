@@ -111,15 +111,20 @@ eErrStatus owToInit( tOwDev * toDev ) {
 	return err;
 }
 
-void owDdInit( tOwDev * powdev ){
+void owDdInit( tOwDev * pddDev ){
 	// Установки для датчиков дверей
-	if ( !powdev->addr ) {
-	  powdev->newErr = TRUE;
+	if ( !pddDev->addr ) {
+	  pddDev->newErr = TRUE;
 		Error_Handler(OW_DD_DEV_ERR);
-		powdev->devStatus = OW_DD_DEV_ERR;
+    pddDev->addr = 0;
+		pddDev->devStatus = OW_DD_DEV_ERR;
 	}
-	powdev->ddState = 0x11;
-	powdev->ddStatePrev = 0x11;
+  else {
+    pddDev->newErr = FALSE;
+    pddDev->devStatus = OW_DEV_OK;
+  }
+	pddDev->ddState = 0x11;
+	pddDev->ddStatePrev = 0x11;
 	// Устанавливаем таймаут сбора информации
 	ddReadTout = DD_READ_TOUT;
 	ddReadCount = DD_READ_TOUT;
@@ -141,7 +146,7 @@ int8_t logInit( void ){
 			toLogBuff.end = 0;
 			toLogBuff.full = 0;
 			// Размер одной записи
-			toLogBuff.size = sizeof(tXtime) + (2 * toDevNum);
+			toLogBuff.size = sizeof(tXtime) + (2 * toDevNum) + 1;
 			// Количество записей в буфере.
 			toLogBuff.len = (TO_LOG_END_ADDR - TO_LOG_START_ADDR - sizeof(tLogBuf));
 			toLogBuff.b1 = 0;

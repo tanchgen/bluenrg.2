@@ -29,7 +29,7 @@
 #define I2C_TIMING                      0x00B01A4B //0x00E0D3FF
 #define I2C_OWN_ADDR					0x00
 #define I2C_TOUT								100
-#define EEPROM_I2C_ADDR				(0x50<<1)
+#define EEPROM_I2C_ADDR				(0x50)
 #define I2C_TIMEOUT						10
 
 #define I2C_TRANSMITTER_MODE		0

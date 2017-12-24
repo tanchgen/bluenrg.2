@@ -9,6 +9,7 @@ C_SRCS += \
 ../src/logger.c \
 ../src/main.c \
 ../src/my_function.c \
+../src/my_service.c \
 ../src/onewire.c \
 ../src/stm32xx_it.c \
 ../src/thermo.c \
@@ -20,6 +21,7 @@ OBJS += \
 ./src/logger.o \
 ./src/main.o \
 ./src/my_function.o \
+./src/my_service.o \
 ./src/onewire.o \
 ./src/stm32xx_it.o \
 ./src/thermo.o \
@@ -31,6 +33,7 @@ C_DEPS += \
 ./src/logger.d \
 ./src/main.d \
 ./src/my_function.d \
+./src/my_service.d \
 ./src/onewire.d \
 ./src/stm32xx_it.d \
 ./src/thermo.d \

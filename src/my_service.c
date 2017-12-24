@@ -106,7 +106,7 @@ tBleStatus BlueNRG_Init( void )
   /* Reset BlueNRG hardware */
   BlueNRG_RST();
 
-#ifdef PAIRING_ON
+//#ifdef PAIRING_ON
   /* Установка случайных значений для вычисления ключей CSRK, LTK, IRK
      !!! Для каждого устройства - свой набор !!! */
   uint8_t DIV[2]={ 0x57, 0x30 };
@@ -124,11 +124,11 @@ tBleStatus BlueNRG_Init( void )
   ret = aci_hal_write_config_data(CONFIG_DATA_IR_OFFSET,
                                   CONFIG_DATA_IR_LEN,(uint8_t *) IR);
 
-  ret = aci_gap_set_io_capability(IO_CAP_DISPLAY_ONLY);
-  if (ret != BLE_STATUS_SUCCESS)
-    printf("Failure.\n");
-#endif /* PAIRING_ON */
-  //Osal_MemCpy(bdaddr, BDADDR, sizeof(BDADDR));
+//  ret = aci_gap_set_io_capability( IO_CAP_NO_INPUT_NO_OUTPUT );
+//  ret = aci_gap_set_io_capability( IO_CAP_KEYBOARD_ONLY );
+//  if (ret == BLE_STATUS_SUCCESS)
+//    printf("Failure.\n");
+//#endif /* PAIRING_ON */
   ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                                    CONFIG_DATA_PUBADDR_LEN,
                                    btId.bdaddr);
@@ -148,8 +148,10 @@ tBleStatus BlueNRG_Init( void )
                                      16,
                                      USE_FIXED_PIN_FOR_PAIRING,
                                      btId.blueID32 % 1000000,
+                                     //123456,
                                      NO_BONDING);
 #endif
+    ret = aci_gap_set_author_requirement( 0, AUTHORIZATION_REQUIRED );
   }
 
   if( !ret ){
@@ -543,7 +545,7 @@ void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle)
 			break;
 		}
 	}
-  // aci_gap_slave_security_request( blue.connHandle, NO_BONDING, MITM_PROTECTION_NOT_REQUIRED);
+//  aci_gap_slave_security_request( blue.connHandle, NO_BONDING, MITM_PROTECTION_NOT_REQUIRED);
 
 }
 
@@ -599,13 +601,13 @@ tBleStatus owDevCharUpdate( void ) {
   if( owDevNum ){
     owDevRec.owDevType = owDev[devCount].devType;
     owDevRec.owId = owDev[devCount].addr;
-    owDevRec.err = owDev[devCount].devStatus;
+    owDevRec.err = owDev[devCount].devStatus - 1;
     if( ++devCount == owDevNum ){
       devCount = 0;
     }
   }
 
-  ret = aci_gatt_update_char_value( workServHandle, owDevCharHandle, 0, sizeof(tOwDevRec), (uint8_t*)&owDevRec );
+  ret= aci_gatt_update_char_value( workServHandle, owDevCharHandle, 0, sizeof(tOwDevRec), (uint8_t*)&owDevRec );
   return ret;
 }
 
@@ -885,7 +887,7 @@ void HCI_Event_CB(void *pckt)
 
             if( evt->status != 0 ){
               // Не прошел проверку пин-кода
-//              aci_gap_terminate( blue.connHandle, SHA_ERR_REASON);
+              aci_gap_terminate( blue.connHandle, SHA_ERR_REASON);
             }
           }
             

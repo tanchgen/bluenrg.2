@@ -29,14 +29,22 @@ int8_t saveStateBuff( tLogBuf *buf ){
 
 // Получение длины следующей записи
 int8_t recordLen( uint32_t addr ){
-  int8_t sz;
+  uint8_t sz;
 
-  if ( receiveEeprom( (addr + 4), (uint8_t*)&sz, 1 ) != HAL_OK){
+  addr += 4;
+  if( addr >= toLogBuff.len ){
+    addr -= toLogBuff.len;
+  }
+  if ( receiveEeprom( toLogBuff.bufAddr + addr, (uint8_t*)&sz, 1 ) != HAL_OK){
     Error_Handler( LOG_ERR );
     return -1;
   }
+  if( sz > 16 ){
+    return -2;
+  }
+
   sz *= 2;
-  sz += 4;
+  sz += 5;
   return sz;
 }
 
@@ -98,7 +106,7 @@ int16_t ddLogReadEnd( tLogBuf * buf ){
 }
 
 int8_t toLogWriteEE( tLogBuf * buf, uint8_t * data  ){
-  uint8_t sz = *(data+4)*2+4;
+  uint8_t sz = *(data+4)*2+5;
   uint8_t sz1 = 0;
   uint32_t e0 = buf->end;
   uint32_t b0 = buf->begin;
@@ -119,11 +127,10 @@ int8_t toLogWriteEE( tLogBuf * buf, uint8_t * data  ){
       buf->full = 1;
       while( (bf == 0) || ((bf == 1) && (b0 < e1)) ){
         int8_t rc;
-        if( (rc = recordLen( buf->bufAddr+b0)) < 0 ){
-          return -1;
+        if( (rc = recordLen(b0)) < 0 ){
+          return rc;
         }
-        b0 = rc;
-        b0 += buf->begin;
+        b0 += rc;
         if( b0 >= buf->len ){
           bf = 1;
           b0 -= buf->len;
@@ -134,11 +141,10 @@ int8_t toLogWriteEE( tLogBuf * buf, uint8_t * data  ){
       buf->full = 1;
       while( (b0 < e1) && (bf == 0) ){
         int8_t rc;
-        if( (rc = recordLen( buf->bufAddr+b0)) < 0 ){
-          return -1;
+        if( (rc = recordLen(b0)) < 0 ){
+          return rc;
         }
-        b0 = rc;
-        b0 += buf->begin;
+        b0 += rc;
         if( b0 >= buf->len ){
           bf = 1;
           b0 -= buf->len;
@@ -149,6 +155,11 @@ int8_t toLogWriteEE( tLogBuf * buf, uint8_t * data  ){
   else if( (e0 < b0) && (e1 > b0) ){
     buf->full = 1;
     while( (b0 < e1) && (bf == 0) ){
+      int8_t rc;
+      if( (rc = recordLen(b0)) < 0 ){
+        return rc;
+      }
+      b0 += rc;
       if( b0 >= buf->len ){
         bf = 1;
         b0 -= buf->len;
@@ -156,12 +167,18 @@ int8_t toLogWriteEE( tLogBuf * buf, uint8_t * data  ){
     }
   }
 
-  if( sendEeprom( (buf->bufAddr + buf->end), data, sz )){
-    return -1;
+  if( sz ){
+  	if( sendEeprom( (buf->bufAddr + buf->end), data, sz )){
+    	return -1;
+  	}
+		if( sz1 ){
+    	if( sendEeprom( buf->bufAddr, data+sz, sz1 )){
+      	return -1;
+    	}
+  	}
   }
-
-  if( sendEeprom( buf->bufAddr, data+sz, sz1 )){
-    return -1;
+  else {
+  	return 0;
   }
 
   buf->end = e1;
@@ -188,7 +205,7 @@ int16_t toLogReadEEStart( tLogBuf * buf, uint8_t *data ){
     return 0;
   }
 
-  if( (rc = recordLen(buf->bufAddr + b0)) < 0){
+  if( (rc = recordLen(b0)) < 0){
     return -1;
   }
   sz = rc;
@@ -338,7 +355,7 @@ uint8_t logBufFill( tToLogBuf * buf, tToLogUnit * log, uint8_t *toNum ){
     fin = 1;
   }
   for(uint8_t i = 0; i < count; i++){
-    buf->toData[i] = log->toData[*toNum + i];
+    buf->toData[i] = (uint16_t)__REV16( (uint32_t)(log->toData[*toNum + i]) );
   }
   if(fin){
     *toNum = 0;

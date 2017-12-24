@@ -13,11 +13,11 @@ OBJS += \
 ./system/src/cmsis/startup_stm32f030x6.o \
 ./system/src/cmsis/system_stm32f0xx.o 
 
-C_DEPS += \
-./system/src/cmsis/system_stm32f0xx.d 
-
 S_UPPER_DEPS += \
 ./system/src/cmsis/startup_stm32f030x6.d 
+
+C_DEPS += \
+./system/src/cmsis/system_stm32f0xx.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
