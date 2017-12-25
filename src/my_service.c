@@ -106,7 +106,7 @@ tBleStatus BlueNRG_Init( void )
   /* Reset BlueNRG hardware */
   BlueNRG_RST();
 
-//#ifdef PAIRING_ON
+#ifdef PAIRING_ON
   /* Установка случайных значений для вычисления ключей CSRK, LTK, IRK
      !!! Для каждого устройства - свой набор !!! */
   uint8_t DIV[2]={ 0x57, 0x30 };
@@ -128,7 +128,7 @@ tBleStatus BlueNRG_Init( void )
 //  ret = aci_gap_set_io_capability( IO_CAP_KEYBOARD_ONLY );
 //  if (ret == BLE_STATUS_SUCCESS)
 //    printf("Failure.\n");
-//#endif /* PAIRING_ON */
+#endif /* PAIRING_ON */
   ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                                    CONFIG_DATA_PUBADDR_LEN,
                                    btId.bdaddr);
@@ -141,7 +141,7 @@ tBleStatus BlueNRG_Init( void )
 #if 0
     ret = aci_gap_set_author_requirement( 0, AUTHORIZATION_REQUIRED );
 #else
-    ret = aci_gap_set_auth_requirement(MITM_PROTECTION_NOT_REQUIRED,
+    ret = aci_gap_set_auth_requirement(MITM_PROTECTION_REQUIRED,
                                      OOB_AUTH_DATA_ABSENT,
                                      NULL,
                                      7,
@@ -149,9 +149,9 @@ tBleStatus BlueNRG_Init( void )
                                      USE_FIXED_PIN_FOR_PAIRING,
                                      btId.blueID32 % 1000000,
                                      //123456,
-                                     NO_BONDING);
+                                     BONDING);
 #endif
-    ret = aci_gap_set_author_requirement( 0, AUTHORIZATION_REQUIRED );
+//    ret = aci_gap_set_author_requirement( 0, AUTHORIZATION_REQUIRED );
   }
 
   if( !ret ){
@@ -545,7 +545,7 @@ void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle)
 			break;
 		}
 	}
-//  aci_gap_slave_security_request( blue.connHandle, NO_BONDING, MITM_PROTECTION_NOT_REQUIRED);
+  aci_gap_slave_security_request( blue.connHandle, NO_BONDING, MITM_PROTECTION_NOT_REQUIRED);
 
 }
 
