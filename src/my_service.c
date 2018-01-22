@@ -141,15 +141,14 @@ tBleStatus BlueNRG_Init( void )
 #if 0
     ret = aci_gap_set_author_requirement( 0, AUTHORIZATION_REQUIRED );
 #else
-    ret = aci_gap_set_auth_requirement(MITM_PROTECTION_REQUIRED,
+    ret = aci_gap_set_auth_requirement(MITM_PROTECTION_NOT_REQUIRED,
                                      OOB_AUTH_DATA_ABSENT,
                                      NULL,
                                      7,
                                      16,
                                      USE_FIXED_PIN_FOR_PAIRING,
                                      btId.blueID32 % 1000000,
-                                     //123456,
-                                     BONDING);
+                                     NO_BONDING);
 #endif
 //    ret = aci_gap_set_author_requirement( 0, AUTHORIZATION_REQUIRED );
   }
@@ -273,41 +272,40 @@ static tBleStatus addService(void)
 
 // Характеристика "Новая тревога"
   ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, alrmNewCharUuid, 2,
- 														CHAR_PROP_READ|CHAR_PROP_INDICATE,
-														ATTR_PERMISSION_NONE,
-														GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-														16, 0, &alrmNewCharHandle);
+ 							CHAR_PROP_READ|CHAR_PROP_INDICATE,
+							ATTR_PERMISSION_NONE,
+							GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+							16, 0, &alrmNewCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Характеристика "Непрочитанные тревоги"
   ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, alrmNoReadCharUuid, 2,
-  													CHAR_PROP_READ|CHAR_PROP_INDICATE,
-   												  ATTR_PERMISSION_NONE,
-   													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-   													16, 0, &alrmNoReadCharHandle);
+  							CHAR_PROP_READ|CHAR_PROP_INDICATE,
+   							ATTR_PERMISSION_NONE,
+   							GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+   							16, 0, &alrmNoReadCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Счетчики Непрочитанных Тревог (индекс соответствует номеру поля в alrmId)
 
 // Характеристика "Отправка логов температуры"
-  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, toLogCharUuid,
-                          TO_LOG_CHARACTERISTIC_LEN,
-													CHAR_PROP_READ|CHAR_PROP_INDICATE,
- 												  ATTR_PERMISSION_NONE,
- 													GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
- 													16, CHAR_VALUE_LEN_VARIABLE, &toLogCharHandle);
+  ret =  aci_gatt_add_char( workServHandle, UUID_TYPE_128, toLogCharUuid, 16,
+							CHAR_PROP_READ|CHAR_PROP_INDICATE,
+							ATTR_PERMISSION_NONE,
+ 							GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+ 							16, CHAR_VALUE_LEN_VARIABLE, &toLogCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
 // Дескриптор "Запрос логов" к Характеристике "Отправка логов температуры"
   uint8_t descVal = 0;
   ret = aci_gatt_add_char_desc( workServHandle, toLogCharHandle, UUID_TYPE_16,
-                          (uint8_t *)&toLogReqDescUuid,
-  												1, 1, &descVal,
-													ATTR_PERMISSION_NONE,
-													ATTR_ACCESS_READ_WRITE,
-//													ATTR_ACCESS_WRITE_WITHOUT_RESPONSE|ATTR_ACCESS_READ_ONLY,
- 													GATT_NOTIFY_ATTRIBUTE_WRITE,
- 													16, 0, &toLogReqDescHandle);
+                          	  (uint8_t *)&toLogReqDescUuid,
+							  1, 1, &descVal,
+							  ATTR_PERMISSION_NONE,
+							  ATTR_ACCESS_READ_WRITE,
+//								ATTR_ACCESS_WRITE_WITHOUT_RESPONSE|ATTR_ACCESS_READ_ONLY,
+							  GATT_NOTIFY_ATTRIBUTE_WRITE,
+							  16, 0, &toLogReqDescHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
   // Характеристика "Отправка логов дверей"
@@ -545,7 +543,7 @@ void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle)
 			break;
 		}
 	}
-  aci_gap_slave_security_request( blue.connHandle, NO_BONDING, MITM_PROTECTION_NOT_REQUIRED);
+//  aci_gap_slave_security_request( blue.connHandle, NO_BONDING, MITM_PROTECTION_NOT_REQUIRED);
 
 }
 

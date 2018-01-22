@@ -31,7 +31,7 @@ system/src/cmsis/%.o: ../system/src/cmsis/%.S
 system/src/cmsis/%.o: ../system/src/cmsis/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross ARM C Compiler'
-	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DSTM32F030 -DHSE_VALUE=16000000 -DSTM32F030x6 -DBLUENRG=1 -DUSE_STDPERIPH_DRIVER -DONE_WIRE=1 -I"/home/jet/workspace/pak.exp-2/inc" -I"/home/jet/workspace/pak.exp-2/system/inc" -I"/home/jet/workspace/pak.exp-2/system/inc/cmsis" -I"/home/jet/workspace/pak.exp-2/system/inc/stm32f0-stdperiph" -I"/home/jet/workspace/pak.exp-2/bluenrg/inc" -I"/home/jet/workspace/pak.exp-2/system/inc/stm32f0-hal" -std=c99 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DSTM32F030 -DHSE_VALUE=16000000 -DSTM32F030x6 -DBLUENRG=1 -DUSE_STDPERIPH_DRIVER -DONE_WIRE=1 -I"/home/jet/work/workspace/pak.exp-2/inc" -I"/home/jet/work/workspace/pak.exp-2/system/inc" -I"/home/jet/work/workspace/pak.exp-2/system/inc/cmsis" -I"/home/jet/work/workspace/pak.exp-2/system/inc/stm32f0-stdperiph" -I"/home/jet/work/workspace/pak.exp-2/bluenrg/inc" -I"/home/jet/work/workspace/pak.exp-2/system/inc/stm32f0-hal" -std=c99 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

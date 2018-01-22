@@ -63,19 +63,7 @@ struct _blue {
 	} logStatus;
 	tBleStatus bleStatus;
 };
-/** 
-* @brief Handle of RX Characteristic on the Client. The handle should be
-*        discovered, but it is fixed only for this demo.
-*/ 
-//#define RX_HANDLE   0x0014
-// Длина характеристики:
-//  4байта - время Utime, 5* (1байт - номер датчика + 2байта - температурв) = 19 байт
-#define TO_LOG_CHARACTERISTIC_LEN   (sizeof(tToLogBuf))
-
 extern struct _blue blue;
-/** @addtogroup SAMPLE_SERVICE_Exported_Functions
- *  @{
- */
 
 void Make_Connection(void);
 void receiveData(uint8_t* data_buffer, uint8_t Nb_bytes);
